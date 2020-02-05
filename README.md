@@ -18,3 +18,6 @@ Twitch "Tinder(TM)" bot.
   * On "match", users are whispered the user name of the person they matched with.
 
 Stay tuned.
+
+# Deadline
+April 1st.
