@@ -19,5 +19,4 @@ Twitch "Tinder(TM)" bot.
 
 Stay tuned.
 
-# Deadline
-April 1st.
+# Deadline: April 1st.
