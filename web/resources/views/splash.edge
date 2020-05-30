@@ -1,0 +1,31 @@
+<section class="hero is-fullheight">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <div class="animated slideInLeft">
+        <h1 class="title is-1">Twitchr</h1>
+        <h2 class="subtitle is-3">Find Twitch friends!</h2>
+        <button class="button is-large">
+          <span class="icon">{{{ icon('twitch', 'big') }}}</span>
+          <span>Login with Twitch</span>
+        </button>
+      </div>
+      <div class="animated fadeIn delay-1s">
+        <hr>
+        <h3 class="is-size-5">Statistics</h3>
+        <div class="columns">
+          <div class="column">
+            <p>Matching {{web.statistics.users.total}} users.</p>
+            <p>{{web.statistics.users.matched}} users matched today.</p>
+          </div>
+          <div class="column">
+            <p>Serving {{web.statistics.channels.total}} channels.</p>
+            <p>{{web.statistics.channels.new}} channels joined today.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-foot">
+    @include('includes/footer')
+  </div>
+</section>

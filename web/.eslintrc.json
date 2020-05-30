@@ -1,0 +1,23 @@
+{
+    "extends": [
+        "standard-with-typescript",
+        "plugin:adonis/typescriptApp"
+        
+    ],
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "@typescript-eslint/class-name-casing": "off",
+        "@typescript-eslint/interface-name-prefix": "off"
+    }
+}

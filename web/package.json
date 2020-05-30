@@ -1,0 +1,43 @@
+{
+  "name": "twitchr",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node ace build",
+    "start": "node ace serve --watch",
+    "css-build": "node-sass resources/sass/style.scss public/css/stylesheet.css --output-style compressed",
+    "lint": "eslint . --ext=.ts"
+  },
+  "devDependencies": {
+    "@adonisjs/assembler": "^2.1.2",
+    "@typescript-eslint/eslint-plugin": "^3.0.2",
+    "adonis-preset-ts": "^1.0.4",
+    "eslint": "^7.1.0",
+    "eslint-config-standard-with-typescript": "^18.0.2",
+    "eslint-plugin-adonis": "^1.0.10",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "pino-pretty": "^4.0.0",
+    "sqlite3": "^4.2.0",
+    "typescript": "^3.9.3",
+    "youch": "^2.0.10",
+    "youch-terminal": "^1.0.0"
+  },
+  "dependencies": {
+    "@adonisjs/ace": "^6.9.3",
+    "@adonisjs/core": "^5.0.0-preview-rc-1.6",
+    "@adonisjs/fold": "^6.3.5",
+    "@adonisjs/session": "^3.0.3",
+    "@adonisjs/view": "^2.0.6",
+    "bulma": "^0.8.2",
+    "feather-icons": "^4.28.0",
+    "node-fetch": "^2.6.0",
+    "node-sass": "^4.14.1",
+    "pg": "^8.2.0",
+    "proxy-addr": "^2.0.6",
+    "reflect-metadata": "^0.1.13",
+    "source-map-support": "^0.5.19"
+  }
+}
