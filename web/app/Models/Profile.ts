@@ -14,7 +14,7 @@ export default class Profile extends BaseModel {
   @column()
   public userId: number
 
-  @column({ columnName: 'chat_id' })
+  @column()
   public chatId: number
 
   @column()
