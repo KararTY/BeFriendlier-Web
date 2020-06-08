@@ -1,0 +1,27 @@
+@if(user)
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <a href="/" class="navbar-item">Twitchr</a>
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+      <div class="navbar-menu">
+        <div class="navbar-end">
+          <form action="{{ route('AuthController.logout') }}" class="form navbar-item" method="POST">
+            {{ csrfField() }}
+            <button class="button is-text" type="submit">Logout</button>
+          </form>
+          <a href="/user" class="navbar-item">
+            <figure class="image is-24x24">
+              <img class="is-rounded" src="{{ user.avatar }}" alt="Twitch profile image">
+            </figure>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+@endif

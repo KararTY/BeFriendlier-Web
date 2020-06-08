@@ -1,0 +1,139 @@
+<form action="{{ route('UsersController.update') }}" class="form" method="POST" id="updateUser">
+  <div class="card">
+    <div class="card-content">
+      <noscript>
+        <div class="has-text-centered">
+          <strong class="is-size-3 has-text-danger">This form requires Javascript to be enabled for it to work.</strong>
+        </div>
+      </noscript>
+      <h1 class="title" id="settings">User settings</h1>
+
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label">Twitch name</label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <input type="text" disabled class="input disabled" value="{{ user.display_name }} ({{ user.name }})">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label">Twitch avatar</label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <figure class="image is-128x128">
+                <img src="{{ user.avatar }}" alt="Twitch avatar">
+              </figure>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field is-horizontal">
+        <div class="field-label"></div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <button type="submit" formaction="/users/refresh" class="button is-pink">
+                <span class="icon">{{{ icon('refresh-cw', 'small') }}}</span>
+                <span class="icon">{{{ icon('twitch', 'small') }}}</span>
+                <span>Refresh</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label">Favorite streamers</label>
+        </div>
+        <div class="field-body">
+          <div class="field is-expanded">
+            <div class="field has-addons">
+              <div class="control">
+                <input class="input" data-name="streamerName" type="text" placeholder="Twitch name...">
+              </div>
+              <div class="control">
+                <button class="button" name="addStreamer">Add</button>
+              </div>
+            </div>
+            <p class="help">Max 5 streamers.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="field is-horizontal">
+        <div class="field-label is-normal"></div>
+        <div class="field-body">
+          <div class="field">
+            <div class="tags are-medium" id="streamers">
+              @each(item in user.favoriteStreamers)
+                <div class="tag" data-streamername="{{ item.name }}">
+                  <span class="icon">
+                    <figure class="image is-24x24">
+                      <img src="{{ item.avatar }}" alt="{{ item.name }} avatar">
+                    </figure>
+                  </span>
+                  <span>{{ item.name }}</span>
+                  <button class="delete" name="removeStreamer"></button>
+                </div>
+              @endeach
+            </div>
+            <input type="text" class="is-hidden" name="favoriteStreamers" value="{{ user.favoriteStreamers.map(streamer => streamer.name).join(',') }}">
+          </div>
+        </div>
+      </div>
+
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label">Public profile</label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control has-icons-left">
+              <div class="select">
+                <select name="makeGlobalPublic">
+                  @if(!!user.profile.find(profile => profile.global && !profile.enabled))
+                    <option value="false" selected>Disabled</option>
+                    <option value="true">Enabled</option>
+                  @else
+                    <option value="false">Disabled</option>
+                    <option value="true" selected>Enabled</option>
+                  @endif
+                </select>
+              </div>
+              <div class="icon is-left">{{{ icon('globe') }}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field is-horizontal">
+        <div class="field-label"></div>
+        <div class="field-body">
+          <div class="field is-grouped">
+            <div class="control">
+              {{ csrfField() }}
+              <button class="button is-success" type="submit" data-name="submitBtn">Update</button>
+            </div>
+            <div class="control">
+              <button type="submit" formaction="/users/delete" class="button is-danger">
+                <span class="icon">{{{ icon('trash', 'small') }}}</span>
+                <span>Delete account</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<script src="/js/updateUser.js"></script>

@@ -20,3 +20,6 @@
 
 import './routes/splash'
 import './routes/licenses'
+import './routes/login'
+import './routes/profile'
+import './routes/user'

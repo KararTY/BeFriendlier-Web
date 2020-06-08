@@ -31,17 +31,15 @@ Stay tuned.
 
 ## Todo
   * Database
+    * User
+      * hasMany: Profile
+      * manyToMany: Favorite streamers list.
     * Profile
-      * `<String>` **Twitch avatar URL** https://...
-      * `<String>` **Twitch ID** 00000000000000000000000
-      * `<StringMax32>` **Twitch name** NotKarar
-      * `<ArrayMax5<StringMax32>>` **Favorite streamers** forsen, xqcow, reckful, reynad27, nymn
-      * `<ArrayMax5<StringMax32>>` **Favorite emotes** Kappa, LuL, monkaS, OMEGALUL, Keepo
-      * `<StringMax128>` **Profile bio** I am monke.
-      * `<StringMax9>` **Background color**  Example: 000000000
+    * (Pivot) Favorite streamers list.
   * Website
-    * Splash page
-    * Login with Twitch page
+    * ~~Splash page~~
+    * ~~Login with Twitch page~~
+    * ~~User page~~ (WIP: Missing profile list)
     * Profile page
       * Background color
       * Twitch avatar

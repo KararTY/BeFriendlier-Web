@@ -22,7 +22,13 @@
     "types": [
       "@adonisjs/core",
       "@adonisjs/session",
-      "@adonisjs/view"
-    ]
-  }
+      "@adonisjs/view",
+      "@adonisjs/auth",
+      "@adonisjs/lucid",
+      "@adonisjs/shield"
+    ],
+    "lib": ["DOM"]
+  },
+  "files": ["./node_modules/@adonisjs/env/build/adonis-typings/env.d.ts"]
+  
 }

@@ -2,7 +2,8 @@
   "typescript": true,
   "commands": [
     "./commands",
-    "@adonisjs/core/build/commands"
+    "@adonisjs/core/build/commands",
+    "@adonisjs/lucid/build/commands"
   ],
   "exceptionHandlerNamespace": "App/Exceptions/Handler",
   "aliases": {
@@ -16,9 +17,14 @@
   ],
   "providers": [
     "./providers/AppProvider",
+    "@adonisjs/env",
     "@adonisjs/core",
     "@adonisjs/session",
-    "@adonisjs/view"
+    "@adonisjs/view",
+    "@adonisjs/auth",
+    "@adonisjs/lucid",
+    "@adonisjs/shield",
+    "./providers/TwitchProvider"
   ],
   "metaFiles": [
     ".env",

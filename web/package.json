@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "build": "node ace build",
-    "start": "node ace serve --watch",
+    "start": "node ace serve --watch --node-args=\"--inspect\"",
     "css-build": "node-sass resources/sass/style.scss public/css/stylesheet.css --output-style compressed",
-    "lint": "eslint . --ext=.ts"
+    "lint": "eslint . --ext=.ts",
+    "migrate:run": "npm run-script build && node ace migration:run",
+    "migrate:rollback": "npm run-script build && node ace migration:rollback"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^2.1.2",
@@ -27,12 +29,16 @@
   },
   "dependencies": {
     "@adonisjs/ace": "^6.9.3",
+    "@adonisjs/auth": "^4.1.5",
     "@adonisjs/core": "^5.0.0-preview-rc-1.6",
     "@adonisjs/fold": "^6.3.5",
+    "@adonisjs/lucid": "^8.1.1",
     "@adonisjs/session": "^3.0.3",
+    "@adonisjs/shield": "^3.0.3",
     "@adonisjs/view": "^2.0.6",
     "bulma": "^0.8.2",
     "feather-icons": "^4.28.0",
+    "got": "^11.2.0",
     "node-fetch": "^2.6.0",
     "node-sass": "^4.14.1",
     "pg": "^8.2.0",
