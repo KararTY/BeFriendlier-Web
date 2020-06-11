@@ -15,14 +15,10 @@ export default class User extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
-  @column({
-    serialize: () => 'HIDDEN',
-  })
+  @column({ serializeAs: null })
   public password: string
 
-  @column({
-    serialize: () => 'HIDDEN',
-  })
+  @column({ serializeAs: null })
   public rememberMeToken: string
 
   @column()

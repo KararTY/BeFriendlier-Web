@@ -22,7 +22,7 @@ export default class AuthController {
           avatar: twitchUser.profile_image_url,
         })
 
-        // Create default public profile, disabled.
+        // Create default global profile, disabled.
         await user.related('profile').create({
           enabled: false,
           global: true,

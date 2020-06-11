@@ -73,11 +73,11 @@ export default class UsersController {
 
       await auth.user.preload('profile')
       const globalProfile = auth.user.profile.find(profile => profile.global)
+      // Global profile can't be undefined, this is here because typescript is strict.
       if (globalProfile !== undefined) {
         if (makeGlobalPublic === 'true') {
           // Set global profile to true.
 
-          // Public profile can't be undefined, this is here because typescript is strict.
           globalProfile.enabled = true
         } else {
           // Set global profile to false.
