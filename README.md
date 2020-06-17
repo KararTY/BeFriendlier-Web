@@ -35,12 +35,14 @@ Stay tuned.
       * hasMany: Profile
       * manyToMany: Favorite streamers list.
     * Profile
+      * manyToMany: Matches list.
     * (Pivot) Favorite streamers list.
+    * (Pivot) Matches list.
   * Website
     * ~~Splash page~~
     * ~~Login with Twitch page~~
     * ~~User page~~
-    * Profile page
+    * ~~Profile page~~ WIP: Missing functionality to allow people who matched to view the profile too.
       * Background color
       * Twitch avatar
       * Twitch name
