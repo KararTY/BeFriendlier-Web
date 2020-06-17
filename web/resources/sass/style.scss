@@ -1,18 +1,22 @@
 @charset "utf-8";
 
 // Source Sans Pro
-@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Fira+Sans&display=swap');
 
 // Brand colors
 
 // Global variables overwrite
-$family-sans-serif: 'Source Sans Pro', sans-serif;
+$family-sans-serif: 'Fira Sans', sans-serif;
 
 /*! bulma.io v0.8.2 | MIT License | github.com/jgthms/bulma */
 @import "../../node_modules/bulma/sass/utilities/_all.sass";
+
 @import "../../node_modules/bulma/sass/base/_all.sass";
+
 @import "../../node_modules/bulma/sass/elements/_all.sass";
+
 @import "../../node_modules/bulma/sass/form/_all.sass";
+
 @import "../../node_modules/bulma/sass/grid/columns.sass";
 // @import "../../node_modules/bulma/sass/grid/_all.sass";
 

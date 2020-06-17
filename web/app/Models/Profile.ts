@@ -1,5 +1,13 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+
+import {
+  column,
+  BaseModel,
+  manyToMany,
+  ManyToMany,
+} from '@ioc:Adonis/Lucid/Orm'
+
+import User from 'App/Models/User'
 
 interface Color {
   r: string
@@ -11,11 +19,12 @@ export default class Profile extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
+  // Foreign key
   @column()
   public userId: number
 
   @column()
-  public chatId: number
+  public chatId?: number
 
   @column()
   public global: boolean
@@ -43,6 +52,15 @@ export default class Profile extends BaseModel {
     serialize: (value: string) => JSON.parse(value),
   })
   public favoriteEmotes: string[]
+
+  @manyToMany(() => User, {
+    localKey: 'id',
+    pivotForeignKey: 'user_id',
+    relatedKey: 'id',
+    pivotRelatedForeignKey: 'match_id',
+    pivotTable: 'matches_lists',
+  })
+  public matches: ManyToMany<typeof User>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

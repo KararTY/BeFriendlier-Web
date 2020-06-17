@@ -1,0 +1,37 @@
+<section class="hero is-fullheight">
+  <div class="hero-head">
+    @include('includes/navbar')
+  </div>
+  <div class="hero-body">
+    <div class="container">
+      @each(profile in profiles.filter(profile => profile.enabled))
+        <a href="/profile/{{profile.id}}">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-title">
+                <div class="level is-mobile">
+                  <div class="level-left">
+                    @if(profile.global)
+                      <span class="icon level-item">{{{ icon('globe') }}}</span>
+                      <span>Global profile</span>
+                    @else
+                      <div class="icon level-item">
+                        <figure class="image">
+                          <img src="{{ profile.chat.avatar.replace('300x300', '70x70') }}" alt="{{ profile.chat.name }}'s avatar'">
+                        </figure>
+                      </div>
+                      <p class="level-item">{{ profile.chat.display_name }} ({{profile.chat.name}})</p>
+                    @endif
+                  </div>
+                </div>
+              </div>
+              <div class="card-header-icon">{{{ icon('arrow-right') }}}</div>
+            </div>
+          </div>
+        </a>
+      @else
+        <h3 class="has-text-centered is-size-3">You don't have any profiles! Go create one in chat or activate your global public profile in <a href="/user#settings">settings</a>.</h3>
+      @endeach
+    </div>
+  </div>
+</section>

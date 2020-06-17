@@ -13,7 +13,7 @@ export default class SplashController {
       user: auth.user?.toJSON(),
       web: {
         template: 'splash',
-        title: 'Pogchamp Friends!',
+        title: 'Find friends!',
         statistics: {
           channels: {
             total: 0,

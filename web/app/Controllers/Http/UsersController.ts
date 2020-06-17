@@ -15,7 +15,7 @@ export default class UsersController {
         user: auth.user.toJSON(),
         web: {
           template: 'user',
-          title: `User profile - ${auth.user.displayName}`,
+          title: `User settings - ${auth.user.displayName}`,
         },
       })
     }
@@ -77,7 +77,6 @@ export default class UsersController {
       if (globalProfile !== undefined) {
         if (makeGlobalPublic === 'true') {
           // Set global profile to true.
-
           globalProfile.enabled = true
         } else {
           // Set global profile to false.
@@ -87,11 +86,13 @@ export default class UsersController {
         await auth.user.related('profile').save(globalProfile)
       }
 
+      /* This is very inefficient. TODO: FIX */
       // Remove all.
       await auth.user.related('favoriteStreamers').detach()
 
       // Add new.
       await auth.user.related('favoriteStreamers').saveMany(newFavoriteStreamers)
+      /**/
 
       await auth.user.save()
       return response.redirect('/user')

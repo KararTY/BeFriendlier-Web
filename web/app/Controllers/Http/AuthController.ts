@@ -22,7 +22,7 @@ export default class AuthController {
           avatar: twitchUser.profile_image_url,
         })
 
-        // Create default global profile, disabled.
+        // Create default global profile, but not enabled.
         await user.related('profile').create({
           enabled: false,
           global: true,
@@ -32,7 +32,7 @@ export default class AuthController {
         session.put('token', token.access_token)
         return response.redirect('/user')
       } else {
-        // Exists but not actually registered, just cached.
+        // Exists but not actually registered, just cached. For "favorite streamers" purposes.
         await userExists.preload('profile')
         if (userExists.profile.length === 0) {
           await userExists.related('profile').create({

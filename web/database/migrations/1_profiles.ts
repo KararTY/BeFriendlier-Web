@@ -8,10 +8,11 @@ export default class Profiles extends BaseSchema {
     this.schema.createTable(this.tableName, table => {
       table.increments('id')
       table.integer('user_id').notNullable()
-      table.string('chat_id', 32)
+      table.integer('chat_id')
       table.boolean('global').defaultTo(false)
       table.boolean('enabled').defaultTo(true)
       table.json('favorite_emotes').defaultTo(JSON.stringify([])).notNullable()
+      table.json('matches').defaultTo(JSON.stringify([])).notNullable()
       table.string('bio', 128).defaultTo('Hello!').notNullable()
       table.string('color', 11).defaultTo('255-255-255').notNullable()
       table.timestamps(true)

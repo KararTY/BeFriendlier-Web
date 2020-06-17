@@ -65,9 +65,7 @@ export class Client {
     }
   }
 
-  public async validateToken () {
-
-  }
+  public async validateToken () {}
 }
 
 export default Client

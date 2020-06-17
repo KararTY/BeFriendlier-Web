@@ -39,7 +39,7 @@ Stay tuned.
   * Website
     * ~~Splash page~~
     * ~~Login with Twitch page~~
-    * ~~User page~~ (WIP: Missing profile list)
+    * ~~User page~~
     * Profile page
       * Background color
       * Twitch avatar

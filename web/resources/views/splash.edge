@@ -13,10 +13,14 @@
             <span>Login with Twitch</span>
           </a>
         @else
-        <a href="{{ route('UsersController.read') }}" class="button is-large" type="submit">
-          <span class="icon">{{{ icon('user', 'big') }}}</span>
-          <span>User profile</span>
-        </a>
+          <a href="{{ route('UsersController.read') }}" class="button is-large" type="submit">
+            <span class="icon">{{{ icon('settings', 'big') }}}</span>
+            <span>Settings</span>
+          </a>
+          <a href="{{ route('UsersController.read') }}" class="button is-large" type="submit">
+            <span class="icon">{{{ icon('user', 'big') }}}</span>
+            <span>Profiles</span>
+          </a>
         @endif
       </div>
       <div class="animated fadeIn delay-1s">
