@@ -104,7 +104,7 @@ export default class ProfilesController {
     }
   }
 
-  // public async update ({ params, auth, view, response }: HttpContextContract) {}
+  public async update ({ params, auth, view, response }: HttpContextContract) {}
 
   public async delete ({ params, auth, response, session }: HttpContextContract) {
     const { id } = params
