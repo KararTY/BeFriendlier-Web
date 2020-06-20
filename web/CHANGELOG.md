@@ -1,3 +1,6 @@
+### v0002a commit (ed12016)
+  * [Fixed error on startup.](https://github.com/KararTY/Twitchr/commit/ed120167b83dc10cac9da1e3109793b1dbd38ab4#diff-fa492029d36185ca8534a9e413b02a4fR107)
+  * Fixed links in updateProfile.edge template, profiles.edge template.
 ### v0001a commit (1ac2181)
   * Changed README file to reflect changes made to Profile model.
   * Added flash message if Twitch doesn't return a token body.
