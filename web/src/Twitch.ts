@@ -14,6 +14,14 @@ export interface TwitchUsersBody {
   view_count: number
 }
 
+export interface TwitchAuthBody {
+  access_token: string
+  refresh_token: string
+  expires_in: number
+  scope: string
+  token_type: string
+}
+
 export class Client {
   private readonly token: string
   private readonly secret: string
@@ -23,7 +31,7 @@ export class Client {
     this.secret = config.get('TWITCH_CLIENT_SECRET')
   }
 
-  public async requestToken (code: string) {
+  public async requestToken (code: string): Promise<TwitchAuthBody | null> {
     const searchParams = {
       client_id: this.token,
       client_secret: this.secret,
@@ -31,14 +39,17 @@ export class Client {
       code,
       redirect_uri: 'http://localhost:3333/register',
     }
-
-    const { body }: any = await fetch.post('https://id.twitch.tv/oauth2/token', {
-      headers: { ...defaultHeader },
-      searchParams,
-      responseType: 'json',
-    })
-
-    return body
+    try {
+      const { body }: any = await fetch.post('https://id.twitch.tv/oauth2/token', {
+        headers: { ...defaultHeader },
+        searchParams,
+        responseType: 'json',
+      })
+      return body
+    } catch (error) {
+      console.error(error)
+      return null
+    }
   }
 
   public async getUser (token: string, usernames?: string[]): Promise<TwitchUsersBody | null>
@@ -65,7 +76,27 @@ export class Client {
     }
   }
 
-  public async validateToken () {}
+  public async refreshToken (token: string): Promise<TwitchAuthBody | null> {
+    const searchParams = {
+      grant_type: 'refresh_token',
+      refresh_token: encodeURI(token), // Per https://dev.twitch.tv/docs/authentication/#refreshing-access-tokens:~:text=URL%20encode
+      client_id: this.token,
+      client_secret: this.secret,
+    }
+
+    try {
+      const { body }: any = await fetch.get('https://id.twitch.tv/oauth2/token', {
+        headers: { ...defaultHeader },
+        searchParams,
+        responseType: 'json',
+      })
+
+      return body as TwitchAuthBody
+    } catch (error) {
+      console.error(error)
+      return null
+    }
+  }
 }
 
 export default Client

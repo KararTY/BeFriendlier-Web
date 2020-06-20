@@ -14,7 +14,7 @@ class UpdateUserForm {
 
       this.named.addStreamerBtn.addEventListener('click', this.addStreamer.bind(this))
 
-      this.named.streamerNameInput.addEventListener('keydown', (ev) => {
+      this.named.streamerNameInput.addEventListener('keydown', ev => {
         if (ev.key === 'Enter') {
           ev.preventDefault()
 
@@ -88,4 +88,4 @@ class UpdateUserForm {
   }
 }
 
-const updateUserForm = new UpdateUserForm(document.getElementById('updateUser'))
+(() => new UpdateUserForm(document.getElementById('updateUser')))()

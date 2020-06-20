@@ -1,4 +1,9 @@
 <form action="{{ route('UsersController.update') }}" class="form" method="POST" id="updateUser">
+  @if(flashMessages.get('user'))
+    <div class="notification {{ flashMessages.get('user').startsWith('Error:') ? 'is-danger' : 'is-success' }}">
+      <span>{{ flashMessages.get('user') }}</span>
+    </div>
+  @endif
   <div class="card">
     <div class="card-content">
       <noscript>
@@ -6,6 +11,7 @@
           <strong class="is-size-3 has-text-danger">This form requires Javascript to be enabled for it to work.</strong>
         </div>
       </noscript>
+
       <h1 class="title" id="settings">User settings</h1>
 
       <div class="field is-horizontal">
@@ -41,7 +47,7 @@
         <div class="field-body">
           <div class="field">
             <div class="control">
-              <button type="submit" formaction="/users/refresh" class="button is-pink">
+              <button type="submit" formaction="/user/refresh" class="button is-pink">
                 <span class="icon">{{{ icon('refresh-cw', 'small') }}}</span>
                 <span class="icon">{{{ icon('twitch', 'small') }}}</span>
                 <span>Refresh</span>
@@ -76,14 +82,14 @@
         <div class="field-body">
           <div class="field">
             <div class="tags are-medium" id="streamers">
-              @each(item in user.favoriteStreamers)
-                <div class="tag" data-streamername="{{ item.name }}">
+              @each(streamer in user.favoriteStreamers)
+                <div class="tag" data-streamername="{{ streamer.name }}">
                   <span class="icon">
                     <figure class="image is-24x24">
-                      <img src="{{ item.avatar }}" alt="{{ item.name }} avatar">
+                      <img src="{{ streamer.avatar }}" alt="{{ streamer.name }} avatar">
                     </figure>
                   </span>
-                  <span>{{ item.name }}</span>
+                  <span>{{ streamer.name }}</span>
                   <button class="delete" name="removeStreamer"></button>
                 </div>
               @endeach
@@ -127,7 +133,7 @@
               <button class="button is-success" type="submit" data-name="submitBtn">Update</button>
             </div>
             <div class="control">
-              <button type="submit" formaction="/users/delete" class="button is-danger">
+              <button type="submit" formaction="/user/delete" class="button is-danger">
                 <span class="icon">{{{ icon('trash', 'small') }}}</span>
                 <span>Delete account</span>
               </button>

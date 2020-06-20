@@ -1,4 +1,6 @@
 import Route from '@ioc:Adonis/Core/Route'
 
-// CRUD
-Route.get('/profile/:id?', 'ProfilesController.profile').middleware('auth:web')
+// RUD
+Route.get('/profile/:id?', 'ProfilesController.read').middleware('auth:web')
+Route.post('/profile/:id?', 'ProfilesController.update').middleware('auth:web')
+Route.post('/profile/:id/delete', 'ProfilesController.delete').middleware('auth:web')

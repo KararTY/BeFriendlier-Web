@@ -9,6 +9,11 @@ export default class AuthController {
     const { code } = request.get()
 
     const token = await Twitch.requestToken(code)
+    if (token === null) {
+      session.flash('splash', 'Error: Twitch did not send a token back. Try again later!')
+      return response.redirect('/')
+    }
+
     const twitchUser = await Twitch.getUser(token.access_token)
     if (twitchUser !== null) {
       const userExists = await User.findBy('twitchID', twitchUser.id)
@@ -29,8 +34,12 @@ export default class AuthController {
         })
 
         await user.save()
+        await auth.login(user)
         session.put('token', token.access_token)
-        return response.redirect('/user')
+        session.put('refresh', token.refresh_token)
+
+        session.flash('splash', 'Welcome! Take a look at your user settings to finalize your setup!')
+        return response.redirect('/')
       } else {
         // Exists but not actually registered, just cached. For "favorite streamers" purposes.
         await userExists.preload('profile')
@@ -44,13 +53,18 @@ export default class AuthController {
         // Login
         await auth.login(userExists)
         session.put('token', token.access_token)
-        return response.redirect('/user')
+        session.put('refresh', token.refresh_token)
+
+        session.flash('splash', 'Welcome back!')
+        return response.redirect('/')
       }
     }
   }
 
-  public async logout ({ auth, response }: HttpContextContract) {
+  public async logout ({ auth, session, response }: HttpContextContract) {
     await auth.logout()
+
+    session.flash('splash', 'Goodbye. See you later!')
     return response.redirect('/')
   }
 }

@@ -10,7 +10,7 @@ Twitch "Tinder(TM)" bot.
   * 10 minute cooldown for "swiping" command.
   * Swiping gives you a text, consisting of the user's bio and a selection of things they like.
   * You can reply to the bot with "yes" or "no" to try to match with the person.
-  * Profile can be setup via command. Simple 15 word bio.
+  * Profile can be setup via command. 128 characters bio.
     * Profiles can be setup to be global or channel-specific.
     * Only one global profile.
     * Only one profile per channel.
@@ -29,6 +29,10 @@ Stay tuned.
     * 5 favorite streamers.
     * 5 favorite Twitch emotes.
 
+## Changelogs
+  * [Website](web/CHANGELOG.md)
+  * [Bot](bot/CHANGELOG.md)
+
 ## Todo
   * Database
     * User
@@ -42,11 +46,12 @@ Stay tuned.
     * ~~Splash page~~
     * ~~Login with Twitch page~~
     * ~~User page~~
-    * ~~Profile page~~ WIP: Missing functionality to allow people who matched to view the profile too.
-      * Background color
+    * ~~Profile page~~
+      * ~~Background color~~
       * Twitch avatar
       * Twitch name
       * Favorite emotes
       * Favorite streamers
       * Profile bio
+      * Matched users list
     * Profile page settings

@@ -2,7 +2,7 @@
   <nav class="navbar">
     <div class="container">
       <div class="navbar-brand">
-        <a href="/" class="navbar-item">Twitchr</a>
+        <a href="{{ route('SplashController.index') }}" class="navbar-item">Twitchr</a>
         <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
@@ -15,8 +15,8 @@
             {{ csrfField() }}
             <button class="button is-text" type="submit">Logout</button>
           </form>
-          <a href="/profile" class="navbar-item">Profiles</a>
-          <a href="/user" class="navbar-item">
+          <a href="{{ route('ProfilesController.read') }}" class="navbar-item">Profiles</a>
+          <a href="{{ route('UsersController.read') }}" class="navbar-item">
             <figure class="image is-24x24">
               <img class="is-rounded" src="{{ user.avatar.replace('300x300', '70x70') }}" alt="Twitch profile image">
             </figure>

@@ -9,12 +9,6 @@ import {
 
 import User from 'App/Models/User'
 
-interface Color {
-  r: string
-  g: string
-  b: string
-}
-
 export default class Profile extends BaseModel {
   @column({ isPrimary: true })
   public id: number
@@ -36,14 +30,7 @@ export default class Profile extends BaseModel {
   public bio: string
 
   @column({
-    serialize: (value: string): Color => {
-      const valueArr = value.split('-')
-      return {
-        r: valueArr[0],
-        g: valueArr[1],
-        b: valueArr[2],
-      }
-    },
+    serialize: (value: string) => `#${value}`,
   })
   public color: string
 

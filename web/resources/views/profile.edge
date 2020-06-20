@@ -4,12 +4,16 @@
   </div>
   <div class="hero-body">
     <div class="container">
-      <hr>
-      <div class="card">
-        <div class="card-content">
-          {{ inspect(profile) }}
+      @if(!guest)
+        @include('forms/updateProfile')
+        <hr>
+        <div class="card">
+          <div class="card-content">
+            {{ inspect(profile) }}
+          </div>
         </div>
-      </div>
+      @endif
     </div>
   </div>
+  <style id="color">.hero-body{background-color:{{ profile.color }}}</style>
 </section>

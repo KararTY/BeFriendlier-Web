@@ -1,0 +1,100 @@
+<form action="{{ route('ProfilesController.update') }}" class="form" method="POST" id="updateProfile">
+  @if(flashMessages.get('profile'))
+    <div class="notification {{ flashMessages.get('profile').startsWith('Error:') ? 'is-danger' : 'is-success' }}">
+      <span>{{ flashMessages.get('profile') }}</span>
+    </div>
+  @endif
+  <div class="card">
+    <div class="card-content">
+      <noscript>
+        <div class="has-text-centered">
+          <strong class="is-size-3 has-text-danger">This form requires Javascript to be enabled for it to work.</strong>
+        </div>
+      </noscript>
+
+      <h1 class="title" id="settings">Profile settings</h1>
+
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label">Bio</label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <input type="text" class="input" maxlength="128" name="bio" value="{{ profile.bio }}">
+            </div>
+            <p class="help">Change the profile bio. <strong>128 characters limit</strong>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label">Color</label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <input type="color" class="input" name="color" value="{{ profile.color }}">
+            </div>
+            <p class="help">Change the background color for this profile.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
+          <label class="label">Favorite emotes</label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <div class="tags are-medium">
+                @each(emote in profile.favorite_emotes)
+                  <div class="tag">
+                    <span class="icon">
+                      <figure class="image is-24x24">
+                        <img src="{{ item.image }}" alt="{{ item.name }} emote">
+                      </figure>
+                    </span>
+                    <span>{{ item.name }}</span>
+                  </div>
+                @else
+                <p>You have none! Add some.</p>
+                @endeach
+              </div>
+            </div>
+            <p class="help">Can only be changed in chat!</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="field is-horizontal">
+        <div class="field-label"></div>
+        <div class="field-body">
+          <div class="field is-grouped">
+            <div class="control">
+              {{ csrfField() }}
+              <button class="button is-success" type="submit" data-name="submitBtn">Update</button>
+            </div>
+            @if(!profile.global)
+              <div class="control">
+                <button type="submit" formaction="/profile/{{ profile.id }}/delete" class="button is-danger">
+                  <span class="icon">{{{ icon('trash', 'small') }}}</span>
+                  <span>Delete profile</span>
+                </button>
+              </div>
+            @else
+              <div class="control">
+                <a href="/user/#settings" class="button">
+                  <span>Disable profile</span>
+                </a>
+              </div>
+            @endif
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<script src="/js/updateProfile.js"></script>
