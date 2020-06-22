@@ -1,3 +1,7 @@
+### v0004a commit (499690a) 2020-06-22
+  * Fixed `streamerMode` for profile avatar image.
+  * Removed redundant comment in `ProfilesController.read`.
+  * Added newline to .env.example file and .gitignore file.
 ### v0003a commit (d113555) 2020-06-22
   * Added comment to .env.example file.
   * Added value to change hash driver. Keep in mind, no hashing in use yet.
