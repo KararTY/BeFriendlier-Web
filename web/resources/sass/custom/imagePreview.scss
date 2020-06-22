@@ -1,0 +1,15 @@
+.blur {
+  -webkit-filter: blur(20px);
+  filter: blur(20px);
+}
+
+// https://stackoverflow.com/a/22218694
+.center-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.has-background-slightly-dark {
+  background-color: hsla(0, 0%, 21%, 0.5)
+}

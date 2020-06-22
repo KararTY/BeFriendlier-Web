@@ -7,11 +7,13 @@
 
 // Global variables overwrite
 $family-sans-serif: 'Fira Sans', sans-serif;
-
+$dimensions: 16 24 32 48 64 96 128 300;
 /*! bulma.io v0.8.2 | MIT License | github.com/jgthms/bulma */
 @import "../../node_modules/bulma/sass/utilities/_all.sass";
 
 @import "../../node_modules/bulma/sass/base/_all.sass";
+
+@import "../../node_modules/bulma/sass/helpers/_all.sass";
 
 @import "../../node_modules/bulma/sass/elements/_all.sass";
 
@@ -34,4 +36,7 @@ $family-sans-serif: 'Fira Sans', sans-serif;
 @import "../../node_modules/bulma/sass/form/_all.sass";
 
 /*! animate.css - https://animate.style/ Version - 4.1.0 | Licensed under the MIT license - http://opensource.org/licenses/MIT */
-@import "./animate.css/core.scss"
+@import "./animate.css/core.scss";
+
+/*! Custom stylesheets - Twitchr */
+@import "./custom/imagePreview.scss"

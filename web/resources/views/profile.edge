@@ -4,6 +4,20 @@
   </div>
   <div class="hero-body">
     <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-5-desktop">
+          <div class="box has-text-centered">
+            <div class="level is-mobile">
+              <div class="level-item">
+                <figure class="image is-300x300">
+                  <img class="blur is-rounded" data-blur="profileAvatar" src="{{ profileUser.avatar }}" alt="{{ profileUser.name }}'s Twitch avatar.">
+                </figure>
+              </div>
+            </div>
+            <p>{{ profile.bio }}</p>
+          </div>
+        </div>
+      </div>
       @if(!guest)
         @include('forms/updateProfile')
         <hr>

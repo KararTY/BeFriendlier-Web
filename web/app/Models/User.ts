@@ -45,6 +45,9 @@ export default class User extends BaseModel {
   })
   public favoriteStreamers: ManyToMany<typeof User>
 
+  @column()
+  public streamerMode: boolean
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

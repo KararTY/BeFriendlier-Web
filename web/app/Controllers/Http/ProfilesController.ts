@@ -17,7 +17,8 @@ export default class ProfilesController {
       const idNumber = Number(id)
       // Make sure it's a number.
       if (Number.isNaN(idNumber)) {
-        return response.badRequest('Parameter is not a number.')
+        session.flash('splash', 'Error: Parameter is not a number. Profile url can only contain numbers.')
+        return response.redirect('/')
       }
 
       const profile = await Profile.find(Number(id))
@@ -30,17 +31,22 @@ export default class ProfilesController {
           chat = await User.find(profile.chatId)
           // Should not happen, ever.
           if (chat === null) {
-            return response.partialContent('Chat owner is missing. Report this error in github.')
+            session.flash('splash', 'Error: Chat owner is missing. Report this error on github.')
+            return response.redirect('/')
           }
         }
 
         await profile.preload('matches')
 
+        const userJSON = auth.user.toJSON()
+        const profileJSON = profile.toJSON()
+
         if (ownProfile) {
           // If own, allow access.
           return view.render('core', {
-            user: auth.user.toJSON(),
-            profile: profile.toJSON(),
+            user: userJSON,
+            profile: profileJSON,
+            profileUser: userJSON,
             web: {
               template: 'profile',
               title: chat !== null ? `Your profile in ${chat.name}'s chat` : 'Your global profile',
@@ -54,8 +60,8 @@ export default class ProfilesController {
             if (userOfProfile !== null) {
               delete profile.matches // We don't want to send that user's matches.
               return view.render('core', {
-                user: auth.user.toJSON(),
-                profile: profile.toJSON(),
+                user: userJSON,
+                profile: profileJSON,
                 profileUser: userOfProfile.toJSON(), // Required.
                 guest: true, // Required.
                 web: {
@@ -68,10 +74,14 @@ export default class ProfilesController {
             }
           }
         }
+        // Disallow access.
+        session.flash('splash', 'Error: You are not allowed access to that profile!')
       }
 
-      // Disallow access.
-      session.flash('splash', 'Error: You are not allowed access to that profile!')
+      if (session.flashMessages.get('splash') === null) {
+        session.flash('splash', 'Error: Profile does not exist.')
+      }
+
       return response.redirect('/')
     } else {
       // Show user's profiles.
@@ -104,10 +114,15 @@ export default class ProfilesController {
     }
   }
 
-  public async update ({ params, auth, view, response }: HttpContextContract) {}
+  public async update ({ params, auth, view, response }: HttpContextContract) {
+    // Bio
+    // Color
+    // Matches
+  }
 
   public async delete ({ params, auth, response, session }: HttpContextContract) {
     const { id } = params
+
     if (auth.user === undefined) {
       return
     }
@@ -116,6 +131,10 @@ export default class ProfilesController {
 
     const profile = auth.user.profile.find(profile => profile.id === id)
     if (profile !== undefined) {
+      await profile.preload('matches')
+
+      await profile.related('matches').detach()
+
       await profile.delete()
       session.flash('profiles', 'Profile has been deleted.')
     }

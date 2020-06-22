@@ -30,7 +30,7 @@ export default class UsersController {
       return
     }
 
-    const { favoriteStreamers, makeGlobalPublic } = request.post()
+    const { favoriteStreamers, toggleGlobalPublic, toggleStreamerMode } = request.post()
 
     // TODO: OPTIMIZE CALLS BY FILTERING OUT EXISTING FIELDS & ONLY DETACHING NON-EXISTING FIELDS.
 
@@ -44,7 +44,7 @@ export default class UsersController {
 
         // Validate the name.
         if (Boolean(streamerName.match(/[^\w]/)) || streamerName.length >= 32) {
-          sessionMessage.push(`Error: ${streamerName} is malformed, please only use characters found in twitch usernames.`)
+          sessionMessage.push(`Error: ${streamerName} is malformed, please only use characters found in Twitch usernames.`)
           continue // These are for readability.
         } else {
           validStreamerNames.push(streamerName)
@@ -98,7 +98,7 @@ export default class UsersController {
     const globalProfile = auth.user.profile.find(profile => profile.global)
     // Global profile can't be undefined, this is here because typescript is strict.
     if (globalProfile !== undefined) {
-      if (makeGlobalPublic === 'true') {
+      if (toggleGlobalPublic === 'true') {
         // Set global profile to true.
         globalProfile.enabled = true
       } else {
@@ -107,6 +107,12 @@ export default class UsersController {
       }
 
       await auth.user.related('profile').save(globalProfile)
+    }
+
+    if (toggleStreamerMode === 'true') {
+      auth.user.streamerMode = true
+    } else {
+      auth.user.streamerMode = false
     }
 
     /* This is very inefficient. TODO: FIX */
@@ -199,7 +205,7 @@ export default class UsersController {
     auth.user.updatedAt = DateTime.fromJSDate(new Date())
     await auth.user.save()
 
-    session.flash('user', 'Successfully refreshed Twitch data.')
+    session.flash('user', 'Successfully refreshed your Twitch data.')
 
     return response.redirect('/user')
   }

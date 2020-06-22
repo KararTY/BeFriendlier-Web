@@ -22,7 +22,7 @@ export default class AuthMiddleware {
    * of the mentioned guards and that guard will be used by the rest of the code
    * during the current request.
    */
-  protected async authenticate (auth: HttpContextContract['auth'], guards: string[]) {
+  protected async authenticate ({ request, auth, session }: HttpContextContract, guards: string[]) {
     for (const guard of guards) {
       if (await auth.use(guard).check()) {
         /**
@@ -38,6 +38,8 @@ export default class AuthMiddleware {
     /**
      * Unable to authenticate using any guard
      */
+    session.flash('splash', 'Error: Please login to perform that action.')
+    session.put('redirectURL', request.parsedUrl.href)
     throw new AuthenticationException(
       'Unauthorized access',
       'E_UNAUTHORIZED_ACCESS',
@@ -48,13 +50,14 @@ export default class AuthMiddleware {
   /**
    * Handle request
    */
-  public async handle ({ auth }: HttpContextContract, next: () => Promise<void>, customGuards: string[]) {
+  public async handle (ctx: HttpContextContract,
+    next: () => Promise<void>, customGuards: string[]) {
     /**
      * Uses the user defined guards or the default guard mentioned in
      * the config file
      */
-    const guards = customGuards.length === 0 ? customGuards : [auth.name]
-    await this.authenticate(auth, guards)
+    const guards = customGuards.length === 0 ? customGuards : [ctx.auth.name]
+    await this.authenticate(ctx, guards)
     await next()
   }
 }

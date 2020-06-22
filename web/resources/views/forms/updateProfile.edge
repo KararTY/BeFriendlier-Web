@@ -4,14 +4,14 @@
       <span>{{ flashMessages.get('profile') }}</span>
     </div>
   @endif
+  <noscript>
+    <div class="has-text-centered">
+      <strong class="is-size-3 has-text-danger">This form requires Javascript to be enabled for it to work.</strong>
+    </div>
+    <hr>
+  </noscript>
   <div class="card">
-    <div class="card-content">
-      <noscript>
-        <div class="has-text-centered">
-          <strong class="is-size-3 has-text-danger">This form requires Javascript to be enabled for it to work.</strong>
-        </div>
-      </noscript>
-
+    <div {{{ user.streamer_mode ? 'class="card-content blur" data-blur="updateProfile" data-blur-vanish="true"' : 'class="card-content"' }}}>
       <h1 class="title" id="settings">Profile settings</h1>
 
       <div class="field is-horizontal">
@@ -86,7 +86,7 @@
               </div>
             @else
               <div class="control">
-                <a href="/user#settings" class="button">
+                <a href="/user#settings:~:text=Global%20profile" class="button">
                   <span>Disable profile</span>
                 </a>
               </div>
