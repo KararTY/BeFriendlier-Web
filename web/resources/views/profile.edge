@@ -10,7 +10,7 @@
             <div class="level is-mobile">
               <div class="level-item">
                 <figure class="image is-300x300">
-                  <img class="blur is-rounded" data-blur="profileAvatar" src="{{ profileUser.avatar }}" alt="{{ profileUser.name }}'s Twitch avatar.">
+                  <img {{{ user.streamer_mode ? 'class="blur is-rounded" data-blur="profileAvatar"' : '' }}} src="{{ profileUser.avatar }}" alt="{{ profileUser.name }}'s Twitch avatar.">
                 </figure>
               </div>
             </div>

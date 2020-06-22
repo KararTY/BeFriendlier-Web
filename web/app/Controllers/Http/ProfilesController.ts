@@ -62,7 +62,7 @@ export default class ProfilesController {
               return view.render('core', {
                 user: userJSON,
                 profile: profileJSON,
-                profileUser: userOfProfile.toJSON(), // Required.
+                profileUser: userOfProfile.toJSON(),
                 guest: true, // Required.
                 web: {
                   template: 'profile',
