@@ -6,7 +6,7 @@
   * Added comment to .env.example file.
   * Added value to change hash driver. Keep in mind, no hashing in use yet.
   * Ignoring public/css folder, this can be built with `npm run css-build`.
-  * Changelog now includes dates for each commit
+  * Changelog now includes dates for each commit.
   * Added flash message for malformed profile parameter.
   * Removed `badRequest` response for malformed profile parameter.
   * Added flash message if chat owner for profile doesn't exist. This shouldn't happen, ever, anyway. /shrug
