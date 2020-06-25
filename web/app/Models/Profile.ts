@@ -29,9 +29,7 @@ export default class Profile extends BaseModel {
   @column()
   public bio: string
 
-  @column({
-    serialize: (value: string) => `#${value}`,
-  })
+  @column()
   public color: string
 
   @column({

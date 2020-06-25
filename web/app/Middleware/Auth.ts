@@ -38,7 +38,10 @@ export default class AuthMiddleware {
     /**
      * Unable to authenticate using any guard
      */
-    session.flash('splash', 'Error: Please login to perform that action.')
+    if (session.get('message') === undefined) {
+      session.flash('message', { error: 'Error: Please login to perform that action.' })
+    }
+
     session.put('redirectURL', request.parsedUrl.href)
     throw new AuthenticationException(
       'Unauthorized access',

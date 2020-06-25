@@ -1,11 +1,13 @@
 import { DateTime } from 'luxon'
 
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { schema, rules } from '@ioc:Adonis/Core/Validator'
+
+import Twitch from '@ioc:Adonis/Addons/Twitch'
+import { TwitchUsersBody } from 'src/Twitch' // For type definitions
 
 import User from 'App/Models/User'
-import Twitch from '@ioc:Adonis/Addons/Twitch'
-
-import { TwitchUsersBody } from 'src/Twitch' // For type definitions
+import BannedUser from 'App/Models/BannedUser'
 
 export default class UsersController {
   public async read ({ auth, view }: HttpContextContract) {
@@ -30,45 +32,66 @@ export default class UsersController {
       return
     }
 
-    const { favoriteStreamers, toggleGlobalPublic, toggleStreamerMode } = request.post()
+    // Validate input
+    const usersSchema = schema.create({
+      favoriteStreamers: schema.array.optional([
+        rules.maxLength(5),
+        rules.distinct('*'),
+      ]).members(schema.string({}, [
+        rules.maxLength(32),
+        rules.validTwitchName(),
+      ])),
+      streamerMode: schema.boolean.optional(),
+      globalProfile: schema.boolean.optional(),
+    })
+
+    const validated = await request.validate({
+      schema: usersSchema,
+      messages: {
+        'favoriteStreamers.maxLength': 'You can only have a maximum of 5 favorite streamers.',
+        'favoriteStreamers.distinct': 'Favorite streamers list must have distinct values. No duplicates.',
+        'streamerMode.boolean': 'Streamer mode must be a boolean value.',
+        'globalProfile.boolean': 'Global profile must be a boolean value.',
+      },
+    }) // Request may fail here, if values do not pass validation.
 
     // TODO: OPTIMIZE CALLS BY FILTERING OUT EXISTING FIELDS & ONLY DETACHING NON-EXISTING FIELDS.
-
-    const favoriteStreamersInput: string[] = favoriteStreamers.split(',').filter(Boolean).slice(0, 5)
     const newFavoriteStreamers: User[] = []
-    const sessionMessage: string[] = []
-    if (favoriteStreamersInput.length > 0) {
-      const validStreamerNames: string[] = []
-      for (let index = 0; index < favoriteStreamersInput.length; index++) {
-        const streamerName = encodeURI(favoriteStreamersInput[index]).normalize()
-
-        // Validate the name.
-        if (Boolean(streamerName.match(/[^\w]/)) || streamerName.length >= 32) {
-          sessionMessage.push(`Error: ${streamerName} is malformed, please only use characters found in Twitch usernames.`)
-          continue // These are for readability.
-        } else {
-          validStreamerNames.push(streamerName)
-        }
-      }
-
-      if (sessionMessage.length > 0) {
-        session.flash('user', sessionMessage.join('\r\n'))
-      }
-
-      const existingUsers = await User.query().whereIn('name', validStreamerNames).limit(5)
+    if (validated.favoriteStreamers !== undefined && validated.favoriteStreamers.length > 0) {
+      const existingUsers = await User.query().whereIn('name', validated.favoriteStreamers)
       newFavoriteStreamers.push(...existingUsers)
 
-      if (existingUsers.length < validStreamerNames.length) {
+      // Check if user is requesting streamers that currently do not exist in the database.
+      if (existingUsers.length < validated.favoriteStreamers.length) {
         // Time to get the rest of the streamers, if they exist.
-        const existingUsernames = existingUsers.map(i => i.name)
+        const existingUsernames = existingUsers.map(user => user.name)
 
-        const streamersToFind = validStreamerNames.filter(i => !existingUsernames.includes(i))
+        const streamersToFind = validated.favoriteStreamers.filter(user => !existingUsernames.includes(user))
 
         // Call Twitch API.
         const streamersToAppend = await Twitch.getUser(session.get('token'), streamersToFind)
 
         if (streamersToAppend instanceof Array) {
-          const d = await User.createMany(streamersToAppend.map((streamer: TwitchUsersBody) => {
+          // Check if banned.
+          const bannedUserSessionMessages: string[] = []
+          const safeUsers: TwitchUsersBody[] = []
+          for (let index = 0; index < streamersToAppend.length; index++) {
+            const user = streamersToAppend[index]
+            const bannedUser = BannedUser.findBy('twitchID', user.id)
+
+            if (bannedUser !== null) {
+              bannedUserSessionMessages.push(`${user.login} is banned from using this service.`)
+            } else {
+              safeUsers.push(user)
+            }
+          }
+
+          if (bannedUserSessionMessages.length > 0) {
+            session.flash('message', { error: `Error: ${bannedUserSessionMessages.join(' \n')}` })
+            return response.redirect('/user')
+          }
+
+          const d = await User.createMany(safeUsers.map(streamer => {
             return {
               twitchID: streamer.id,
               name: streamer.login,
@@ -79,54 +102,36 @@ export default class UsersController {
 
           newFavoriteStreamers.push(...d)
         } else {
-          const twitchBody = await Twitch.refreshToken(session.get('refresh'))
-
-          if (twitchBody !== null) {
-            session.put('token', twitchBody.access_token)
-            session.put('refresh', twitchBody.refresh_token)
-            session.flash('user', 'Error: Something went wrong with Twitch. Try again. Reference: #USERUPDATE1')
-          } else {
-            session.flash('user', 'Error: Something went wrong with Twitch. ' +
-            'Try again later. Reference: #USERUPDATE2')
-          }
+          session.flash('message', { error: 'Error: Something went wrong with Twitch. Try again later.' })
           return response.redirect('/user')
         }
       }
     }
 
     await auth.user.preload('profile')
+
     const globalProfile = auth.user.profile.find(profile => profile.global)
+
     // Global profile can't be undefined, this is here because typescript is strict.
     if (globalProfile !== undefined) {
-      if (toggleGlobalPublic === 'true') {
-        // Set global profile to true.
-        globalProfile.enabled = true
-      } else {
-        // Set global profile to false.
-        globalProfile.enabled = false
-      }
+      globalProfile.enabled = validated.globalProfile !== undefined
 
       await auth.user.related('profile').save(globalProfile)
     }
 
-    if (toggleStreamerMode === 'true') {
-      auth.user.streamerMode = true
-    } else {
-      auth.user.streamerMode = false
-    }
+    auth.user.streamerMode = validated.streamerMode !== undefined
 
     /* This is very inefficient. TODO: FIX */
     // Remove all.
     await auth.user.related('favoriteStreamers').detach()
 
     // Add new.
-    await auth.user.related('favoriteStreamers').saveMany(newFavoriteStreamers)
+    if (newFavoriteStreamers.length > 0) {
+      await auth.user.related('favoriteStreamers').saveMany(newFavoriteStreamers)
+    }
     /**/
 
-    if (session.flashMessages.get('user') === null) {
-      session.flash('user', 'Successfully updated user settings.')
-    }
-
+    session.flash('message', { message: 'Successfully updated user settings.' })
     await auth.user.save()
     return response.redirect('/user')
   }
@@ -158,10 +163,10 @@ export default class UsersController {
       accountDeleted = true
     }
 
-    session.flash('splash', accountDeleted
-      ? 'Account has been deleted.'
+    session.flash('message', accountDeleted
+      ? { message: 'Account has been deleted.' }
       // eslint-disable-next-line comma-dangle
-      : 'Error: Something went wrong, please try again later! Reference: #USERDELETE1'
+      : { error: 'Error: Something went wrong, please try again later! Reference: #USERDELETE1' }
     )
 
     return response.redirect('/')
@@ -173,29 +178,22 @@ export default class UsersController {
     }
 
     if (auth.user.updatedAt.diffNow('minutes').minutes > -5) {
-      session.flash('user', 'Error: Account has recently been changed. ' +
-      'Please wait at least 5 minutes before refreshing Twitch data.')
+      session.flash('message', {
+        error: 'Error: Account has recently been changed. ' +
+        // eslint-disable-next-line comma-dangle
+        'Please wait at least 5 minutes before refreshing Twitch data.'
+      })
       return response.redirect('/user')
     }
 
     const twitchBody = await Twitch.getUser(session.get('token'))
 
     if (twitchBody === null) {
-      if (session.get('refreshedToken') !== null) {
-        session.flash('user', 'Error: Twitch returned nothing after repeated attempts. ' +
-        'Try again later. Reference: #USERREFRESH1')
-      } else {
-        const twitchBody = await Twitch.refreshToken(session.get('refresh'))
-        if (twitchBody !== null) {
-          session.put('token', twitchBody.access_token)
-          session.put('refresh', twitchBody.refresh_token)
-          session.flash('user', 'Error: Try again.')
-          session.put('refreshedToken', true)
-        } else {
-          session.flash('user', 'Error: Twitch not accepting refresh token. Try again later. Reference: #USERREFRESH2')
-        }
-      }
-
+      session.flash('message', {
+        error: 'Error: Twitch returned nothing after repeated attempts. ' +
+        // eslint-disable-next-line comma-dangle
+        'Try again later. Reference: #USERREFRESH1'
+      })
       return response.redirect('/user')
     }
 
@@ -205,7 +203,7 @@ export default class UsersController {
     auth.user.updatedAt = DateTime.fromJSDate(new Date())
     await auth.user.save()
 
-    session.flash('user', 'Successfully refreshed your Twitch data.')
+    session.flash('message', { message: 'Successfully refreshed your Twitch data.' })
 
     return response.redirect('/user')
   }

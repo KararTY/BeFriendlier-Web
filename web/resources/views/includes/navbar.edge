@@ -1,14 +1,16 @@
-@if(user)
-  <nav class="navbar">
-    <div class="container">
-      <div class="navbar-brand">
-        <a href="{{ route('SplashController.index') }}" class="navbar-item">Twitchr</a>
+<nav class="navbar">
+  <div class="container">
+    <div class="navbar-brand">
+      <a href="{{ route('SplashController.index') }}" class="navbar-item">Twitchr</a>
+      @if(user)
         <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
         </a>
-      </div>
+      @endif
+    </div>
+    @if(user)
       <div class="navbar-menu">
         <div class="navbar-end">
           <form action="{{ route('AuthController.logout') }}" class="navbar-item" method="POST">
@@ -23,6 +25,6 @@
           </a>
         </div>
       </div>
-    </div>
-  </nav>
-@endif
+    @endif
+  </div>
+</nav>

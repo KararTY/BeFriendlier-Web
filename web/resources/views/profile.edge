@@ -5,18 +5,77 @@
   <div class="hero-body">
     <div class="container">
       <div class="columns is-centered">
-        <div class="column is-5-desktop">
+        <div class="column is-narrow">
           <div class="box has-text-centered">
             <div class="level is-mobile">
-              <div class="level-item">
+              <div class="level-item is-unselectable">
                 <figure class="image is-300x300">
-                  <img {{{ user.streamer_mode ? 'class="blur is-rounded" data-blur="profileAvatar"' : '' }}} src="{{ profileUser.avatar }}" alt="{{ profileUser.name }}'s Twitch avatar.">
+                  <img {{{ user.streamer_mode ? 'class="blur is-rounded" data-blur="profileAvatar" data-blur-text="true"' : '' }}} src="{{ profileUser.avatar }}" alt="{{ profileUser.name }}'s Twitch avatar.">
                 </figure>
               </div>
             </div>
-            <p>{{ profile.bio }}</p>
+            <hr>
+            <h4 class="is-size-4">{{ profileUser.display_name }} <small class="is-size-7">({{ profileUser.name }})</small></h4>
           </div>
         </div>
+      </div>
+      <div class="columns is-centered">
+        @if(profile.favorite_emotes.length > 0)
+        <div class="column is-one-third">
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-header-title is-size-4">Favorite emotes</h4>
+            </div>
+            <div {{{ user.streamer_mode ? 'class="blur card-content is-rounded" data-blur="favoriteEmotes" data-blur-text="true"' : 'class="card-content"' }}}>
+              @each(emote in profile.favorite_emotes)
+                <div class="level is-mobile">
+                  <div class="level-left">
+                    <div class="level-item is-unselectable">
+                      <figure class="image is-32x32">
+                        <img src="{{ emote.image }}" alt="{{ emote.name }} emote image">
+                      </figure>
+                    </div>
+                    <p class="level-item is-size-5"> {{ emote.name }} </p>
+                  </div>
+                </div>
+              @endeach
+            </div>
+          </div>
+        </div>
+        @endif
+        <div class="column is-one-third">
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-header-title is-size-4">Bio</h4>
+            </div>
+            <div class="card-content">
+              <p>{{ profile.bio }}</p>
+            </div>
+          </div>
+        </div>
+        @if(profileUser.favorite_streamers.length > 0)
+          <div class="column is-one-third">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-header-title is-size-4">Favorite streamers</h4>
+              </div>
+              <div {{{ user.streamer_mode ? 'class="card-content blur is-rounded" data-blur="favoriteStreamers" data-blur-text="true" data-blur-vanish="true"' : 'class="card-content"' }}}>
+                @each(streamer in profileUser.favorite_streamers)
+                  <div class="level is-mobile">
+                    <a class="level-left has-text-dark" href="https://www.twitch.tv/{{streamer.name}}" target="_blank">
+                      <div class="level-item is-unselectable">
+                        <figure class="image is-32x32">
+                          <img class="is-rounded" src="{{ streamer.avatar.replace('300x300', '70x70') }}" alt="{{ streamer.name }}'s avatar">
+                        </figure>
+                      </div>
+                      <p class="level-item is-size-5"> {{ streamer.name }} </p>
+                    </a>
+                  </div>
+                @endeach
+              </div>
+            </div>
+          </div>
+        @endif
       </div>
       @if(!guest)
         @include('forms/updateProfile')
@@ -30,4 +89,7 @@
     </div>
   </div>
   <style id="color">.hero-body{background-color:{{ profile.color }}}</style>
+  <div class="hero-foot">
+    @include('includes/footer')
+  </div>
 </section>

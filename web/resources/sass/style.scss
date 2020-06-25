@@ -39,4 +39,5 @@ $dimensions: 16 24 32 48 64 96 128 300;
 @import "./animate.css/core.scss";
 
 /*! Custom stylesheets - Twitchr */
-@import "./custom/imagePreview.scss"
+@import "./custom/imagePreview.scss";
+@import "./custom/toast.scss";

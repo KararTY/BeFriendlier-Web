@@ -14,7 +14,7 @@ export default class Profiles extends BaseSchema {
       table.json('favorite_emotes').defaultTo(JSON.stringify([])).notNullable()
       table.json('matches').defaultTo(JSON.stringify([])).notNullable()
       table.string('bio', 128).defaultTo('Hello!').notNullable()
-      table.string('color', 6).defaultTo('ffffff').notNullable()
+      table.string('color', 7).defaultTo('#ffffff').notNullable()
       table.timestamps(true)
     })
   }

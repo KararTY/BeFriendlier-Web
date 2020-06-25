@@ -3,8 +3,8 @@ const { html, render, svg } = window.uhtml
 function initBlurButtons () {
   const blurToggles = document.querySelectorAll('[data-blur]')
 
-  const showImageEl = (value) => html.node`<a class="is-overlay center-text has-text-white is-size-3 has-background-slightly-dark" data-blur-button="${value}" onclick="${
-    (ev) => {
+  const showImageEl = (dataset) => html.node`<a class="${(dataset.blurText ? 'is-size-3 ' : '') + 'is-overlay center-text has-text-white has-background-slightly-dark'}" data-blur-button="${dataset.blur}" onclick="${
+    (ev = new window.MouseEvent()) => {
       ev.preventDefault()
 
       const targetElement = document.querySelector(`[data-blur="${ev.target.dataset.blurButton}"`)
@@ -16,17 +16,19 @@ function initBlurButtons () {
       targetElement.classList.toggle('blur')
       ev.target.classList.toggle('has-background-slightly-dark')
 
-      if (targetElement.classList.contains('blur')) {
-        ev.target.innerText = 'Unblur'
-      } else {
-        ev.target.innerText = ''
+      if (dataset.blurText) {
+        if (targetElement.classList.contains('blur')) {
+          ev.target.innerText = 'Unblur'
+        } else {
+          ev.target.innerText = ''
+        }
       }
 
       if (targetElement.dataset.blurVanish === 'true') {
         ev.target.outerHTML = ''
       }
     }
-  }">Unblur</a>`
+  }">${dataset.blurText ? 'Unblur' : ''}</a>`
 
   for (let index = 0; index < blurToggles.length; index++) {
     const element = blurToggles[index]
@@ -35,10 +37,21 @@ function initBlurButtons () {
       return
     }
 
-    element.parentElement.appendChild(showImageEl(element.dataset.blur))
+    element.parentElement.appendChild(showImageEl(element.dataset))
+  }
+}
+
+function initToastButton () {
+  const toast = document.querySelector('.toast')
+
+  if (toast instanceof window.HTMLElement) {
+    toast.addEventListener('click', () => {
+      toast.outerHTML = ''
+    })
   }
 }
 
 initBlurButtons()
+initToastButton()
 
 console.log('Loaded.')

@@ -1,0 +1,23 @@
+// From https://github.com/rfoel/bulma-toast
+.toast {
+  width:100%;
+  z-index:99999;
+  position:fixed;
+  display:flex;
+  flex-direction:column;
+  padding:15px;
+
+  // Bottom-right
+  right:0;
+  bottom:0;
+  text-align:right;
+  align-items:flex-end;
+}
+
+.toast .notification {
+  width: auto;
+  pointer-events: auto;
+  display: inline-flex;
+  white-space: pre-wrap;
+  box-shadow: 0 0.5em 1em -0.125em rgba(10,10,10,0.1), 0 0px 0 1px rgba(10,10,10,0.02);
+}

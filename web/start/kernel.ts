@@ -45,4 +45,6 @@ Server.middleware.registerNamed({
   auth: 'App/Middleware/Auth',
   silentAuth: 'App/Middleware/SilentAuth',
   redirect: 'App/Middleware/Redirect',
+  refreshTwitchToken: 'App/Middleware/RefreshTwitchToken',
+  validateTwitchToken: 'App/Middleware/ValidateTwitchToken',
 })

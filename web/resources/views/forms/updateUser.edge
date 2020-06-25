@@ -1,9 +1,4 @@
 <form action="{{ route('UsersController.update') }}" class="form" method="POST" id="updateUser">
-  @if(flashMessages.get('user'))
-    <div class="notification {{ flashMessages.get('user').startsWith('Error:') ? 'is-danger' : 'is-success' }}">
-      <span>{{ flashMessages.get('user') }}</span>
-    </div>
-  @endif
   <noscript>
     <div class="has-text-centered">
       <strong class="is-size-3 has-text-danger">This form requires Javascript to be enabled for it to work.</strong>
@@ -11,9 +6,10 @@
     <hr>
   </noscript>
   <div class="card">
-    <div {{{ user.streamer_mode ? 'class="card-content blur" data-blur="updateUser" data-blur-vanish="true"' : 'class="card-content"' }}}>
-      <h1 class="title" id="settings">User settings</h1>
-
+    <div class="card-header">
+      <h4 class="card-header-title is-size-4" id="userSettings">User settings</h4>
+    </div>
+    <div {{{ user.streamer_mode ? 'class="card-content blur" data-blur="updateUser" data-blur-vanish="true" data-blur-text="true"' : 'class="card-content"' }}}>
       <div class="field is-horizontal">
         <div class="field-label is-normal">
           <label class="label">Twitch name</label>
@@ -35,7 +31,7 @@
           <div class="field">
             <div class="control">
               <figure class="image is-128x128">
-                <img src="{{ user.avatar }}" alt="Twitch avatar">
+                <img class="is-rounded" src="{{ user.avatar }}" alt="Twitch avatar">
               </figure>
             </div>
           </div>
@@ -72,6 +68,9 @@
                 <button class="button" name="addStreamer">Add</button>
               </div>
             </div>
+            @if(flashMessages.has('errors.favoriteStreamers'))
+              <p class="help has-text-weight-bold is-danger">{{ flashMessages.get('errors.favoriteStreamers').join(' ') }}</p>
+            @endif
             <p class="help">Max 5 streamers.</p>
           </div>
         </div>
@@ -81,70 +80,56 @@
         <div class="field-label is-normal"></div>
         <div class="field-body">
           <div class="field">
-            <div class="tags are-medium" id="streamers">
-              @each(streamer in user.favoriteStreamers)
+            <div class="tags are-medium is-marginless" id="streamers">
+              @each(streamer in user.favorite_streamers)
                 <div class="tag" data-streamername="{{ streamer.name }}">
                   <span class="icon">
                     <figure class="image is-24x24">
-                      <img src="{{ streamer.avatar }}" alt="{{ streamer.name }} avatar">
+                      <img src="{{ streamer.avatar.replace('300x300', '70x70') }}" alt="{{ streamer.name }}'s avatar">
                     </figure>
                   </span>
                   <span>{{ streamer.name }}</span>
                   <button class="delete" name="removeStreamer"></button>
+                  <input type="text" class="is-hidden" name="favoriteStreamers[]" value="{{ streamer.name }}">
                 </div>
               @endeach
             </div>
-            <input type="text" class="is-hidden" name="favoriteStreamers" value="{{ user.favoriteStreamers.map(streamer => streamer.name).join(',') }}">
           </div>
         </div>
       </div>
 
       <div class="field is-horizontal">
-        <div class="field-label is-normal">
-          <label class="label">Global profile</label>
-        </div>
+        <div class="field-label"></div>
         <div class="field-body">
           <div class="field">
-            <div class="control has-icons-left">
-              <div class="select">
-                <select name="toggleGlobalPublic">
-                  @if(!!user.profile.find(profile => profile.global && !profile.enabled))
-                    <option value="false" selected>Disabled</option>
-                    <option value="true">Enabled</option>
-                  @else
-                    <option value="false">Disabled</option>
-                    <option value="true" selected>Enabled</option>
-                  @endif
-                </select>
-              </div>
-              <div class="icon is-left">{{{ icon('globe') }}}</div>
+            <div class="control">
+              <label class="checkbox">
+                <input type="checkbox" name="globalProfile" {{{ !!user.profile.find(profile => profile.global && profile.enabled) ? 'checked' : ''}}}>
+                <span>Global profile</span>
+              </label>
             </div>
-            <p class="help">Enables a public presence allowing you to match with people all over Twitch using the bot & with enabled global profile.</p>
+            @if(flashMessages.has('errors.globalProfile'))
+              <p class="help has-text-weight-bold is-danger">{{ flashMessages.get('errors.globalProfile').join(' ') }}</p>
+            @endif
+            <p class="help">When checked, enables a public presence allowing you to match with people all over Twitch using the bot and with an enabled global profile.</p>
           </div>
         </div>
       </div>
 
       <div class="field is-horizontal">
-        <div class="field-label is-normal">
-          <label class="label">Streamer mode</label>
-        </div>
+        <div class="field-label is-normal"></div>
         <div class="field-body">
           <div class="field">
-            <div class="control has-icons-left">
-              <div class="select">
-                <select name="toggleStreamerMode">
-                  @if(user.streamer_mode)
-                    <option value="false">Disabled</option>
-                    <option value="true" selected>Enabled</option>
-                  @else
-                    <option value="false" selected>Disabled</option>
-                    <option value="true">Enabled</option>
-                  @endif
-                </select>
-              </div>
-              <div class="icon is-left">{{{ icon('image') }}}</div>
+            <div class="control">
+              <label class="checkbox">
+                <input type="checkbox" name="streamerMode" {{{ user.streamer_mode ? 'checked' : ''}}}>
+                <span>Streamer mode</span>
+              </label>
             </div>
-            <p class="help">When enabled, profile avatar pictures will be hidden by default.</p>
+            @if(flashMessages.has('errors.streamerMode'))
+              <p class="help has-text-weight-bold is-danger">{{ flashMessages.get('errors.streamerMode').join(' ') }}</p>
+            @endif
+            <p class="help">When checked, sensitive elements will be hidden. This includes profile pictures.</p>
           </div>
         </div>
       </div>

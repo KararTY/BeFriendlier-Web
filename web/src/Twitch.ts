@@ -1,6 +1,6 @@
 import fetch from 'got'
 
-const defaultHeader = { 'user-agent': 'friendapp/0.0.0 (https://github.com/kararty/twitchr)' }
+const defaultHeader = { 'user-agent': 'friendapp (https://github.com/kararty/twitchr)' }
 
 export interface TwitchUsersBody {
   id: string
@@ -18,8 +18,16 @@ export interface TwitchAuthBody {
   access_token: string
   refresh_token: string
   expires_in: number
-  scope: string
+  scope?: string
   token_type: string
+}
+
+export interface TwitchValidateBody {
+  client_id: string
+  expires_in: number
+  login: string
+  scopes: string[]
+  user_id: string
 }
 
 export class Client {
@@ -38,7 +46,9 @@ export class Client {
       grant_type: 'authorization_code',
       code,
       redirect_uri: 'http://localhost:3333/register',
+      scope: 'user_subscriptions',
     }
+
     try {
       const { body }: any = await fetch.post('https://id.twitch.tv/oauth2/token', {
         headers: { ...defaultHeader },
@@ -52,7 +62,7 @@ export class Client {
     }
   }
 
-  public async getUser (token: string, usernames?: string[]): Promise<TwitchUsersBody | null>
+  public async getUser (token: string): Promise<TwitchUsersBody | null>
   public async getUser (token: string, usernames?: string[]): Promise<TwitchUsersBody[] | null>
   public async getUser (token: string, usernames?: string[]): Promise<TwitchUsersBody | TwitchUsersBody[] | null> {
     try {
@@ -78,20 +88,39 @@ export class Client {
 
   public async refreshToken (token: string): Promise<TwitchAuthBody | null> {
     const searchParams = {
-      grant_type: 'refresh_token',
-      refresh_token: encodeURI(token), // Per https://dev.twitch.tv/docs/authentication/#refreshing-access-tokens:~:text=URL%20encode
       client_id: this.token,
       client_secret: this.secret,
+      grant_type: 'refresh_token',
+      refresh_token: encodeURI(token), // Per https://dev.twitch.tv/docs/authentication/#refreshing-access-tokens:~:text=URL%20encode
+      scope: 'user_subscriptions',
     }
 
     try {
-      const { body }: any = await fetch.get('https://id.twitch.tv/oauth2/token', {
+      const { body }: any = await fetch.post('https://id.twitch.tv/oauth2/token', {
         headers: { ...defaultHeader },
         searchParams,
         responseType: 'json',
       })
 
       return body as TwitchAuthBody
+    } catch (error) {
+      console.error(error)
+      return null
+    }
+  }
+
+  public async validateToken (token: string): Promise<TwitchValidateBody | null> {
+    try {
+      const { body }: any = await fetch.get('https://id.twitch.tv/oauth2/validate', {
+        headers: {
+          ...defaultHeader,
+          'Client-ID': this.token,
+          Authorization: `OAuth ${token}`,
+        },
+        responseType: 'json',
+      })
+
+      return body as TwitchValidateBody
     } catch (error) {
       console.error(error)
       return null

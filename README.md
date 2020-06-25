@@ -7,17 +7,19 @@ Looking to hook up with POG Twitch friends?
 Twitch "Tinder(TM)" bot.
 
 ## Execution
-  * 10 minute cooldown for "swiping" command.
-  * Swiping gives you a text, consisting of the user's bio and a selection of things they like.
-  * You can reply to the bot with "yes" or "no" to try to match with the person.
+  * 10 minute cooldown for a "swiping" command.
+  * "Swiping" gives you a text, consisting of the user's bio.
+  * You can reply to the bot with "yes" to get more information.
+  * You can reply to the bot with "match" to try to match with the person.
+  * You can reply with "next" or "no" to skip the person.
   * Profile can be setup via command. 128 characters bio.
     * Profiles can be setup to be global or channel-specific.
     * Only one global profile.
     * Only one profile per channel.
-    * Setup asks you a few questions to better "match" you with Twitch friends.
-  * Profiles also accessible via web link, ~~displaying user customized pictures~~(Maybe not?).
+    * Setup asks you a few questions to better "match" you with other users.
+  * Profiles also accessible via web link.
   * Choose between global results or channel results.
-  * On "match", users are whispered the user name of the person they matched with.
+  * On "match", users are **whispered** the username of the person they matched with.
 
 Stay tuned.
 
@@ -28,6 +30,7 @@ Stay tuned.
     * Customizable background color.
     * 5 favorite streamers.
     * 5 favorite Twitch emotes.
+    * 128 characters bio.
 
 ## Changelogs
   * [Website](web/CHANGELOG.md)
@@ -48,10 +51,13 @@ Stay tuned.
     * ~~User page~~
     * ~~Profile page~~
       * ~~Background color~~
-      * Twitch avatar
-      * Twitch name
-      * Favorite emotes
-      * Favorite streamers
-      * Profile bio
+      * ~Twitch avatar~
+      * ~Twitch name~
+      * ~~Favorite emotes~~
+      * ~Favorite streamers~
+      * ~Profile bio~
       * Matched users list
-    * Profile page settings
+    * ~~Profile page settings~~
+    * Admin page
+      * Ban users
+      * Delete users

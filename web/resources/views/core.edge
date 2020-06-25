@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" text="text/css" href="/css/stylesheet.css" />
   <title>{{web && web.title ? web.title : 'Twitchr'}}</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta property="og:title" content="Twitchr" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:site_name" content="Twitchr" />
+  <link rel="stylesheet" text="text/css" href="/css/stylesheet.css" />
 </head>
   <body>
     @include(web.template)
+    @include('includes/flashMessages')
   </body>
   <script src="/js/lib/uhtml.min@1.11.6.js"></script>
   <script src="/js/app.js"></script>

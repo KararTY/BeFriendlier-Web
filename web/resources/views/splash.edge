@@ -4,11 +4,6 @@
   </div>
   <div class="hero-body">
     <div class="container has-text-centered">
-      @if(flashMessages.get('splash'))
-        <div class="notification {{ flashMessages.get('splash').startsWith('Error:') ? 'is-danger' : 'is-success' }}">
-          <span>{{ flashMessages.get('splash') }}</span>
-        </div>
-      @endif
       <div class="animated slideInLeft">
         <h1 class="title is-1">Twitchr</h1>
         <h2 class="subtitle is-3">Find Twitch friends!</h2>

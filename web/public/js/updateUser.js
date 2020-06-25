@@ -7,9 +7,8 @@ class UpdateUserForm {
       this.named = {
         addStreamerBtn: this.elements.namedItem('addStreamer'),
         streamerNameInput: this.form.querySelector('[data-name="streamerName"]'),
-        favoriteStreamers: this.elements.namedItem('favoriteStreamers'),
         submitBtn: this.form.querySelector('[data-name="submitBtn"]'),
-        streamers: this.form.querySelectorAll('[data-streamername]'),
+        streamers: this.form.querySelectorAll('[name="favoriteStreamers[]"]'),
       }
 
       this.named.addStreamerBtn.addEventListener('click', this.addStreamer.bind(this))
@@ -25,7 +24,7 @@ class UpdateUserForm {
       })
 
       this.named.streamers.forEach(el => {
-        const childEl = el.querySelector('.delete')
+        const childEl = el.parentElement.querySelector('.delete')
         childEl.addEventListener('click', this.removeStreamer.bind(this))
       })
     } else {
@@ -42,49 +41,38 @@ class UpdateUserForm {
     }
 
     const node = html.node`
-      <p class="tag" data-streamername="${value}">
+      <p class="tag">
         <span>${value}</span>
         <button class="delete" name="removeStreamer" onclick="${this.removeStreamer.bind(this)}"></button>
+        <input type="text" class="is-hidden" name="favoriteStreamers[]" value="${value}">
       </p>
     `
 
-    const favoriteStreamers = this.named.favoriteStreamers.value.split(',').filter(Boolean)
-    if (favoriteStreamers.includes(value)) {
+    if (this.named.streamers.length > 4) {
       return
     }
 
-    if (favoriteStreamers.length > 4) {
-      return
+    for (let index = 0; index < this.named.streamers.length; index++) {
+      const element = this.named.streamers[index]
+      if (element.value === value) {
+        return
+      }
     }
 
-    favoriteStreamers.push(value)
-    this.named.favoriteStreamers.value = `${favoriteStreamers.join(',')}`
     this.named.streamerNameInput.value = ''
 
     const tagsElement = document.getElementById('streamers')
     tagsElement.appendChild(node)
+    this.named.streamers = this.form.querySelectorAll('[name="favoriteStreamers[]"]')
   }
 
   removeStreamer (ev) {
     ev.preventDefault()
 
     const parentElement = ev.target.parentElement
-    const value = parentElement.dataset.streamername
-    if (value.length === 0) {
-      return
-    }
-
-    const favoriteStreamers = this.named.favoriteStreamers.value.split(',').filter(Boolean)
-    if (!(favoriteStreamers.includes(value))) {
-      return
-    }
-
-    const index = favoriteStreamers.findIndex(streamer => streamer === value)
-    favoriteStreamers.splice(index, 1)
-
-    this.named.favoriteStreamers.value = `${favoriteStreamers.join(',')}`
 
     parentElement.parentElement.removeChild(parentElement)
+    this.named.streamers = this.form.querySelectorAll('[name="favoriteStreamers[]"]')
   }
 }
 

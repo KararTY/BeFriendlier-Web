@@ -1,3 +1,92 @@
+### v0005a commit () 2020-06-25
+  * Updated README.md to reflect changes.
+  * Added validationRules file to `adonisrc.json` file so that it can properly preload file.
+  * Chore: `package.json` updated.
+    * **devdependencies**
+      * `@adonisjs/assembler` changed to `^2.1.3`.
+      * `@typescript-eslint/eslint-plugin` changed to `^3.4.0`.
+      * `eslint` changed to `^7.3.1`.
+      * `eslint-plugin-adonis` changed to `^1.0.12`.
+    * **dependencies**
+      * `@adonisjs/auth` changed to `^4.2.2`.
+      * `@adonisjs/core` changed to `^5.0.0-preview-rc-1.9`.
+  * Refactored flash messages in `AuthController.register` and
+  `AuthController.logout`.
+  * Added `HealthChecksController` for checking service health. WIP: Will eventually also include health data about the bot.
+  * More code readability in `ProfilesController.read()`.
+  * Refactored flash messages in `ProfilesController.read()`.
+  * Fixed bug where a guest user wouldn't see the `favoriteStreamers[]` for said user.
+  * Added `ProfilesController.update()`. Profiles can now be edited.
+  * More code readability in `ProfilesController.delete()`.
+  * Refactored flash messages in `ProfilesController.delete()`.
+  * Implemented `ProfilesController.unmatch()`. *While end-point can be accessed, there's no way to access it via front-end.*
+  * More code readability in `UsersController`. Moved imports around.
+  * Changed validation method for `UsersController.update()`. Now uses AdonisJS validation module.
+  * Refactored flash messages in `UsersController.update()`.
+  * Added banned user check for `favoriteStreamers[]`.
+  * Added flash message for trying to add banned users to `favoriteStreamers[]`.
+  * Removed `Twitch.refreshToken()` from `UsersController.update()`. This is now handled in the `RefreshTwitchToken` middleware.
+  * More code readability in `UsersController.update()`. Changed variable names from `i` to `user` in a `map()` and `filter()`. Added conditionals *(Example: value is not undefined)* instead of if statements for `streamerMode` and `globalProfile`.
+  * Will now no longer try to add to `favoriteStreamers[]` if `newFavoriteStreamers[]` is empty.
+  * Refactored flash messages in `UsersController.delete()`.
+  * Refactored flash messages in `UsersController.refresh()`.
+  * Removed `Twitch.refreshToken()` from `UsersController.refresh()`. This is now handled in the `RefreshTwitchToken` middleware.
+  * Fixed edge (Adonisjs/Edge view template engine) deprecation errors in the default exceptions handler under `App/Exceptions/Handler.ts`.
+  * Refactored flash messages in `Auth` middleware.
+  * Added `RefreshTwitchToken` middleware. Will refresh Twitch `access_token` every 1 hour if trying to access HTTP Controllers (App/Controllers/Http) behind it. Use `start/routes/` to find out which end-point is using which middleware.
+  * Added `ValidateTwitchToken` middleware. Will validate... =/= See above.
+  * Added BannedUser model for dealing with banned users.
+  * Removed serialization in Profile model for column `color`. Profile model column `color` now has `#` in the database by default.
+  * Changed serialization for `favoriteStreamers[]`. The field is serialized into `favorite_streamers` for consistency.
+  * Fixed eslint issues in `contracts/events.ts`
+  * Added validator contract for typescript type checking.
+  * **npm run migration:rollback** is required for this update! This will irreversibly delete all user data! Hopefully for the last time during development.
+  * Migration file `1_profiles.ts` has been changed to allow `#` for Profile model `color` column. This is for validation purposes.
+  * Migration file for banned_users now exists.
+  * Changed migration file name from `1592771278779_users.ts` to `2_users.ts` due to issues with migration order.
+  * Made the "Unblur" text optional on blurred elements with the new `data-blur-text` dataset.
+  * Added `initToastButton()` to allow the toast notification to be closed.
+  * `updateUser.js` has been refactored to work with the new `favoriteStreamers[]`. `favoriteStreamers[]` no longer returns a string. It is now returned as an array on the back-end.
+  * Added toast notification stylesheet. It's mostly based on `@rfoel/bulma-toast`.
+  * Moved around elements in `core.edge` template and added Open Graph Protocol fields.
+  * `core.edge` template now contains the `flashMessages()` as it has been changed into a toast notification.
+  * Added `privacy.edge` template & page.
+  * Profile now shows off `favoriteStreamers[]` and `favoriteEmotes[]`.
+  * Added footer to profile page.
+  * Removed flash messages from the `profiles.edge` template.
+  * Added footer to profiles page.
+  * Removed flash messages from the `splash.edge` template.
+  * Added `terms.edge` template & page.
+  * Removed `inspect()` in `user.edge` template as we're pretty much done with its implementation.
+  * Renamed and reformatted `not-found.edge` template to `notFound.edge` template.
+  * Renamed and reformatted `server-error.edge` template to `serverError.edge` template.
+  * Fixed a bug in `updateProfile.edge` where user would submit changes to wrong end-point by not appending the `id` parameter.
+  * Renamed `#profile` to `#profileSettings` in `updateProfile.edge` template.
+  * Removed flash messages from the `updateProfile.edge` template.
+  * Added validator flash messages for `updateProfile.edge` template.
+  * Renamed `#user` to `#userSetttings` in `updateUser.edge` template.
+  * Removed flash messages from the `updateUser.edge` template.
+  * Added validator flash messages for `updateUser.edge` template.
+  * `favoriteStreamers[]` avatars are now rounded.
+  * Refactored how `favoriteStreamers[]` are rendered in `updateUser.edge` template.
+  * Changed global profile selector into checkbox.
+  * Changed global profile help text to reflect changes.
+  * Changed streamer mode selector into checkbox.
+  * Changed streamer mode help text to reflect changes.
+  * Added `flashMessages.edge` under `includes` folder.
+  * Changed how footer is displayed by making the links into buttons.
+  * Navbar will now display even if you aren't logged in, but with "Logout", "Profiles" and your profile avatar missing.
+  * Removed version number from `user-agent` header sent to Twitch in `src/Twitch.ts`.
+  * Added `TwitchValidateBody` for use with the new `Twitch.validateToken()` function.
+  * `Twitch.requestToken()` now asks for `user_subscriptions` scope. It's a v5 scope, not sure it actually works in Helix.
+  * Changed overload for `Twitch.getUser()`. Should now properly check whether returned value is of array or just a single `TwitchUsersBody`.
+  * Fixed bug in `Twitch.refreshToken()`. The request to refresh token is to be done as `POST` and not `GET`.
+  * Added `Twitch.validateToken()` function in `Twitch`. For use in the `ValidateTwitchToken` middleware.
+  * Added `RefreshTwitchToken`, `ValidateTwitchToken` named middleware to kernel file.
+  * Added /health, /privacy, /terms to routes file.
+  * Added `hexColorString` validation rule for Profile model `color` column.
+  * Added `validTwitchName` validation rule for User model, `favoriteStreamers[]`'s User model name, manyToMany relationship.
+  * Added `ValidateTwitchToken`, `RefreshTwitchToken` middleware to `UsersController.update()` and `UsersController.refresh()`.
 ### v0004a commit (499690a) 2020-06-22
   * Fixed `streamerMode` for profile avatar image.
   * Removed redundant comment in `ProfilesController.read`.
