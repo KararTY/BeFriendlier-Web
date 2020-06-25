@@ -1,4 +1,4 @@
-### v0005a commit () 2020-06-25
+### v0005a commit (651da6b) 2020-06-25
   * Updated README.md to reflect changes.
   * Added validationRules file to `adonisrc.json` file so that it can properly preload file.
   * Chore: `package.json` updated.
