@@ -15,7 +15,7 @@
               </div>
             </div>
             <hr>
-            <h4 class="is-size-4">{{ profileUser.display_name }} <small class="is-size-7">({{ profileUser.name }})</small></h4>
+            <h4 class="is-size-4">{{ profileUser.display_name }} {{{ profileUser.display_name.toLowerCase() === profileUser.name ? '' : ('<small class="is-size-7">(' + profileUser.name + ')</small>') }}}</h4>
           </div>
         </div>
       </div>

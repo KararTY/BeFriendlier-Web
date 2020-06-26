@@ -198,7 +198,7 @@ export default class UsersController {
     }
 
     auth.user.displayName = twitchBody.display_name
-    auth.user.name = twitchBody.display_name
+    auth.user.name = twitchBody.login
     auth.user.avatar = twitchBody.profile_image_url
     auth.user.updatedAt = DateTime.fromJSDate(new Date())
     await auth.user.save()

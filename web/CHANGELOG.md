@@ -1,3 +1,6 @@
+### v0006a commit () 2020-06-
+  * `profile.edge` template file changed. Will now no longer display login (User model `name` column) if it's the same as the display name (User model `displayName` column).
+  * Fixed bug in `UsersController.refresh()` where name was set to `display_name` value from Twitch API instead of `login` value from Twitch API.
 ### v0005a commit (651da6b) 2020-06-25
   * Updated README.md to reflect changes.
   * Added validationRules file to `adonisrc.json` file so that it can properly preload file.
