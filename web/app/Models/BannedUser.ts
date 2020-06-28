@@ -11,6 +11,9 @@ export default class BannedUser extends BaseModel {
   @column({ columnName: 'twitch_id' })
   public twitchID: string
 
+  @column.dateTime({ autoCreate: true })
+  public createdAt: DateTime
+
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 }

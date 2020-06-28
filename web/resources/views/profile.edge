@@ -26,7 +26,7 @@
             <div class="card-header">
               <h4 class="card-header-title is-size-4">Favorite emotes</h4>
             </div>
-            <div {{{ user.streamer_mode ? 'class="blur card-content is-rounded" data-blur="favoriteEmotes" data-blur-text="true"' : 'class="card-content"' }}}>
+            <div {{{ user.streamer_mode ? 'class="blur card-content" data-blur="favoriteEmotes" data-blur-text="true"' : 'class="card-content"' }}}>
               @each(emote in profile.favorite_emotes)
                 <div class="level is-mobile">
                   <div class="level-left">
@@ -59,7 +59,7 @@
               <div class="card-header">
                 <h4 class="card-header-title is-size-4">Favorite streamers</h4>
               </div>
-              <div {{{ user.streamer_mode ? 'class="card-content blur is-rounded" data-blur="favoriteStreamers" data-blur-text="true" data-blur-vanish="true"' : 'class="card-content"' }}}>
+              <div {{{ user.streamer_mode ? 'class="card-content blur" data-blur="favoriteStreamers" data-blur-text="true" data-blur-vanish="true"' : 'class="card-content"' }}}>
                 @each(streamer in profileUser.favorite_streamers)
                   <div class="level is-mobile">
                     <a class="level-left has-text-dark" href="https://www.twitch.tv/{{streamer.name}}" target="_blank">
@@ -68,7 +68,7 @@
                           <img class="is-rounded" src="{{ streamer.avatar.replace('300x300', '70x70') }}" alt="{{ streamer.name }}'s avatar">
                         </figure>
                       </div>
-                      <p class="level-item is-size-5"> {{ streamer.name }} </p>
+                      <p class="level-item is-size-5"> {{ streamer.display_name }} {{{ streamer.display_name.toLowerCase() === streamer.name ? '' : ('<small class="is-size-7">(' + streamer.name + ')</small>') }}}</p>
                     </a>
                   </div>
                 @endeach
@@ -77,14 +77,10 @@
           </div>
         @endif
       </div>
-      @if(!guest)
-        @include('forms/updateProfile')
+      @if(profileUser.id === user.id)
+        @include('includes/matches')
         <hr>
-        <div class="card">
-          <div class="card-content">
-            {{ inspect(profile) }}
-          </div>
-        </div>
+        @include('forms/updateProfile')
       @endif
     </div>
   </div>

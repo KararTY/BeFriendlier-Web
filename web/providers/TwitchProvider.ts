@@ -28,8 +28,9 @@ export default class TwitchProvider {
     // Register your own bindings
     this.container.singleton('Adonis/Addons/Twitch', app => {
       const config = app.use('Adonis/Core/Env')
+      const logger = app.use('Adonis/Core/Logger')
 
-      const TwitchInstance = new Client(config)
+      const TwitchInstance = new Client(config, logger)
 
       return TwitchInstance
     })

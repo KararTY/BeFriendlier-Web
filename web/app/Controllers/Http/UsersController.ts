@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import Database from '@ioc:Adonis/Lucid/Database'
 
 import Twitch from '@ioc:Adonis/Addons/Twitch'
 import { TwitchUsersBody } from 'src/Twitch' // For type definitions
@@ -56,7 +57,7 @@ export default class UsersController {
     }) // Request may fail here, if values do not pass validation.
 
     // TODO: OPTIMIZE CALLS BY FILTERING OUT EXISTING FIELDS & ONLY DETACHING NON-EXISTING FIELDS.
-    const newFavoriteStreamers: User[] = []
+    let newFavoriteStreamers: User[] = []
     if (validated.favoriteStreamers !== undefined && validated.favoriteStreamers.length > 0) {
       const existingUsers = await User.query().whereIn('name', validated.favoriteStreamers)
       newFavoriteStreamers.push(...existingUsers)
@@ -77,7 +78,7 @@ export default class UsersController {
           const safeUsers: TwitchUsersBody[] = []
           for (let index = 0; index < streamersToAppend.length; index++) {
             const user = streamersToAppend[index]
-            const bannedUser = BannedUser.findBy('twitchID', user.id)
+            const bannedUser = await BannedUser.findBy('twitchID', user.id)
 
             if (bannedUser !== null) {
               bannedUserSessionMessages.push(`${user.login} is banned from using this service.`)
@@ -110,7 +111,7 @@ export default class UsersController {
 
     await auth.user.preload('profile')
 
-    const globalProfile = auth.user.profile.find(profile => profile.global)
+    const globalProfile = auth.user.profile.find(profile => profile.chatUserId === 0)
 
     // Global profile can't be undefined, this is here because typescript is strict.
     if (globalProfile !== undefined) {
@@ -127,6 +128,13 @@ export default class UsersController {
 
     // Add new.
     if (newFavoriteStreamers.length > 0) {
+      // Filter newFavoriteStreamers for possible duplicates.
+      newFavoriteStreamers = newFavoriteStreamers.sort((a, b) => {
+        return b.updatedAt.toMillis() - a.updatedAt.toMillis()
+      }).filter((streamer, pos, self) => {
+        const slf = self.findIndex(user => user.name === streamer.name)
+        return slf === pos
+      })
       await auth.user.related('favoriteStreamers').saveMany(newFavoriteStreamers)
     }
     /**/
@@ -152,6 +160,8 @@ export default class UsersController {
       for (let i = 0; i < user.profile.length; i++) {
         const profile = user.profile[i]
         await profile.related('matches').detach()
+
+        await Database.query().from('matches_lists').where('match_user_id', user.id).delete()
 
         await profile.delete()
       }

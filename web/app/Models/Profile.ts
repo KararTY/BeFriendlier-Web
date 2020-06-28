@@ -7,8 +7,6 @@ import {
   ManyToMany,
 } from '@ioc:Adonis/Lucid/Orm'
 
-import User from 'App/Models/User'
-
 export default class Profile extends BaseModel {
   @column({ isPrimary: true })
   public id: number
@@ -18,10 +16,7 @@ export default class Profile extends BaseModel {
   public userId: number
 
   @column()
-  public chatId?: number
-
-  @column()
-  public global: boolean
+  public chatUserId?: number
 
   @column()
   public enabled: boolean
@@ -38,14 +33,15 @@ export default class Profile extends BaseModel {
   })
   public favoriteEmotes: string[]
 
-  @manyToMany(() => User, {
+  @manyToMany(() => Profile, {
     localKey: 'id',
-    pivotForeignKey: 'user_id',
+    pivotForeignKey: 'profile_id',
     relatedKey: 'id',
-    pivotRelatedForeignKey: 'match_id',
+    pivotRelatedForeignKey: 'match_profile_id',
     pivotTable: 'matches_lists',
+    pivotColumns: ['user_id', 'match_user_id'],
   })
-  public matches: ManyToMany<typeof User>
+  public matches: ManyToMany<typeof Profile>
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

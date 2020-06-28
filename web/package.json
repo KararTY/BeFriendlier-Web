@@ -7,8 +7,10 @@
     "start": "node ace serve --watch --node-args=\"--inspect\"",
     "css-build": "node-sass resources/sass/style.scss public/css/stylesheet.css --output-style compressed",
     "lint": "eslint . --ext=.ts",
+    "migrate:rollback": "npm run-script build && node ace migration:rollback",
     "migrate:run": "npm run-script build && node ace migration:run",
-    "migrate:rollback": "npm run-script build && node ace migration:rollback"
+    "seed": "npm run-script build && node ace db:seed",
+    "r:m:s": "npm run-script build && node ace migration:rollback && node ace migration:run && node ace db:seed"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^2.1.3",

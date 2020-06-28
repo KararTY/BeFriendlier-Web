@@ -69,7 +69,7 @@ class UpdateUserForm {
   removeStreamer (ev) {
     ev.preventDefault()
 
-    const parentElement = ev.target.parentElement
+    const parentElement = ev.currentTarget.parentElement
 
     parentElement.parentElement.removeChild(parentElement)
     this.named.streamers = this.form.querySelectorAll('[name="favoriteStreamers[]"]')

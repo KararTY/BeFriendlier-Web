@@ -8,45 +8,59 @@ class UpdateProfileForm {
         bioInput: this.elements.namedItem('bio'),
         colorInput: this.elements.namedItem('color'),
         submitBtn: this.form.querySelector('[data-name="submitBtn"]'),
+        matches: document.body.querySelectorAll('[data-unmatch]'),
+        csrfToken: this.elements.namedItem('_csrf'),
       }
 
       this.named.colorInput.addEventListener('input', ev => {
         const styleEl = document.getElementById('color')
 
         if (styleEl instanceof window.HTMLStyleElement) {
-          styleEl.innerHTML = `.hero-body{background-color:${ev.target.value}}`
+          styleEl.innerHTML = `.hero-body{background-color:${ev.currentTarget.value}}`
         }
       })
 
-      // this.named.streamers.forEach(el => {
-      //   const childEl = el.querySelector('.delete')
-      //   childEl.addEventListener('click', this.removeStreamer.bind(this))
-      // })
+      this.named.matches.forEach(el => {
+        el.addEventListener('click', this.removeMatch.bind(this))
+      })
     } else {
       throw new Error('That is not a form.')
     }
   }
 
-  removeMatch (ev) {
-    // ev.preventDefault()
+  async removeMatch (ev) {
+    ev.preventDefault()
 
-    // const parentElement = ev.target.parentElement
-    // const value = parentElement.dataset.streamername
-    // if (value.length === 0) {
-    //   return
-    // }
+    if (!(ev instanceof window.MouseEvent)) {
+      return
+    }
 
-    // const favoriteStreamers = this.named.favoriteStreamers.value.split(',').filter(Boolean)
-    // if (!(favoriteStreamers.includes(value))) {
-    //   return
-    // }
+    const data = new window.FormData()
+    data.append('_csrf', this.named.csrfToken.value)
+    data.append('profileID', ev.currentTarget.dataset.unmatch)
 
-    // const index = favoriteStreamers.findIndex(streamer => streamer === value)
-    // favoriteStreamers.splice(index, 1)
+    const parentElement = ev.currentTarget.parentElement
+    const parentParentElement = parentElement.parentElement
 
-    // this.named.favoriteStreamers.value = `${favoriteStreamers.join(',')}`
+    try {
+      const request = await window.fetch(`${window.location.href}/unmatch`, {
+        body: data,
+        method: 'POST',
+        credentials: 'same-origin',
+      })
 
-    // parentElement.parentElement.removeChild(parentElement)
+      const res = await request.json()
+
+      window.displayToast(res)
+      if (res.error === undefined) {
+        parentParentElement.removeChild(parentElement)
+        if (parentParentElement.children.length === 0) {
+          parentParentElement.appendChild(html.node`<p>You've not matched with anyone. FeelsBadMan</p>`)
+        }
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 }
 

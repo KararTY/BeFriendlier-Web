@@ -1,4 +1,5 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Env from '@ioc:Adonis/Core/Env'
 
 import Twitch from '@ioc:Adonis/Addons/Twitch'
 
@@ -30,11 +31,22 @@ export default class AuthController {
         // Create default global profile, but not enabled.
         await user.related('profile').create({
           enabled: false,
-          global: true,
+          chatUserId: 0,
         })
 
         await user.save()
-        await auth.login(user)
+
+        if (Env.get('NODE_ENV') === 'development') {
+          const testUser = await User.findBy('twitchID', '0')
+          if (testUser === null) {
+            throw new Error('Using NODE_ENV=development without existing TestUser.' +
+            'Run `npm run seed` (`node ace db:seed`).')
+          } else {
+            await auth.login(testUser)
+          }
+        } else {
+          await auth.login(user)
+        }
         session.put('token', token.access_token)
         session.put('refresh', token.refresh_token)
 
@@ -46,12 +58,23 @@ export default class AuthController {
         if (userExists.profile.length === 0) {
           await userExists.related('profile').create({
             enabled: false,
-            global: true,
+            chatUserId: 0,
           })
         }
 
         // Login
-        await auth.login(userExists)
+        if (Env.get('NODE_ENV') === 'development') {
+          const testUser = await User.findBy('twitchID', '0')
+          if (testUser === null) {
+            throw new Error('Using NODE_ENV=development without existing TestUser.' +
+            'Run `npm run seed` (`node ace db:seed`).')
+          } else {
+            await auth.login(testUser)
+          }
+        } else {
+          await auth.login(userExists)
+        }
+
         session.put('token', token.access_token)
         session.put('refresh', token.refresh_token)
 

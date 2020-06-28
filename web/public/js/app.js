@@ -7,25 +7,25 @@ function initBlurButtons () {
     (ev = new window.MouseEvent()) => {
       ev.preventDefault()
 
-      const targetElement = document.querySelector(`[data-blur="${ev.target.dataset.blurButton}"`)
+      const targetElement = document.querySelector(`[data-blur="${ev.currentTarget.dataset.blurButton}"`)
 
       if (!(targetElement instanceof window.HTMLElement)) {
         return
       }
 
       targetElement.classList.toggle('blur')
-      ev.target.classList.toggle('has-background-slightly-dark')
+      ev.currentTarget.classList.toggle('has-background-slightly-dark')
 
       if (dataset.blurText) {
         if (targetElement.classList.contains('blur')) {
-          ev.target.innerText = 'Unblur'
+          ev.currentTarget.innerText = 'Unblur'
         } else {
-          ev.target.innerText = ''
+          ev.currentTarget.innerText = ''
         }
       }
 
       if (targetElement.dataset.blurVanish === 'true') {
-        ev.target.outerHTML = ''
+        ev.currentTarget.outerHTML = ''
       }
     }
   }">${dataset.blurText ? 'Unblur' : ''}</a>`
@@ -49,6 +49,27 @@ function initToastButton () {
       toast.outerHTML = ''
     })
   }
+}
+
+function displayToast (message) {
+  const toastHTML = html.node`
+    <div class="toast animated fadeIn">
+      <div class="${message.error ? 'notification is-danger' : 'notification is-success'}">
+        <button class="delete"></button>
+        <span>${message.error || message.message}</span>
+      </div>
+    </div>
+  `
+
+  const toast = document.querySelector('.toast')
+
+  if (toast instanceof window.HTMLElement) {
+    toast.outerHTML = ''
+  }
+
+  document.body.appendChild(toastHTML)
+
+  initToastButton()
 }
 
 initBlurButtons()

@@ -31,12 +31,14 @@ export interface TwitchValidateBody {
 }
 
 export class Client {
+  private readonly Logger
   private readonly token: string
   private readonly secret: string
 
-  constructor (config: any) {
+  constructor (config, Logger) {
     this.token = config.get('TWITCH_CLIENT_TOKEN')
     this.secret = config.get('TWITCH_CLIENT_SECRET')
+    this.Logger = Logger
   }
 
   public async requestToken (code: string): Promise<TwitchAuthBody | null> {
@@ -57,7 +59,7 @@ export class Client {
       })
       return body
     } catch (error) {
-      console.error(error)
+      this.Logger.error(error)
       return null
     }
   }
@@ -81,7 +83,7 @@ export class Client {
         return body.data[0] !== undefined ? body.data[0] as TwitchUsersBody : null
       }
     } catch (error) {
-      console.error(error)
+      this.Logger.error(error)
       return null
     }
   }
@@ -104,7 +106,7 @@ export class Client {
 
       return body as TwitchAuthBody
     } catch (error) {
-      console.error(error)
+      this.Logger.error(error)
       return null
     }
   }
@@ -122,7 +124,7 @@ export class Client {
 
       return body as TwitchValidateBody
     } catch (error) {
-      console.error(error)
+      this.Logger.error(error)
       return null
     }
   }

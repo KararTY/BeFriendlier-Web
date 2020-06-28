@@ -1,3 +1,43 @@
+### v0007a commit () 2020-06-27
+  * Added `seed` npm script. This will seed the database with development data.
+  * Added `r:m:s` npm script. It will rollback, migrate and then seed the database all-in-one command.
+  * `AuthController.register()` when `NODE_ENV=development` will now make all users who try to login use the "Test" account that is provided in the `Development` database seed.
+  * `ProfilesController.read()` will no longer preload ALL matches, and will instead only query 10 matches.
+  * Since all matches are no longer preloaded, things have now been refactored when trying to retrieve someone else's profile.
+  * Removed various redundant comments in `ProfilesController`
+  * Major refactoring done to `ProfilesController.read()` due to refactoring of Profile model `matches` relationship changing into other Profiles.
+  * Changed how a profile is sent to front-end. Every matched user will now have 2 variables: `user` & `profile`.
+  * When trying to view someone else's profile, backend will now query the `matches_lists` table instead of how it used to work due to refactoring of Profile model.
+  * `guest` variable now not sent to front-end, instead the front-end uses conditional check to see if user should have `updateProfile.edge` template shown.
+  * Fixed bug where when deleting profile, users that matched with this profile wouldn't have their record of the deleted profile deleted as well.
+  * Refactored `ProfilesController.delete()` to work with new Profile model.
+  * WIP: Added `ProfilesController.matches()` to send matches for pagination purposes. Not implemented in front-end yet, however!
+  * Fixed bug in `UsersController.update()` when checking banned users. Missed the `await` prefix for the promise.
+  * Changed `UsersController.update()` due to refactoring of the Profile model.
+  * `newFavoriteStreamers` variable now sorts by `updatedAt` to make sure you don't add duplicate users if they happen to have the same User model `name` value.
+  * Fixed bug in `UsersController.delete()` where profiles who matched with you weren't deleted.
+  * Added missing `createdAt` field in BannedUser model.
+  * Profile model refactored. `chatId` is now `chatUserId`. `global` field has been removed: `chatUserId === 0` is now the check for global profiles. `matches` relationship is now to other Profiles instead of Users, fields have been changed to reflect that. The `matches_lists` will now also return `user_id` and `match_user_id` as `pivotColumns`.
+  * Fixed timestamps for `favorite_streamer_lists` schema.
+  * Changed `matches_lists` schema to reflect refactoring changes done to Profile model. `profile_id` equals the parent profile's id. `match_profile_id` equals the related profile's id. `match_user_id` equals the related profile's user's id. Timestamps now work, too.
+  * Changed `profiles` schema to reflect the refactoring changes. `chat_id` is now `chat_user_id`.
+  * Added development seeder, under `database/seeders/Development.ts`. Will fill the database with development data, for debugging purposes.
+  * `TwitchProvider` now appends AdonisJS/Logger to the `Twitch` instance.
+  * Changed `ev.target` to `ev.currentTarget` in `app.js` due to HTML bubbling.
+  * Added `displayToast()` to `app.js`. For creating toast messages in the front-end javascript.
+  * More implementations done to `updateProfile.js`. As well as changing `ev.target` to `ev.currentTarget`. Matched users can now be deleted via front-end.
+  * Changed `ev.target` to `ev.currentTarget` in `updateUser.js` due to HTML bubbling.
+  * Removed stray `is-rounded` classes in profile.edge template.
+  * Favorite streamers' list in profile.edge template will now display User model `displayName` as well as `name` if the two do not match or otherwise only display `displayName`. This is for users who have non-latin characters in their display name.
+  * Changed the conditional in profile.edge from `!guest` to `profileUser.id === user.id` to check whether user owns said profile.
+  * Removed debugging stuff from profile.edge template.
+  * Changed profiles.edge template conditional to reflect changes done to Profile model. As well as adding `level-item` classes for consistency.
+  * Changed layout of user.edge template. Will now display the commands.edge and updateUser.edge template as columns in desktop screens (Side-by-side).
+  * Changed updateProfile.edge template to reflect changes done to Profile model.
+  * Changed updateUser.edge template to reflect changes done to Profile model.
+  * Changed header sizes in commands.edge template file. They're now smaller.
+  * Added matches.edge template file to show profile's matched profiles.
+  * `Twitch` now uses AdonisJS/Logger instead of `console.error()`.
 ### v0006a commit (bc76f3b) 2020-06-26
   * `profile.edge` template file changed. Will now no longer display login (User model `name` column) if it's the same as the display name (User model `displayName` column).
   * Fixed bug in `UsersController.refresh()` where name was set to `display_name` value from Twitch API instead of `login` value from Twitch API.

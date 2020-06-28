@@ -8,8 +8,7 @@ export default class Profiles extends BaseSchema {
     this.schema.createTable(this.tableName, table => {
       table.increments('id')
       table.integer('user_id').notNullable()
-      table.integer('chat_id')
-      table.boolean('global').defaultTo(false)
+      table.integer('chat_user_id').notNullable()
       table.boolean('enabled').defaultTo(true)
       table.json('favorite_emotes').defaultTo(JSON.stringify([])).notNullable()
       table.json('matches').defaultTo(JSON.stringify([])).notNullable()

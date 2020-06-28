@@ -13,9 +13,12 @@
                   <div class="card-header-title">
                     <div class="level is-mobile">
                       <div class="level-left">
-                        @if(profile.global)
-                          <span class="icon level-item">{{{ icon('globe') }}}</span>
-                          <span>Global profile</span>
+                        @if(profile.chat_user_id === 0)
+                          <span class="level-item icon">{{{ icon('globe') }}}</span>
+                          <p class="level-item">Global profile</p>
+                          @if(!profile.enabled)
+                            <p class="level-item">(Disabled)</p>
+                          @endif
                         @else
                           <div class="icon level-item">
                             <figure class="image">

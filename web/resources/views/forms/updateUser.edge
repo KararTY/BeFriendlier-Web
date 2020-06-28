@@ -104,7 +104,7 @@
           <div class="field">
             <div class="control">
               <label class="checkbox">
-                <input type="checkbox" name="globalProfile" {{{ !!user.profile.find(profile => profile.global && profile.enabled) ? 'checked' : ''}}}>
+                <input type="checkbox" name="globalProfile" {{{ !!user.profile.find(profile => profile.chat_user_id === 0 && profile.enabled) ? 'checked' : ''}}}>
                 <span>Global profile</span>
               </label>
             </div>

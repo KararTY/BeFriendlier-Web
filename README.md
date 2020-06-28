@@ -40,9 +40,9 @@ Stay tuned.
   * Database
     * User
       * hasMany: Profile
-      * manyToMany: Favorite streamers list.
+      * manyToMany: Favorite streamers list. (Matches to other users)
     * Profile
-      * manyToMany: Matches list.
+      * manyToMany: Matches list. (Matches to other profiles)
     * (Pivot) Favorite streamers list.
     * (Pivot) Matches list.
   * Website
@@ -56,8 +56,11 @@ Stay tuned.
       * ~~Favorite emotes~~
       * ~Favorite streamers~
       * ~Profile bio~
-      * Matched users list
+      * ~~Matched users list~~
     * ~~Profile page settings~~
     * Admin page
       * Ban users
       * Delete users
+    * Make sure users go through privacy page & terms page (in that order) before being able to register via Twitch.
+  * Bot
+    * TODO: Make a todo. Pepega
