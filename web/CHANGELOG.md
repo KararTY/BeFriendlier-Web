@@ -1,3 +1,7 @@
+### v0008a () commit 2020-06-29
+  * Users now have to go through Privacy Policy & Terms of Service to be able to register/login.
+  * Added a simple `Cookie` class to `app.js`. For dealing with cookies on the front-end.
+  * Added `setToSCookies()` function to `app.js`.
 ### v0007a (18e0ebb) commit 2020-06-28
   * Added `seed` npm script. This will seed the database with development data.
   * Added `r:m:s` npm script. It will rollback, migrate and then seed the database all-in-one command.

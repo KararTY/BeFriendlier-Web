@@ -61,6 +61,6 @@ Stay tuned.
     * Admin page
       * Ban users
       * Delete users
-    * Make sure users go through privacy page & terms page (in that order) before being able to register via Twitch.
+    * ~~Make sure users go through privacy page & terms page (in that order) before being able to register via Twitch.~~
   * Bot
     * TODO: Make a todo. Pepega

@@ -46,11 +46,18 @@
   <p>We will let you know via email and/or a prominent notice on our Service, prior to the change becoming effective and update the "effective date" at the top of this Terms of Service.</p>
   <p>You are advised to review this Terms of Service periodically for any changes. Changes to this Terms of Service are effective when they are posted on this page.</p>
   <h2>Contact Us</h2>
-  <p>If you have any questions about this Terms of Service, please contact us:</p>
+  <p>If you have any questions about this Terms of Service, please contact admin:</p>
   <ul>
     <li>By email: alremahykarar@ymail.com</li>
   </ul>
 @if(!raw)
+      <div class="has-text-centered" id="login">
+        <h1 class="is-size-1">By clicking on Login with Twitch, you accept these terms.</h1>
+        <a href="{{ twitchAuth(csrfToken) }}" class="button is-large" type="submit" id="login">
+          <span class="icon">{{{ icon('twitch', 'big') }}}</span>
+          <span>Login with Twitch</span>
+        </a>
+      </div>
     </div>
   </div>
 </section>

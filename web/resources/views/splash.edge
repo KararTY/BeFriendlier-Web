@@ -8,7 +8,7 @@
         <h1 class="title is-1">Twitchr</h1>
         <h2 class="subtitle is-3">Find Twitch friends!</h2>
         @if(!user)
-          <a href="{{ twitchAuth(csrfToken) }}" class="button is-large" type="submit">
+          <a href="{{ twitchAuth(csrfToken) }}" class="button is-large" type="submit" id="login">
             <span class="icon">{{{ icon('twitch', 'big') }}}</span>
             <span>Login with Twitch</span>
           </a>
