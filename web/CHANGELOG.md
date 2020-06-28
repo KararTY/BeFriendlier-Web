@@ -1,4 +1,4 @@
-### v0008a () commit 2020-06-29
+### v0008a (6e9a01ds) commit 2020-06-29
   * Users now have to go through Privacy Policy & Terms of Service to be able to register/login.
   * Added a simple `Cookie` class to `app.js`. For dealing with cookies on the front-end.
   * Added `setToSCookies()` function to `app.js`.
