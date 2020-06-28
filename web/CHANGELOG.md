@@ -1,5 +1,4 @@
-### v0007a commit 2020-06-28
-Commit: [18e0ebb]
+### v0007a (18e0ebb) commit 2020-06-28
   * Added `seed` npm script. This will seed the database with development data.
   * Added `r:m:s` npm script. It will rollback, migrate and then seed the database all-in-one command.
   * `AuthController.register()` when `NODE_ENV=development` will now make all users who try to login use the "Test" account that is provided in the `Development` database seed.
