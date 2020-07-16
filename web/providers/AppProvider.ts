@@ -45,7 +45,16 @@ export default class AppProvider {
     // Cleanup, since app is going down
   }
 
-  public ready () {
+  public async ready () {
     // App is ready
+    const App = await import('@ioc:Adonis/Core/Application')
+
+    /**
+     * Only import socket file, when environment is `web`. In other
+     * words do not import during ace commands.
+     */
+    if (App.default.environment === 'web') {
+      await import('../start/socket')
+    }
   }
 }

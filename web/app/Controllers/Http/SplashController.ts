@@ -1,4 +1,5 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Ws from 'App/Services/Ws'
 
 export default class SplashController {
   public async index ({ auth, view }: HttpContextContract) {
@@ -26,5 +27,10 @@ export default class SplashController {
         },
       },
     })
+  }
+
+  public async ws () {
+    Ws.server.emit('message', 'test')
+    return 'bop'
   }
 }

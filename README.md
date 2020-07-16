@@ -58,9 +58,17 @@ Stay tuned.
       * ~Profile bio~
       * ~~Matched users list~~
     * ~~Profile page settings~~
+    * ~~Make sure users go through privacy page & terms page (in that order) before being able to register via Twitch.~~
     * Admin page
       * Ban users
       * Delete users
-    * ~~Make sure users go through privacy page & terms page (in that order) before being able to register via Twitch.~~
+    * Bots end-point
+      * Keep track of clients.
+      * Refresh bot data.
+      * Tell bot to track new channel.
+      * Roll a match.
+      * Confirm matches.
+      * Remove matches.
+      * Get matches.
   * Bot
     * TODO: Make a todo. Pepega

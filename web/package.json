@@ -38,6 +38,7 @@
     "@adonisjs/session": "^3.0.4",
     "@adonisjs/shield": "^3.0.4",
     "@adonisjs/view": "^2.0.7",
+    "@types/ws": "^7.2.6",
     "bulma": "^0.9.0",
     "feather-icons": "^4.28.0",
     "got": "^11.3.0",
@@ -46,6 +47,11 @@
     "phc-argon2": "^1.0.0",
     "proxy-addr": "^2.0.6",
     "reflect-metadata": "^0.1.13",
-    "source-map-support": "^0.5.19"
+    "source-map-support": "^0.5.19",
+    "ws": "^7.3.1"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.1",
+    "utf-8-validate": "^5.0.2"
   }
 }
