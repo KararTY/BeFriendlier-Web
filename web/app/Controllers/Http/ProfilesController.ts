@@ -6,6 +6,16 @@ import User from 'App/Models/User'
 import Profile from 'App/Models/Profile'
 
 export default class ProfilesController {
+  private readonly profilesSchema = schema.create({
+    bio: schema.string({}, [
+      rules.maxLength(128),
+      rules.minLength(1),
+    ]),
+    color: schema.string({}, [
+      rules.hexColorString(),
+    ]),
+  })
+
   public async read ({ params, auth, view, session, response }: HttpContextContract) {
     if (auth.user === undefined) {
       return
@@ -147,18 +157,9 @@ export default class ProfilesController {
     }
 
     // Validate input
-    const profilesSchema = schema.create({
-      bio: schema.string({}, [
-        rules.maxLength(128),
-        rules.minLength(1),
-      ]),
-      color: schema.string({}, [
-        rules.hexColorString(),
-      ]),
-    })
-
     const validated = await request.validate({
-      schema: profilesSchema,
+      schema: this.profilesSchema,
+      cacheKey: 'profilesSchema',
     }) // Request may fail here if values do not pass validation.
 
     const profile = await Profile.find(idNumber)

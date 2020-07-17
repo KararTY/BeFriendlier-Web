@@ -133,6 +133,12 @@ function setToSCookies () {
       break
     }
     case '/privacy': {
+      if (cookies.getCookie('privacyPolicyAccepted')) {
+        login.innerHTML = ''
+        login.appendChild(html.node`<p>You've accepted the Privacy Policy already.</p>`)
+        return
+      }
+
       login.firstElementChild.firstElementChild.addEventListener('click', ev => {
         ev.preventDefault()
 

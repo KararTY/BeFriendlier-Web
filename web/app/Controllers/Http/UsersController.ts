@@ -11,6 +11,18 @@ import User from 'App/Models/User'
 import BannedUser from 'App/Models/BannedUser'
 
 export default class UsersController {
+  private readonly usersSchema = schema.create({
+    favoriteStreamers: schema.array.optional([
+      rules.maxLength(5),
+      rules.distinct('*'),
+    ]).members(schema.string({}, [
+      rules.maxLength(32),
+      rules.validTwitchName(),
+    ])),
+    streamerMode: schema.boolean.optional(),
+    globalProfile: schema.boolean.optional(),
+  })
+
   public async read ({ auth, view }: HttpContextContract) {
     if (auth.user === undefined) {
       return
@@ -34,26 +46,15 @@ export default class UsersController {
     }
 
     // Validate input
-    const usersSchema = schema.create({
-      favoriteStreamers: schema.array.optional([
-        rules.maxLength(5),
-        rules.distinct('*'),
-      ]).members(schema.string({}, [
-        rules.maxLength(32),
-        rules.validTwitchName(),
-      ])),
-      streamerMode: schema.boolean.optional(),
-      globalProfile: schema.boolean.optional(),
-    })
-
     const validated = await request.validate({
-      schema: usersSchema,
+      schema: this.usersSchema,
       messages: {
         'favoriteStreamers.maxLength': 'You can only have a maximum of 5 favorite streamers.',
         'favoriteStreamers.distinct': 'Favorite streamers list must have distinct values. No duplicates.',
         'streamerMode.boolean': 'Streamer mode must be a boolean value.',
         'globalProfile.boolean': 'Global profile must be a boolean value.',
       },
+      cacheKey: 'usersSchema',
     }) // Request may fail here, if values do not pass validation.
 
     // TODO: OPTIMIZE CALLS BY FILTERING OUT EXISTING FIELDS & ONLY DETACHING NON-EXISTING FIELDS.

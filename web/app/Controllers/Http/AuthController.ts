@@ -53,7 +53,9 @@ export default class AuthController {
         session.flash('message', { message: 'Welcome! Take a look at your user settings to finalize your setup!' })
         return response.redirect('/')
       } else {
-        // Exists but not actually registered, just cached. For "favorite streamers" purposes.
+        // User exists.
+
+        // Check if not actually registered, and only just cached. For "favorite streamers" purposes.
         await userExists.preload('profile')
         if (userExists.profile.length === 0) {
           await userExists.related('profile').create({
