@@ -1,4 +1,14 @@
-### v0008a (6e9a01ds) commit 2020-06-29
+### v0010a (cf76367cc16313d4fb93897efbbf11617709f374)
+  * feat(validation): Validation schemas now cached.
+  * fix(public/js/app): No longer shows "I accept" if already accepted.
+  * docs(AuthController): Clarified comments.
+  * From here and onwards, [conventional commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/) will be used and changelogs will now contain full commit hash and no dates.
+### v0009a (24e7b7523cde9666c3b2a28dbe321c06597dba28)
+  * Merge pull request #1. Bump lodash from 4.17.15 to 4.17.19 in /web.
+### v0009a (0d8534741d0586bf7ae5fbefbcda27966102c571)
+  * WIP: Prototype websockets implemented. Only for bot-to-server communications.
+  * Updated README.md with more TODOs.
+### v0008a (6e9a01d) commit 2020-06-29
   * Users now have to go through Privacy Policy & Terms of Service to be able to register/login.
   * Added a simple `Cookie` class to `app.js`. For dealing with cookies on the front-end.
   * Added `setToSCookies()` function to `app.js`.
