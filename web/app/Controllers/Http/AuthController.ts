@@ -6,6 +6,9 @@ import Twitch from '@ioc:Adonis/Addons/Twitch'
 import User from 'App/Models/User'
 
 export default class AuthController {
+  private readonly devError = new Error('Using NODE_ENV=development without existing TestUser. ' +
+  'Run `npm run seed` (`node ace db:seed`).')
+
   public async register ({ request, auth, response, session }: HttpContextContract) {
     const { code } = request.get()
 
@@ -39,8 +42,7 @@ export default class AuthController {
         if (Env.get('NODE_ENV') === 'development') {
           const testUser = await User.findBy('twitchID', '0')
           if (testUser === null) {
-            throw new Error('Using NODE_ENV=development without existing TestUser.' +
-            'Run `npm run seed` (`node ace db:seed`).')
+            throw this.devError
           } else {
             await auth.login(testUser)
           }
@@ -68,8 +70,7 @@ export default class AuthController {
         if (Env.get('NODE_ENV') === 'development') {
           const testUser = await User.findBy('twitchID', '0')
           if (testUser === null) {
-            throw new Error('Using NODE_ENV=development without existing TestUser.' +
-            'Run `npm run seed` (`node ace db:seed`).')
+            throw this.devError
           } else {
             await auth.login(testUser)
           }
