@@ -1,3 +1,5 @@
+### v0011a (7a8c475d733ddd46ff0e7c5be1a4273d47e4c155)
+  * fix: Refactor dev error when seeds not run. Will do a full DRY run later.
 ### v0010a (cf76367cc16313d4fb93897efbbf11617709f374)
   * feat(validation): Validation schemas now cached.
   * fix(public/js/app): No longer shows "I accept" if already accepted.
