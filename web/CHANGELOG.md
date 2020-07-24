@@ -1,5 +1,12 @@
+### v0017a (bfefe63676799db6b268fa28884b3e44f7fc3b4f)
+  * fix(splash): Typo, hours when it should be minutes
+### v0016a (f732a247a36af36aa327acb0dfbd821f4c93600a)
+  * Splash page may contain more statistics in the future, this should be okay for now.
+    * feat(splash): Now shows updated statistics.
+  * Changed `1_favorite_streamer_lists`'s & `1_matches_lists`'s `created_at` & `updated_at` default value behavior.
+    * fix(migrations): Now using toSQL() instead of toFormat().
 ### v0015a (ad921707f1cd0b99e3edc6a30b8596c72e14e51d)
-* chore(dependencies): Update dependencies.
+  * chore(dependencies): Update dependencies.
     * **devdependencies**
       * `@typescript-eslint/eslint-plugin` changed to `^3.7.0`.
       * `eslint` changed to `^7.5.0`.
