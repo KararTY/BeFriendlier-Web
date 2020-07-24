@@ -7,15 +7,15 @@ import Twitch from '@ioc:Adonis/Addons/Twitch'
 export default class RefreshTwitchToken {
   private async refresh ({ session, auth }: HttpContextContract) {
     if (session.get('token') !== undefined) {
-      const lastRefresh = session.get('lastRefresh') as string | undefined
+      const nextRefresh = session.get('nextRefresh') as string | undefined
 
-      if (lastRefresh !== undefined && (DateTime.fromISO(lastRefresh).diffNow('minutes').minutes > -59)) {
+      if (nextRefresh !== undefined && (DateTime.fromISO(nextRefresh).diffNow('minutes').minutes <= 0)) {
         return
       }
 
       const twitchBody = await Twitch.refreshToken(session.get('refresh'))
 
-      session.put('lastRefresh', new Date())
+      session.put('nextRefresh', DateTime.fromJSDate(new Date()).plus({ hour: 1 }).toJSDate())
 
       if (twitchBody !== null) {
         session.put('token', twitchBody.access_token)
