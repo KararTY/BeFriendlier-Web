@@ -1,36 +1,72 @@
+import { DateTime } from 'luxon'
+
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Ws from 'App/Services/Ws'
+
+import Database from '@ioc:Adonis/Lucid/Database'
+
+let splashLastUpdate = DateTime.fromJSDate(new Date())
+let statistics = {
+  users: {
+    total: 0,
+    new: 0,
+  },
+  channels: {
+    total: 0,
+    new: 0,
+  },
+}
 
 export default class SplashController {
   public async index ({ auth, view }: HttpContextContract) {
-    /**
-   * Send back statistics:
-   * Total users
-   * Total channels
-   * New matches
-   * New channels
-   */
+    if (splashLastUpdate.diffNow('hours').hours <= 0) {
+      splashLastUpdate = splashLastUpdate.plus({ minutes: 30 })
+      await this.refreshStatistics()
+    }
+
     return view.render('core', {
       user: auth.user?.toJSON(),
       web: {
         template: 'splash',
         title: 'Find friends!',
-        statistics: {
-          channels: {
-            total: 0,
-            new: 0,
-          },
-          users: {
-            total: 0,
-            matched: 0,
-          },
-        },
+        statistics: statistics,
       },
     })
   }
 
-  public async ws () {
-    Ws.server.emit('message', 'test')
-    return 'bop'
+  private async refreshStatistics () {
+    const dateMidnight = DateTime
+      .fromJSDate(new Date())
+      .set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).toJSDate()
+
+    const countTotalUsers = Database.query().from('users').countDistinct('id as total').first()
+    const countTotalChannels = Database.query().from('profiles').countDistinct('chat_user_id as total').first()
+
+    const countNewUsers = Database.query()
+      .from('users')
+      .whereBetween('created_at', [dateMidnight, new Date()])
+      .countDistinct('id as total')
+      .first()
+    const countNewChannels = Database.query()
+      .from('profiles')
+      .whereBetween('created_at', [dateMidnight, new Date()])
+      .countDistinct('chat_user_id as total')
+      .first()
+
+    const [
+      { total: totalUsers }, { total: totalChannels }, { total: totalNewUsers }, { total: totalNewChannels },
+    ] = await Promise.all([
+      countTotalUsers, countTotalChannels, countNewUsers, countNewChannels,
+    ])
+
+    statistics = {
+      users: {
+        total: totalUsers,
+        new: totalNewUsers,
+      },
+      channels: {
+        total: totalChannels,
+        new: totalNewChannels,
+      },
+    }
   }
 }

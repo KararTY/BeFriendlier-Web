@@ -11,8 +11,8 @@ export default class MatchesLists extends BaseSchema {
       table.integer('user_id')
       table.integer('match_profile_id')
       table.integer('match_user_id')
-      table.dateTime('created_at').defaultTo(DateTime.fromJSDate(new Date()).toFormat('yyyy-MM-dd HH:mm:ss'))
-      table.dateTime('updated_at').defaultTo(DateTime.fromJSDate(new Date()).toFormat('yyyy-MM-dd HH:mm:ss'))
+      table.dateTime('created_at').defaultTo(DateTime.fromJSDate(new Date()).toSQL())
+      table.dateTime('updated_at').defaultTo(DateTime.fromJSDate(new Date()).toSQL())
     })
   }
 

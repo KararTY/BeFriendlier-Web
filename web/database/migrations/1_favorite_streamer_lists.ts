@@ -9,8 +9,8 @@ export default class FavoriteStreamerLists extends BaseSchema {
     this.schema.createTable(this.tableName, table => {
       table.integer('user_id')
       table.integer('streamer_id')
-      table.dateTime('created_at').defaultTo(DateTime.fromJSDate(new Date()).toFormat('yyyy-MM-dd HH:mm:ss'))
-      table.dateTime('updated_at').defaultTo(DateTime.fromJSDate(new Date()).toFormat('yyyy-MM-dd HH:mm:ss'))
+      table.dateTime('created_at').defaultTo(DateTime.fromJSDate(new Date()).toSQL())
+      table.dateTime('updated_at').defaultTo(DateTime.fromJSDate(new Date()).toSQL())
     })
   }
 
