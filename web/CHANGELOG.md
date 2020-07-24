@@ -1,3 +1,30 @@
+### v0015a (ad921707f1cd0b99e3edc6a30b8596c72e14e51d)
+* chore(dependencies): Update dependencies.
+    * **devdependencies**
+      * `@typescript-eslint/eslint-plugin` changed to `^3.7.0`.
+      * `eslint` changed to `^7.5.0`.
+      * `eslint-plugin-adonis` changed to `^1.0.14`.
+      * `eslint-plugin-import` changed to `^2.22.0`.
+      * `pino-pretty` changed to `^4.1.0`.
+      * `sqlite3` changed to `^5.0.0`.
+      * `typescript` changed to `^3.9.7`.
+    * **dependencies**
+      * `@adonisjs/auth` changed to `^4.2.4`.
+      * `got` changed to `^11.5.1`.
+      * `pg` changed to `^8.3.0`.
+      * `phc-argon2` changed to `^1.0.10`.
+### v0014a (affc76836dd0b8a9ef3df9b4148d4fc53e42e391)
+  * Renamed template global from `twitchAuth` to `twitchAuthURL` in `AppProvider` for clarification.
+    * refactor(AppProvider): Renamed template global.
+### v0013a (c1601679cab7cabf0d9a9dbfba6874193186493f)
+  * Twitch script now uses the scopes & redirectURI provided in the config under `config/twitch.ts` file. Also moved logic from `AppProvider`'s template global `twitchAuth` to `Twitch` as it's more appropriate to handle all Twitch related logic in one file.
+    * feat(config): scopes & redirectURI now in a config
+    * feat(TwitchProvider): Now uses new Twitch config.
+    * feat(Twitch): authorizationURL now parses url.
+    * refactor(AppProvider): Using Twitch.authorizationURL instead.
+### v0012a (3477db0108659f2de382909dfa531952466a407d)
+  * In the middlewares `RefreshTwitchToken` & `ValidateTwitchToken` the refresh dates are now *next* instead of last. This means we expect the values to be in the positive when diffing *until* the next date is hit.
+    * fix(middlewares): Use luxon math
 ### v0011a (7a8c475d733ddd46ff0e7c5be1a4273d47e4c155)
   * fix: Refactor dev error when seeds not run. Will do a full DRY run later.
 ### v0010a (cf76367cc16313d4fb93897efbbf11617709f374)
