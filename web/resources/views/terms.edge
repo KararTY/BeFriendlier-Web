@@ -53,7 +53,7 @@
 @if(!raw)
       <div class="has-text-centered" id="login">
         <h1 class="is-size-1">By clicking on Login with Twitch, you accept these terms.</h1>
-        <a href="{{ twitchAuth(csrfToken) }}" class="button is-large" type="submit" id="login">
+        <a href="{{ twitchAuthURL(csrfToken) }}" class="button is-large" type="submit" id="login">
           <span class="icon">{{{ icon('twitch', 'big') }}}</span>
           <span>Login with Twitch</span>
         </a>

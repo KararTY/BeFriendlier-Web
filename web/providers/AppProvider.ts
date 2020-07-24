@@ -28,7 +28,7 @@ export default class AppProvider {
       return feather.icons[iconName].toSvg(opts)
     })
 
-    View.global('twitchAuth', (csrfToken: string) => {
+    View.global('twitchAuthURL', (csrfToken: string) => {
       return Twitch.authorizationURL(csrfToken)
     })
   }
