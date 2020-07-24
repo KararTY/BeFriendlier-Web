@@ -11,14 +11,6 @@ import Client from '../src/Twitch'
 | You must import them inside the life-cycle methods defined inside
 | the provider class.
 |
-| @example:
-|
-| public async ready () {
-|   const Database = (await import('@ioc:Adonis/Lucid/Database')).default
-|   const Event = (await import('@ioc:Adonis/Core/Event')).default
-|   Event.on('db:query', Database.prettyPrint)
-| }
-|
 */
 export default class TwitchProvider {
   constructor (protected container: IocContract) {
@@ -27,10 +19,11 @@ export default class TwitchProvider {
   public register () {
     // Register your own bindings
     this.container.singleton('Adonis/Addons/Twitch', app => {
-      const config = app.use('Adonis/Core/Env')
+      const env = app.use('Adonis/Core/Env')
+      const config = app.use('Adonis/Core/Config')
       const logger = app.use('Adonis/Core/Logger')
 
-      const TwitchInstance = new Client(config, logger)
+      const TwitchInstance = new Client(env, config, logger)
 
       return TwitchInstance
     })

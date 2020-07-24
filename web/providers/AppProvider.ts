@@ -12,7 +12,7 @@ export default class AppProvider {
   public async boot () {
     // IoC container is ready
     const View = (await import('@ioc:Adonis/Core/View')).default
-    const Env = (await import('@ioc:Adonis/Core/Env')).default
+    const Twitch = (await import('@ioc:Adonis/Addons/Twitch')).default
 
     View.global('icon', (iconName: string, size?: 'big' | 'small') => {
       let opts: { width: number, height: number }
@@ -29,15 +29,7 @@ export default class AppProvider {
     })
 
     View.global('twitchAuth', (csrfToken: string) => {
-      let url = 'https://id.twitch.tv/oauth2/authorize?response_type=code'
-
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      url += `&client_id=${Env.get('TWITCH_CLIENT_TOKEN', '')}`
-      url += `&redirect_uri=${'http://localhost:3333/register'}`
-      url += '&force_verify=true'
-      url += `&state=${csrfToken}`
-
-      return url
+      return Twitch.authorizationURL(csrfToken)
     })
   }
 
