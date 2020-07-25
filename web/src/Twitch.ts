@@ -31,13 +31,17 @@ export interface TwitchValidateBody {
 }
 
 export class Client {
-  private readonly Logger
   private readonly token: string
   private readonly secret: string
+  private readonly scopes: string
+  private readonly redirectURI: string
+  private readonly Logger
 
-  constructor (config, Logger) {
-    this.token = config.get('TWITCH_CLIENT_TOKEN')
-    this.secret = config.get('TWITCH_CLIENT_SECRET')
+  constructor (env, config, Logger) {
+    this.token = env.get('TWITCH_CLIENT_TOKEN')
+    this.secret = env.get('TWITCH_CLIENT_SECRET')
+    this.scopes = config.get('twitch.scopes').join(' ')
+    this.redirectURI = config.get('twitch.redirectURI')
     this.Logger = Logger
   }
 
@@ -47,8 +51,8 @@ export class Client {
       client_secret: this.secret,
       grant_type: 'authorization_code',
       code,
-      redirect_uri: 'http://localhost:3333/register',
-      scope: 'user_subscriptions',
+      redirect_uri: this.redirectURI,
+      scope: this.scopes,
     }
 
     try {
@@ -59,7 +63,7 @@ export class Client {
       })
       return body
     } catch (error) {
-      this.Logger.error(error)
+      this.Logger.error('Twitch.requestToken()', error)
       return null
     }
   }
@@ -83,7 +87,7 @@ export class Client {
         return body.data[0] !== undefined ? body.data[0] as TwitchUsersBody : null
       }
     } catch (error) {
-      this.Logger.error(error)
+      this.Logger.error('Twitch.getUser()', error)
       return null
     }
   }
@@ -94,7 +98,7 @@ export class Client {
       client_secret: this.secret,
       grant_type: 'refresh_token',
       refresh_token: encodeURI(token), // Per https://dev.twitch.tv/docs/authentication/#refreshing-access-tokens:~:text=URL%20encode
-      scope: 'user_subscriptions',
+      scope: this.scopes,
     }
 
     try {
@@ -106,7 +110,7 @@ export class Client {
 
       return body as TwitchAuthBody
     } catch (error) {
-      this.Logger.error(error)
+      this.Logger.error('Twitch.refreshToken()', error)
       return null
     }
   }
@@ -124,9 +128,22 @@ export class Client {
 
       return body as TwitchValidateBody
     } catch (error) {
-      this.Logger.error(error)
+      this.Logger.error('Twitch.validateToken()', error)
       return null
     }
+  }
+
+  public authorizationURL (csrfToken: string) {
+    let url = 'https://id.twitch.tv/oauth2/authorize?response_type=code'
+
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    url += `&client_id=${this.token}`
+    url += `&redirect_uri=${this.redirectURI}`
+    url += `&scope=${this.scopes}`
+    url += '&force_verify=true'
+    url += `&state=${csrfToken}`
+
+    return url
   }
 }
 
