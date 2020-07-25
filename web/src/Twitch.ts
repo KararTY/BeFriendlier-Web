@@ -136,7 +136,6 @@ export class Client {
   public authorizationURL (csrfToken: string) {
     let url = 'https://id.twitch.tv/oauth2/authorize?response_type=code'
 
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     url += `&client_id=${this.token}`
     url += `&redirect_uri=${this.redirectURI}`
     url += `&scope=${this.scopes}`

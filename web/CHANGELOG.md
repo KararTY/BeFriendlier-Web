@@ -1,3 +1,6 @@
+### v0019a (ba7ccef867e5c3e4c258fb2b4420eabce18d2bb3)
+  * This was supposed to be uploaded with c1601679cab7cabf0d9a9dbfba6874193186493f.
+    * refactor(Twitch): Updated Twitch.ts
 ### v0018a (a78c130a6b80b3b897cfa9628c14b833fea10c41)
   * This was supposed to be uploaded with f732a247a36af36aa327acb0dfbd821f4c93600a.
     * refactor(splash): Updated splash template
