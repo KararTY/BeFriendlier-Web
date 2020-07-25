@@ -1,3 +1,6 @@
+### v0018a (a78c130a6b80b3b897cfa9628c14b833fea10c41)
+  * This was supposed to be uploaded with f732a247a36af36aa327acb0dfbd821f4c93600a.
+    * refactor(splash): Updated splash template
 ### v0017a (bfefe63676799db6b268fa28884b3e44f7fc3b4f)
   * fix(splash): Typo, hours when it should be minutes
 ### v0016a (f732a247a36af36aa327acb0dfbd821f4c93600a)
