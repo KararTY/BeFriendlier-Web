@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 0.2.0 (2020-07-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* Move files to root directory.
+
+### Features
+
+* Move files to root directory. ([70ac504](https://github.com/KararTY/Twitchr/commit/70ac5048d096333eeaf14944c164d9d1c193dc70))
+* **config:** scopes & redirectURI now in a config ([c160167](https://github.com/KararTY/Twitchr/commit/c1601679cab7cabf0d9a9dbfba6874193186493f))
+* **splash:** Now shows updated statistics. ([f732a24](https://github.com/KararTY/Twitchr/commit/f732a247a36af36aa327acb0dfbd821f4c93600a))
+* **validation:** Validation schemas now cached. ([cf76367](https://github.com/KararTY/Twitchr/commit/cf76367cc16313d4fb93897efbbf11617709f374))
+
+
+### Bug Fixes
+
+* **gitignore:** Ignore pnpm-lock.yaml ([f401ffd](https://github.com/KararTY/Twitchr/commit/f401ffd5e21fa2fe4b5345bf5d126f8854646804))
+* **middlewares:** Use luxon math ([3477db0](https://github.com/KararTY/Twitchr/commit/3477db0108659f2de382909dfa531952466a407d))
+* **README:** Fix links & cross Todo items. ([3c0fe87](https://github.com/KararTY/Twitchr/commit/3c0fe872353d1daaf67b11458c9c1efbc9e6b3ea))
+* **splash:** Typo, hours when it should be minutes ([bfefe63](https://github.com/KararTY/Twitchr/commit/bfefe63676799db6b268fa28884b3e44f7fc3b4f))
+* **Websocket:** Fix import reference to module. ([fed2847](https://github.com/KararTY/Twitchr/commit/fed2847ce7e5e8f624f9d9fbe86b0d764d6fc0b0))
+* Refactor dev error when seeds not run. ([7a8c475](https://github.com/KararTY/Twitchr/commit/7a8c475d733ddd46ff0e7c5be1a4273d47e4c155))
+
 ## 0.1.0 (2020-07-26)
 
 
