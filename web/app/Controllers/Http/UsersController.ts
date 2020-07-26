@@ -162,6 +162,7 @@ export default class UsersController {
         const profile = user.profile[i]
         await profile.related('matches').detach()
 
+        // Remove all matches to this user.
         await Database.query().from('matches_lists').where('match_user_id', user.id).delete()
 
         await profile.delete()

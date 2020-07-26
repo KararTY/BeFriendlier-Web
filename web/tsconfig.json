@@ -27,8 +27,11 @@
       "@adonisjs/lucid",
       "@adonisjs/shield"
     ],
-    "lib": ["DOM"]
+    "lib": [
+      "DOM"
+    ]
   },
-  "files": ["./node_modules/@adonisjs/env/build/adonis-typings/env.d.ts"]
-  
+  "files": [
+    "./node_modules/@adonisjs/env/build/adonis-typings/env.d.ts"
+  ]
 }

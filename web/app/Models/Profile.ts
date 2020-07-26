@@ -7,6 +7,11 @@ import {
   ManyToMany,
 } from '@ioc:Adonis/Lucid/Orm'
 
+interface Emotes {
+  name: string
+  url: string
+}
+
 export default class Profile extends BaseModel {
   @column({ isPrimary: true })
   public id: number
@@ -16,7 +21,7 @@ export default class Profile extends BaseModel {
   public userId: number
 
   @column()
-  public chatUserId?: number
+  public chatUserId: number
 
   @column()
   public enabled: boolean
@@ -28,10 +33,10 @@ export default class Profile extends BaseModel {
   public color: string
 
   @column({
-    prepare: (value: string[]) => JSON.stringify(value),
+    prepare: (value: Emotes[]) => JSON.stringify(value),
     serialize: (value: string) => JSON.parse(value),
   })
-  public favoriteEmotes: string[]
+  public favoriteEmotes: Emotes[]
 
   @manyToMany(() => Profile, {
     localKey: 'id',
@@ -42,6 +47,21 @@ export default class Profile extends BaseModel {
     pivotColumns: ['user_id', 'match_user_id'],
   })
   public matches: ManyToMany<typeof Profile>
+
+  @column({
+    prepare: (value: number[]) => JSON.stringify(value),
+    serialize: (value: string) => JSON.parse(value),
+  })
+  public mismatches: number[]
+
+  @column({
+    prepare: (value: number[]) => JSON.stringify(value),
+    serialize: (value: string) => JSON.parse(value),
+  })
+  public rolls: number[]
+
+  @column.dateTime()
+  public nextRoll: DateTime
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

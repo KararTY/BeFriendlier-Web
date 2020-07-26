@@ -25,6 +25,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "pino-pretty": "^4.1.0",
     "sqlite3": "^5.0.0",
+    "standard-version": "^8.0.2",
     "typescript": "^3.9.7",
     "youch": "^2.0.10",
     "youch-terminal": "^1.0.0"
@@ -38,7 +39,9 @@
     "@adonisjs/session": "^3.0.4",
     "@adonisjs/shield": "^3.0.4",
     "@adonisjs/view": "^2.0.7",
+    "@hapi/bourne": "^2.0.0",
     "@types/ws": "^7.2.6",
+    "befriendlier-shared": "github:kararty/befriendlier-shared#semver:^1.1.1",
     "bulma": "^0.9.0",
     "feather-icons": "^4.28.0",
     "got": "^11.5.1",

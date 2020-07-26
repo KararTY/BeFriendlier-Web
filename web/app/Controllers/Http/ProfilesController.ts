@@ -6,16 +6,6 @@ import User from 'App/Models/User'
 import Profile from 'App/Models/Profile'
 
 export default class ProfilesController {
-  private readonly profilesSchema = schema.create({
-    bio: schema.string({}, [
-      rules.maxLength(128),
-      rules.minLength(1),
-    ]),
-    color: schema.string({}, [
-      rules.hexColorString(),
-    ]),
-  })
-
   public async read ({ params, auth, view, session, response }: HttpContextContract) {
     if (auth.user === undefined) {
       return
@@ -24,24 +14,8 @@ export default class ProfilesController {
     const { id } = params
 
     if (id === undefined) {
-      // Show user's profiles.
-      const profiles: any[] = []
-
-      await auth.user.preload('profile')
-      for (let index = 0; index < auth.user.profile.length; index++) {
-        const profile = auth.user.profile[index]
-        const profileJSON = profile.toJSON()
-
-        if (profile.chatUserId !== 0) {
-          const user = await User.find(profile.chatUserId)
-          if (user !== null) {
-            profileJSON.chat = user.toJSON()
-            profiles.push(profileJSON)
-          }
-        } else {
-          profiles.push(profileJSON)
-        }
-      }
+      // Show all user's profiles.
+      const profiles = await this.getAllProfilesForUser(auth.user)
 
       return view.render('core', {
         user: auth.user.toJSON(),
@@ -52,29 +26,31 @@ export default class ProfilesController {
         },
       })
     } else {
+      // Request has an id in parameter (url): We're looking for a profile...
       const authID = auth.user.id
 
       const idNumber = Number(id)
       if (Number.isNaN(idNumber)) {
-        session.flash('message', { error: 'Error: Parameter is not a number. Profile url can only contain numbers.' })
+        session.flash('message', { error: this.Error.parameterBadRequest })
         return response.redirect('/')
       }
 
       const profile = await Profile.find(Number(id))
 
       if (profile === null) {
-        session.flash('message', { error: 'Error: Profile does not exist.' })
+        session.flash('message', { error: this.Error.notFound })
         return response.redirect('/')
       }
 
       const ownProfile = profile.userId === authID
 
       let chat: User | null = null
+      // "chatUserId === 0" notates a global profile. It doesn't exist by design, so don't check for it.
       if (profile.chatUserId !== 0) {
         chat = await User.find(profile.chatUserId)
         // Should not happen, ever.
         if (chat === null) {
-          session.flash('message', { error: 'Error: Chat owner is missing. Report this error on github.' })
+          session.flash('message', { error: this.Error.noOwner })
           return response.redirect('/profile/')
         }
       }
@@ -101,7 +77,7 @@ export default class ProfilesController {
       }
 
       if (ownProfile) {
-      // If own, allow access.
+        // If own, allow access.
         return view.render('core', {
           user: userJSON,
           profile: profileJSON,
@@ -112,33 +88,51 @@ export default class ProfilesController {
           },
         })
       } else {
-        // If someone else's, check if this user has matched for that specific profile.
+        // If someone else's, check if the requested profile has matched this requesting user.
         const match = await Database.query().from('matches_lists').where({
           profile_id: profile.id,
           match_user_id: authID,
         }).first()
 
-        if (match !== null) {
-          const userOfProfile = await User.find(profile.userId)
-          if (userOfProfile !== null) {
-            await userOfProfile.preload('favoriteStreamers')
-
-            return view.render('core', {
-              user: userJSON,
-              profile: profileJSON,
-              profileUser: userOfProfile.toJSON(),
-              web: {
-                template: 'profile',
-                title: chat !== null
-                  ? `${userOfProfile.name}'s profile in ${chat.name}'s chat`
-                  : `${userOfProfile.name}'s global profile`,
-              },
-            })
-          }
+        if (match === null) {
+          // The requested profile hasn't matched with this requesting user.
+          session.flash('message', { error: this.Error.forbidden })
+          return response.redirect('/')
         }
 
-        session.flash('message', { error: 'Error: You are not allowed access to that profile!' })
-        return response.redirect('/')
+        // And check if the requesting user has matched for that specific profile.
+        const hasMatched = await Database.query().from('matches_lists').where({
+          user_id: auth.user.id,
+          match_profile_id: profile.id,
+        }).first()
+
+        if (hasMatched === null) {
+          // This requesting user hasn't matched with the requested profile.
+          session.flash('message', { error: this.Error.forbidden })
+          return response.redirect('/')
+        }
+
+        const userOfProfile = await User.find(profile.userId)
+
+        if (userOfProfile === null) {
+          // The requested profile doesn't have an existing owner? This shouldn't happen.
+          session.flash('message', { error: this.Error.noOwner })
+          return response.redirect('/profile')
+        }
+
+        await userOfProfile.preload('favoriteStreamers')
+
+        return view.render('core', {
+          user: userJSON,
+          profile: profileJSON,
+          profileUser: userOfProfile.toJSON(),
+          web: {
+            template: 'profile',
+            title: chat !== null
+              ? `${userOfProfile.name}'s profile in ${chat.name}'s chat`
+              : `${userOfProfile.name}'s global profile`,
+          },
+        })
       }
     }
   }
@@ -152,7 +146,7 @@ export default class ProfilesController {
 
     const idNumber = Number(id)
     if (Number.isNaN(idNumber)) {
-      session.flash('message', { error: 'Error: Parameter is not a number. Profile url can only contain numbers.' })
+      session.flash('message', { error: this.Error.parameterBadRequest })
       return response.redirect('/profile/')
     }
 
@@ -165,7 +159,7 @@ export default class ProfilesController {
     const profile = await Profile.find(idNumber)
 
     if (profile === null) {
-      session.flash('message', { error: 'Error: Profile does not exist.' })
+      session.flash('message', { error: this.Error.notFound })
       return response.redirect('/profile/')
     }
 
@@ -179,7 +173,7 @@ export default class ProfilesController {
       session.flash('message', { message: 'Successfully updated your profile.' })
       return response.redirect(`/profile/${id}`)
     } else {
-      session.flash('message', { error: 'Error: You are not allowed access to that profile!' })
+      session.flash('message', { error: this.Error.forbidden })
       return response.redirect('/profile/')
     }
   }
@@ -197,6 +191,7 @@ export default class ProfilesController {
     if (profile !== undefined) {
       await profile.related('matches').detach()
 
+      // Remove all matches to this profile.
       await Database.query().from('matches_lists').where('match_profile_id', profile.id).delete()
 
       await profile.delete()
@@ -206,7 +201,7 @@ export default class ProfilesController {
     return response.redirect('/profile/')
   }
 
-  public async matches ({ params, request, auth, response }: HttpContextContract) {
+  public async matchesJSONPagination ({ params, request, auth, response }: HttpContextContract) {
     if (auth.user === undefined) {
       return
     }
@@ -221,18 +216,18 @@ export default class ProfilesController {
 
     const idNumber = Number(id)
     if (Number.isNaN(idNumber)) {
-      return response.badRequest({ error: 'Error: Parameter is not a number. Profile url can only contain numbers.' })
+      return response.badRequest({ error: this.Error.parameterBadRequest })
     }
 
     const paginationNumber = Number(pagination)
     if (Number.isNaN(paginationNumber)) {
-      return response.badRequest({ error: 'Error: Pagination get() query is not a number.' })
+      return response.badRequest({ error: this.Error.paginationGetBadRequest })
     }
 
     const profile = await Profile.find(idNumber)
 
     if (profile === null) {
-      return response.notFound({ error: 'Error: Profile does not exist.' })
+      return response.notFound({ error: this.Error.notFound })
     }
 
     const ownProfile = profile.userId === auth.user.id
@@ -257,7 +252,7 @@ export default class ProfilesController {
 
       return response.json(matchesJSON)
     } else {
-      return response.forbidden({ error: 'Error: You are not allowed access to that profile!' })
+      return response.forbidden({ error: this.Error.forbidden })
     }
   }
 
@@ -275,23 +270,23 @@ export default class ProfilesController {
     const { profileID } = request.post()
 
     if (profileID === undefined) {
-      return response.badRequest({ error: 'Error: Body must contain { profileID: number }.' })
+      return response.badRequest({ error: this.Error.bodyBadRequest })
     }
 
     const profileIDNumber = Number(profileID)
     if (Number.isNaN(profileIDNumber)) {
-      return response.badRequest({ error: 'Error: profileID is not a number.' })
+      return response.badRequest({ error: this.Error.idBadRequest })
     }
 
     const idNumber = Number(id)
     if (Number.isNaN(idNumber)) {
-      return response.badRequest({ error: 'Error: Parameter is not a number. Profile url can only contain numbers.' })
+      return response.badRequest({ error: this.Error.parameterBadRequest })
     }
 
     const profile = await Profile.find(idNumber)
 
     if (profile === null) {
-      return response.notFound({ error: 'Error: Profile does not exist.' })
+      return response.notFound({ error: this.Error.notFound })
     }
 
     const ownProfile = profile.userId === auth.user.id
@@ -300,7 +295,7 @@ export default class ProfilesController {
       const match = await profile.related('matches').query().where('id', profileIDNumber).first()
 
       if (match === null) {
-        return response.notFound({ error: 'Error: Could not remove. That matched profile does not exist.' })
+        return response.notFound({ error: this.Error.notFound })
       }
 
       // Remove match from this profile.
@@ -315,7 +310,50 @@ export default class ProfilesController {
 
       return response.ok({ message: 'Successfully removed match from profile.' })
     } else {
-      return response.forbidden({ error: 'Error: You are not allowed access to that profile!' })
+      return response.forbidden({ error: this.Error.forbidden })
     }
+  }
+
+  private async getAllProfilesForUser (user: User) {
+    const profiles: any[] = []
+
+    await user.preload('profile')
+
+    for (let index = 0; index < user.profile.length; index++) {
+      const profile = user.profile[index]
+      const profileJSON = profile.toJSON()
+
+      if (profile.chatUserId !== 0) {
+        const matchedprofileUser = await User.find(profile.chatUserId)
+        if (matchedprofileUser !== null) {
+          profileJSON.chat = matchedprofileUser.toJSON()
+          profiles.push(profileJSON)
+        }
+      } else {
+        profiles.push(profileJSON)
+      }
+    }
+
+    return profiles
+  }
+
+  private readonly profilesSchema = schema.create({
+    bio: schema.string({}, [
+      rules.maxLength(128),
+      rules.minLength(1),
+    ]),
+    color: schema.string({}, [
+      rules.hexColorString(),
+    ]),
+  })
+
+  private readonly Error = {
+    forbidden: 'Error: You are not allowed access to that profile!',
+    notFound: 'Error: Profile does not exist.',
+    parameterBadRequest: 'Error: Parameter is not a number. Profile url can only contain numbers.',
+    noOwner: 'Error: Chat owner is missing. Report this error on github.',
+    bodyBadRequest: 'Error: Body must contain { profileID: number }.',
+    idBadRequest: 'Error: profileID is not a number.',
+    paginationGetBadRequest: 'Error: Pagination GET query is not a number.',
   }
 }
