@@ -9,7 +9,7 @@ Twitch "Tinder(TM)" bot.
 ## Execution
   * 10 minute cooldown for a "swiping" command.
   * "Swiping" gives you a text, consisting of the user's bio.
-  * You can reply to the bot with "yes" to get more information.
+  * You can reply to the bot with "more" to get more information.
   * You can reply to the bot with "match" to try to match with the person.
   * You can reply with "next" or "no" to skip the person.
   * Profile can be setup via command. 128 characters bio.
@@ -33,8 +33,9 @@ Stay tuned.
     * 128 characters bio.
 
 ## Changelogs
-  * [Website](web/CHANGELOG.md)
-  * [Bot](bot/CHANGELOG.md)
+  * [Website](CHANGELOG.md)
+  * [Bot](https://github.com/KararTY/BeFriendlier-Bot/blob/master/CHANGELOG.md)
+  * [Shared](https://github.com/KararTY/BeFriendlier-Shared/blob/master/CHANGELOG.md)
 
 ## Todo
   * Database
@@ -63,12 +64,12 @@ Stay tuned.
       * Ban users
       * Delete users
     * Bots end-point
-      * Keep track of clients.
+      * ~~Keep track of clients.~~
       * Refresh bot data.
       * Tell bot to track new channel.
-      * Roll a match.
-      * Confirm matches.
-      * Remove matches.
+      * ~~Roll a match.~~
+      * ~~Confirm matches.~~
+      * ~~Remove matches.~~
       * Get matches.
   * Bot
     * TODO: Make a todo. Pepega
