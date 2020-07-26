@@ -1,4 +1,4 @@
-# Twitchr
+# BeFriendlier
 Looking to hook up with POG Twitch friends?
 
 ## Requirements
