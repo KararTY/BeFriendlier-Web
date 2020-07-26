@@ -1,9 +1,10 @@
 {
   "name": "twitchr",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "build": "node ace build",
+    "bump": "standard-version",
     "start": "node ace serve --watch --node-args=\"--inspect\"",
     "css-build": "node-sass resources/sass/style.scss public/css/stylesheet.css --output-style compressed",
     "lint": "eslint . --ext=.ts",
