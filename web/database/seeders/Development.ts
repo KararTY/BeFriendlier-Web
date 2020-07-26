@@ -107,11 +107,15 @@ export default class UserSeeder extends BaseSeeder {
       }
     }
 
-    // No hard feelings, forsen. This is just for testing purposes.
+    // No hard feelings, forsen & xqcow. This is just for testing purposes.
     await BannedUser.updateOrCreateMany(uniqueKey, [
       {
         twitchID: '22484632',
         name: 'forsen',
+      },
+      {
+        twitchID: '71092938',
+        name: 'xqcow',
       },
     ])
   }
