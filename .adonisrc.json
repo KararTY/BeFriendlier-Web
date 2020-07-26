@@ -29,8 +29,7 @@
     "@adonisjs/view",
     "@adonisjs/auth",
     "@adonisjs/lucid",
-    "@adonisjs/shield",
-    "./providers/TwitchProvider"
+    "@adonisjs/shield"
   ],
   "metaFiles": [
     ".env",
