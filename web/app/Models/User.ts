@@ -27,11 +27,11 @@ export default class User extends BaseModel {
   @column()
   public name: string
 
-  @hasMany(() => Profile)
-  public profile: HasMany<typeof Profile>
-
   @column()
   public displayName: string
+
+  @hasMany(() => Profile)
+  public profile: HasMany<typeof Profile>
 
   @column({ columnName: 'twitch_id' })
   public twitchID: string
