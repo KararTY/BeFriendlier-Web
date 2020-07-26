@@ -1,3 +1,37 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## 0.1.0 (2020-07-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove `/ws` end-point.
+
+### Features
+
+* **config:** scopes & redirectURI now in a config ([c160167](https://github.com/KararTY/Twitchr/commit/c1601679cab7cabf0d9a9dbfba6874193186493f))
+* **package:** Add new modules. ([ba792b5](https://github.com/KararTY/Twitchr/commit/ba792b5b20cd7de7ff559d97f9914cc4063633f4))
+* **Profile:** Add /paginate end-point. ([921cb6a](https://github.com/KararTY/Twitchr/commit/921cb6a4d6aec91405f23342fa9dcb3b78967201))
+* **Profile:** Check if users are matched ([2847858](https://github.com/KararTY/Twitchr/commit/2847858941c9d208a5179076dda9ca662ef9c65d))
+* **Profile:** New Match columns. ([9b09e1f](https://github.com/KararTY/Twitchr/commit/9b09e1f64a95db396af7c8dd3876698724fde7fd))
+* **splash:** Now shows updated statistics. ([f732a24](https://github.com/KararTY/Twitchr/commit/f732a247a36af36aa327acb0dfbd821f4c93600a))
+* **validation:** Validation schemas now cached. ([cf76367](https://github.com/KararTY/Twitchr/commit/cf76367cc16313d4fb93897efbbf11617709f374))
+* **Websocket:** Added prototype websocket logic. ([aa0cbcc](https://github.com/KararTY/Twitchr/commit/aa0cbcc4c78bf3d70d12ed9e9e30647bad32165e))
+
+
+### Bug Fixes
+
+* **gitignore:** Ignore pnpm-lock.yaml ([f401ffd](https://github.com/KararTY/Twitchr/commit/f401ffd5e21fa2fe4b5345bf5d126f8854646804))
+* **lint:** Lint tsconfig. ([f081bcc](https://github.com/KararTY/Twitchr/commit/f081bcc1c39f0110c8f11b089a1bd32581b1e23a))
+* **middlewares:** Use luxon math ([3477db0](https://github.com/KararTY/Twitchr/commit/3477db0108659f2de382909dfa531952466a407d))
+* **Seeding:** Add new user to test banned users. ([94fa520](https://github.com/KararTY/Twitchr/commit/94fa520b5cc5e6728a12eb369ad94159c1f6bcd0))
+* **Twitch:** Allow Twitch module to throw errors. ([b8e0a50](https://github.com/KararTY/Twitchr/commit/b8e0a50e16fd562dca477ba1908753b2ae3967d4))
+* Refactor dev error when seeds not run. ([7a8c475](https://github.com/KararTY/Twitchr/commit/7a8c475d733ddd46ff0e7c5be1a4273d47e4c155))
+* Remove `/ws` end-point. ([a0795c5](https://github.com/KararTY/Twitchr/commit/a0795c571a54f4192c42fdd47da9c602913370ea))
+* **splash:** Typo, hours when it should be minutes ([bfefe63](https://github.com/KararTY/Twitchr/commit/bfefe63676799db6b268fa28884b3e44f7fc3b4f))
+
 ### v0019a (ba7ccef867e5c3e4c258fb2b4420eabce18d2bb3)
   * This was supposed to be uploaded with c1601679cab7cabf0d9a9dbfba6874193186493f.
     * refactor(Twitch): Updated Twitch.ts
