@@ -11,6 +11,7 @@ import { DatabaseConfig } from '@ioc:Adonis/Lucid/Database'
 import { OrmConfig } from '@ioc:Adonis/Lucid/Orm'
 
 const healthCheck = Boolean(Env.get('DB_HEALTHCHECK', false) as string)
+const connection = Env.get('DB_CONNECTION', 'sqlite') as string
 
 const databaseConfig: DatabaseConfig & { orm: Partial<OrmConfig> } = {
   /*
@@ -23,7 +24,7 @@ const databaseConfig: DatabaseConfig & { orm: Partial<OrmConfig> } = {
   | file.
   |
   */
-  connection: Env.get('DB_CONNECTION', 'sqlite') as string,
+  connection,
 
   connections: {
     /*
@@ -43,7 +44,7 @@ const databaseConfig: DatabaseConfig & { orm: Partial<OrmConfig> } = {
         filename: Application.tmpPath('db.sqlite3'),
       },
       useNullAsDefault: true,
-      healthCheck,
+      healthCheck: connection === 'sqlite' ? healthCheck : false,
     },
 
     /*
@@ -66,7 +67,7 @@ const databaseConfig: DatabaseConfig & { orm: Partial<OrmConfig> } = {
         password: Env.get('DB_PASSWORD', 'lucid') as string,
         database: Env.get('DB_NAME', 'lucid') as string,
       },
-      healthCheck,
+      healthCheck: connection === 'mysql' ? healthCheck : false,
     },
 
     /*
@@ -89,7 +90,7 @@ const databaseConfig: DatabaseConfig & { orm: Partial<OrmConfig> } = {
         password: Env.get('DB_PASSWORD', 'lucid') as string,
         database: Env.get('DB_NAME', 'lucid') as string,
       },
-      healthCheck,
+      healthCheck: connection === 'pg' ? healthCheck : false,
     },
   },
 
