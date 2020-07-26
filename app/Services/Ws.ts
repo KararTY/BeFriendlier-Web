@@ -8,7 +8,7 @@ import { schema, validator } from '@ioc:Adonis/Core/Validator'
 import Logger from '@ioc:Adonis/Core/Logger'
 
 import Matching from './Match'
-import { More, SocketMessage, ROLLMATCH, UNMATCH, BASE } from 'Shared'
+import { More, SocketMessage, ROLLMATCH, UNMATCH, BASE } from 'befriendlier-shared'
 
 interface Websocket extends WS {
   isAlive: boolean
