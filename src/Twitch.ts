@@ -35,14 +35,14 @@ export class Client {
   private readonly secret: string
   private readonly scopes: string
   private readonly redirectURI: string
-  private readonly Logger
+  private readonly logger
 
-  constructor (env, config, Logger) {
-    this.token = env.getOrFail('TWITCH_CLIENT_TOKEN')
-    this.secret = env.getOrFail('TWITCH_CLIENT_SECRET')
+  constructor (config, logger) {
+    this.token = config.get('twitch.clientToken')
+    this.secret = config.get('twitch.clientSecret')
     this.scopes = config.get('twitch.scopes').join(' ')
     this.redirectURI = config.get('twitch.redirectURI')
-    this.Logger = Logger
+    this.logger = logger
   }
 
   public async requestToken (code: string): Promise<TwitchAuthBody | null> {
@@ -63,7 +63,7 @@ export class Client {
       })
       return body
     } catch (error) {
-      this.Logger.error('Twitch.requestToken()', error)
+      this.logger.error('Twitch.requestToken()', error)
       return null
     }
   }
@@ -87,7 +87,7 @@ export class Client {
         return body.data[0] !== undefined ? body.data[0] as TwitchUsersBody : null
       }
     } catch (error) {
-      this.Logger.error('Twitch.getUser()', error)
+      this.logger.error('Twitch.getUser()', error)
       return null
     }
   }
@@ -110,7 +110,7 @@ export class Client {
 
       return body as TwitchAuthBody
     } catch (error) {
-      this.Logger.error('Twitch.refreshToken()', error)
+      this.logger.error('Twitch.refreshToken()', error)
       return null
     }
   }
@@ -128,7 +128,7 @@ export class Client {
 
       return body as TwitchValidateBody
     } catch (error) {
-      this.Logger.error('Twitch.validateToken()', error)
+      this.logger.error('Twitch.validateToken()', error)
       return null
     }
   }
