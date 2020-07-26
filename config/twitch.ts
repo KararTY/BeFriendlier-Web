@@ -2,24 +2,31 @@ import Env from '@ioc:Adonis/Core/Env'
 
 const TwitchConfig = {
   /**
-   * Twitch Client ID Token
+   * Twitch client ID token.
    */
   clientToken: Env.getOrFail('TWITCH_CLIENT_TOKEN') as string,
 
   /**
-   * Twitch Client Secret Token
+   * Twitch client secret token.
    */
   clientSecret: Env.getOrFail('TWITCH_CLIENT_SECRET') as string,
 
   /**
    * Redirect URI.
    */
-  redirectURI: 'http://localhost:3333/register',
+  redirectURI: Env.getOrFail('TWITCH_REDIRECT_URI') as string,
 
   /**
    * Scopes to ask for.
    */
   scopes: ['user_subscriptions'],
+
+  /**
+   * HTTP request headers.
+   */
+  headers: {
+    'user-agent': 'befriendlierapp (https://github.com/kararty/befriendlier-web)',
+  },
 }
 
 export default TwitchConfig

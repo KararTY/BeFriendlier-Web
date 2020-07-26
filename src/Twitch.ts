@@ -1,6 +1,4 @@
-import fetch from 'got'
-
-const defaultHeader = { 'user-agent': 'friendapp (https://github.com/kararty/twitchr)' }
+import fetch, { Headers } from 'got'
 
 export interface TwitchUsersBody {
   id: string
@@ -33,15 +31,17 @@ export interface TwitchValidateBody {
 export class Client {
   private readonly token: string
   private readonly secret: string
-  private readonly scopes: string
   private readonly redirectURI: string
+  private readonly scopes: string
+  private readonly headers: Headers
   private readonly logger
 
   constructor (config, logger) {
     this.token = config.get('twitch.clientToken')
     this.secret = config.get('twitch.clientSecret')
-    this.scopes = config.get('twitch.scopes').join(' ')
     this.redirectURI = config.get('twitch.redirectURI')
+    this.scopes = config.get('twitch.scopes').join(' ')
+    this.headers = config.get('twitch.headers')
     this.logger = logger
   }
 
@@ -57,7 +57,7 @@ export class Client {
 
     try {
       const { body }: any = await fetch.post('https://id.twitch.tv/oauth2/token', {
-        headers: { ...defaultHeader },
+        headers: { ...this.headers },
         searchParams,
         responseType: 'json',
       })
@@ -74,7 +74,7 @@ export class Client {
     try {
       const { body }: any = await fetch.get(`https://api.twitch.tv/helix/users?${usernames instanceof Array ? usernames.map((i, ind) => ind > 0 ? '&login=' + i : 'login=' + i).join('') : ''}`, {
         headers: {
-          ...defaultHeader,
+          ...this.headers,
           'Client-ID': this.token,
           Authorization: `Bearer ${token}`,
         },
@@ -103,7 +103,7 @@ export class Client {
 
     try {
       const { body }: any = await fetch.post('https://id.twitch.tv/oauth2/token', {
-        headers: { ...defaultHeader },
+        headers: { ...this.headers },
         searchParams,
         responseType: 'json',
       })
@@ -119,7 +119,7 @@ export class Client {
     try {
       const { body }: any = await fetch.get('https://id.twitch.tv/oauth2/validate', {
         headers: {
-          ...defaultHeader,
+          ...this.headers,
           'Client-ID': this.token,
           Authorization: `OAuth ${token}`,
         },
