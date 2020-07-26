@@ -38,8 +38,8 @@ export class Client {
   private readonly Logger
 
   constructor (env, config, Logger) {
-    this.token = env.get('TWITCH_CLIENT_TOKEN')
-    this.secret = env.get('TWITCH_CLIENT_SECRET')
+    this.token = env.getOrFail('TWITCH_CLIENT_TOKEN')
+    this.secret = env.getOrFail('TWITCH_CLIENT_SECRET')
     this.scopes = config.get('twitch.scopes').join(' ')
     this.redirectURI = config.get('twitch.redirectURI')
     this.Logger = Logger
