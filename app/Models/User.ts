@@ -40,6 +40,9 @@ export default class User extends BaseModel {
   @column()
   public streamerMode: boolean
 
+  @column()
+  public host: boolean
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
