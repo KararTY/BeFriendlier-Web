@@ -2,6 +2,7 @@ import Twitch from '@ioc:Adonis/Addons/Twitch'
 import Env from '@ioc:Adonis/Core/Env'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
+import { AuthContract } from '@ioc:Adonis/Addons/Auth'
 
 export default class AuthController {
   private readonly devError = new Error('Using NODE_ENV=development without existing TestUser. ' +
@@ -38,12 +39,7 @@ export default class AuthController {
         await user.save()
 
         if (Env.get('NODE_ENV') === 'development') {
-          const testUser = await User.findBy('twitchID', '0')
-          if (testUser === null) {
-            throw this.devError
-          } else {
-            await auth.login(testUser)
-          }
+          await this.developmentLogin(auth)
         } else {
           await auth.login(user)
         }
@@ -66,12 +62,7 @@ export default class AuthController {
 
         // Login
         if (Env.get('NODE_ENV') === 'development') {
-          const testUser = await User.findBy('twitchID', '0')
-          if (testUser === null) {
-            throw this.devError
-          } else {
-            await auth.login(testUser)
-          }
+          await this.developmentLogin(auth)
         } else {
           await auth.login(userExists)
         }
@@ -90,5 +81,14 @@ export default class AuthController {
 
     session.flash('message', { message: 'Goodbye. See you later!' })
     return response.redirect('/')
+  }
+
+  private async developmentLogin (auth: AuthContract) {
+    const testUser = await User.findBy('twitchID', '0')
+    if (testUser === null) {
+      throw this.devError
+    } else {
+      await auth.login(testUser)
+    }
   }
 }
