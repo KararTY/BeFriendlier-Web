@@ -1,5 +1,5 @@
-import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import HealthCheck from '@ioc:Adonis/Core/HealthCheck'
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class HealthChecksController {
   public async ping ({ request, response }: HttpContextContract) {

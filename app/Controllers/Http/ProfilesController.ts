@@ -1,9 +1,8 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
-
-import User from 'App/Models/User'
 import Profile from 'App/Models/Profile'
+import User from 'App/Models/User'
 
 export default class ProfilesController {
   public async read ({ params, auth, view, session, response }: HttpContextContract) {

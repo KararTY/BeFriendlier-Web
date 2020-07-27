@@ -1,11 +1,5 @@
+import { BaseModel, column, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
 import { DateTime } from 'luxon'
-
-import {
-  column,
-  BaseModel,
-  manyToMany,
-  ManyToMany,
-} from '@ioc:Adonis/Lucid/Orm'
 
 interface Emotes {
   name: string

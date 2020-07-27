@@ -1,10 +1,8 @@
-import { SocketMessage, ROLLMATCH, BASE, UNMATCH } from 'befriendlier-shared'
-
 import Logger from '@ioc:Adonis/Core/Logger'
 import Database from '@ioc:Adonis/Lucid/Database'
-
-import User from 'App/Models/User'
 import Profile from 'App/Models/Profile'
+import User from 'App/Models/User'
+import { BASE, ROLLMATCH, SocketMessage, UNMATCH } from 'befriendlier-shared'
 
 class Match {
   /**

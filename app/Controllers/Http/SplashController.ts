@@ -1,8 +1,6 @@
-import { DateTime } from 'luxon'
-
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-
 import Database from '@ioc:Adonis/Lucid/Database'
+import { DateTime } from 'luxon'
 
 let splashLastUpdate = DateTime.fromJSDate(new Date())
 let statistics = {

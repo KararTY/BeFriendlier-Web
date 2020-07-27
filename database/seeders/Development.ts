@@ -1,6 +1,6 @@
 import BaseSeeder from '@ioc:Adonis/Lucid/Seeder'
-import User from 'App/Models/User'
 import BannedUser from 'App/Models/BannedUser'
+import User from 'App/Models/User'
 
 export default class UserSeeder extends BaseSeeder {
   public static developmentOnly = true
