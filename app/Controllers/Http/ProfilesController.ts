@@ -323,9 +323,9 @@ export default class ProfilesController {
       const profileJSON = profile.toJSON()
 
       if (profile.chatUserId !== 0) {
-        const matchedprofileUser = await User.find(profile.chatUserId)
-        if (matchedprofileUser !== null) {
-          profileJSON.chat = matchedprofileUser.toJSON()
+        const matchedProfileUser = await User.find(profile.chatUserId)
+        if (matchedProfileUser !== null) {
+          profileJSON.chat = matchedProfileUser.toJSON()
           profiles.push(profileJSON)
         }
       } else {
