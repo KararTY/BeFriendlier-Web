@@ -17,6 +17,14 @@ const TwitchConfig = {
   redirectURI: Env.getOrFail('TWITCH_REDIRECT_URI') as string,
 
   /**
+   * Twitch username. Used to make bot join default channel.
+   */
+  user: {
+    name: Env.getOrFail('TWITCH_BOT_NAME') as string,
+    id: Env.getOrFail('TWITCH_BOT_ID') as string,
+  },
+
+  /**
    * Scopes to ask for.
    */
   scopes: ['user_subscriptions'],
