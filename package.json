@@ -8,10 +8,11 @@
     "start": "node ace serve --watch --node-args=\"--inspect\"",
     "css-build": "node-sass resources/sass/style.scss public/css/stylesheet.css --output-style compressed",
     "lint": "eslint . --ext=.ts",
-    "migrate:rollback": "npm run-script build && node ace migration:rollback",
-    "migrate:run": "npm run-script build && node ace migration:run",
-    "seed": "npm run-script build && node ace db:seed",
-    "r:m:s": "npm run-script build && node ace migration:rollback && node ace migration:run && node ace db:seed"
+    "lintfix": "eslint . --ext=.ts --fix",
+    "migrate:rollback": "npm run build && node ace migration:rollback",
+    "migrate:run": "npm run build && node ace migration:run",
+    "seed": "npm run build && node ace db:seed",
+    "r:m:s": "npm run build && node ace migration:rollback && node ace migration:run && node ace db:seed"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^2.1.3",
@@ -42,7 +43,7 @@
     "@adonisjs/view": "^2.0.7",
     "@hapi/bourne": "^2.0.0",
     "@types/ws": "^7.2.6",
-    "befriendlier-shared": "github:kararty/befriendlier-shared#semver:^1.1.1",
+    "befriendlier-shared": "github:kararty/befriendlier-shared#semver:^4.1.0",
     "bulma": "^0.9.0",
     "feather-icons": "^4.28.0",
     "got": "^11.5.1",

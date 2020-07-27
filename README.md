@@ -37,6 +37,23 @@ Stay tuned.
   * [Bot](https://github.com/KararTY/BeFriendlier-Bot/blob/master/CHANGELOG.md)
   * [Shared](https://github.com/KararTY/BeFriendlier-Shared/blob/master/CHANGELOG.md)
 
+## Setup
+  * `npm i` / `yarn i` / `pnpm i --shamefully-hoist` to install packages.
+  * Copy `.env.example`, and rename copy to `.env`.
+  * Change the environment values in the new `.env` file.
+  * Check `config/` directory for other configurations to change. Default config values should be sufficient for development, however.
+  * `npm run r:m:s` for seeding the database with initial values. If `NODE_ENV` is set to `development`, you will also get development values to test around with.
+  * `npm start` to start web server. That's it.
+
+## Contributing
+  * Use the provided eslint `.eslintrc.json` file.
+  * Run `npm run lint` to check for formatting issues.
+  * Run `npm run lintfix` to fix formatting issues.
+  * Always create a new branch, it's recommended to not push to master.
+  * Issue pull request.
+  * Use semver semantics in your commits, and make sure they adhere to the conventional commits specification. [Read more here](https://www.conventionalcommits.org/en/v1.0.0/).
+  * If you are creating a release in your own fork, run `npm run bump`.
+
 ## Todo
   * Database
     * User
@@ -70,6 +87,5 @@ Stay tuned.
       * ~~Roll a match.~~
       * ~~Confirm matches.~~
       * ~~Remove matches.~~
-      * Get matches.
   * Bot
     * TODO: Make a todo. Pepega
