@@ -7,3 +7,4 @@ coverage
 tmp
 public/css
 pnpm-lock.yaml
+.parcel-cache/
