@@ -2,7 +2,7 @@ import Logger from '@ioc:Adonis/Core/Logger'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Profile from 'App/Models/Profile'
 import User from 'App/Models/User'
-import { BASE, ROLLMATCH, SocketMessage, UNMATCH } from 'befriendlier-shared'
+import { BASE, ROLLMATCH, MessageType, UNMATCH } from 'befriendlier-shared'
 
 class Match {
   /**
@@ -25,7 +25,7 @@ class Match {
     }
 
     if (profile.nextRoll.diffNow('hours').hours < 0) {
-      throw new Error(SocketMessage.TAKEABREAK)
+      throw new Error(MessageType.TAKEABREAK)
     }
 
     await profile.preload('matches')
@@ -64,7 +64,7 @@ class Match {
     if (matchProfile === null) {
       // Shouldn't hit here, maybe user deleted as soon as they tried to match.
       Logger.error(`Tried to match with an unknown profile. profileId: ${String(profileId)}`)
-      throw new Error(SocketMessage.TAKEABREAK)
+      throw new Error(MessageType.TAKEABREAK)
     }
 
     // Add match for this profile.
@@ -81,15 +81,15 @@ class Match {
     if (matchUser === null) {
       // Shouldn't hit here, maybe user deleted as soon as they tried to match.
       Logger.error(`Tried to match with an unknown user. userId:${matchProfile.userId}, profileId: ${String(profileId)}`)
-      throw new Error(SocketMessage.TAKEABREAK)
+      throw new Error(MessageType.TAKEABREAK)
     }
 
     await profile.save()
 
     if (hasMatched !== null) {
-      return { attempt: SocketMessage.SUCCESS, user, matchUser }
+      return { attempt: MessageType.SUCCESS, user, matchUser }
     } else {
-      return { attempt: SocketMessage.MATCH }
+      return { attempt: MessageType.MATCH }
     }
   }
 
@@ -104,7 +104,7 @@ class Match {
     if (matchUser === null) {
       // Shouldn't hit here, maybe user deleted as soon as they tried to unmatch.
       Logger.error(`Tried to match with an unknown user. matchUserTwitch.id:${String(matchUserTwitch.id)}, matchUserTwitch.name:${String(matchUserTwitch.name)}, profileId: ${String(profile.id)}`)
-      throw new Error(SocketMessage.TAKEABREAK)
+      throw new Error(MessageType.TAKEABREAK)
     }
 
     const res = await Database.query().from('matches_lists').where({
@@ -129,7 +129,7 @@ class Match {
 
   private async rollUntilAvailableUser (rolls: number[]) {
     if (rolls.length === 0) {
-      return new Error(SocketMessage.TAKEABREAK)
+      return new Error(MessageType.TAKEABREAK)
     }
 
     const profile = await Profile.find(rolls[0])
@@ -147,7 +147,7 @@ class Match {
   private async findProfileByChatOwner (userId: string, channelId: string) {
     const user = await User.findBy('twitchID', userId)
     if (user === null) {
-      throw new Error(SocketMessage.UNREGISTERED)
+      throw new Error(MessageType.UNREGISTERED)
     }
 
     const chatOwnerUser = await User.findBy('twitchID', channelId)
