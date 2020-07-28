@@ -1,19 +1,20 @@
 {
-  "name": "twitchr",
+  "name": "befriendlier-web",
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "build": "node ace build",
-    "build-public": "parcel build resources/public/Index.ts --dist-dir public/js/ --detailed-report",
+    "build": "npm run build-js && npm run build-css && npm run build-server",
+    "build-server": "node ace build",
+    "build-js": "parcel build resources/js/Index.ts --dist-dir public/js/ --detailed-report",
+    "build-css": "node-sass resources/sass/style.scss public/css/stylesheet.css --output-style compressed",
     "bump": "standard-version",
-    "start": "node ace serve --watch --node-args=\"--inspect\"",
-    "css-build": "node-sass resources/sass/style.scss public/css/stylesheet.css --output-style compressed",
+    "start-test": "node ace serve --watch --node-args=\"--inspect\"",
     "lint": "eslint .",
     "lintfix": "eslint . --ext=.ts --fix",
     "migrate:rollback": "npm run build && node ace migration:rollback",
     "migrate:run": "npm run build && node ace migration:run",
     "seed": "npm run build && node ace db:seed",
-    "r:m:s": "npm run build && node ace migration:rollback && node ace migration:run && node ace db:seed"
+    "r:m:s": "npm run build-server && node ace migration:rollback && node ace migration:run && node ace db:seed"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^2.1.3",
@@ -26,6 +27,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
+    "fsevents": "^2.1.3",
     "pino-pretty": "^4.1.0",
     "sqlite3": "^5.0.0",
     "standard-version": "^8.0.2",

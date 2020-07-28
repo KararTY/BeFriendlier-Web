@@ -5,13 +5,15 @@
   <div class="hero-body">
     <div class="container has-text-centered">
       <div class="animated slideInLeft">
-        <h1 class="title is-1">Twitchr</h1>
+        <h1 class="title is-1">BeFriendlier</h1>
         <h2 class="subtitle is-3">Find Twitch friends!</h2>
         @if(!user)
-          <a href="{{ twitchAuthURL(csrfToken) }}" class="button is-large" type="submit" id="login">
-            <span class="icon">{{{ icon('twitch', 'big') }}}</span>
-            <span>Login with Twitch</span>
-          </a>
+          <div id="login">
+            <a href="{{ twitchAuthURL(csrfToken) }}" class="button is-large" type="submit">
+              <span class="icon">{{{ icon('twitch', 'big') }}}</span>
+              <span>Login with Twitch</span>
+            </a>
+          </div>
         @else
           <a href="{{ route('UsersController.read') }}" class="button is-large" type="submit">
             <span class="icon">{{{ icon('settings', 'big') }}}</span>

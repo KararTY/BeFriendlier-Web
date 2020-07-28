@@ -8,3 +8,4 @@ tmp
 public/css
 pnpm-lock.yaml
 .parcel-cache/
+public/js

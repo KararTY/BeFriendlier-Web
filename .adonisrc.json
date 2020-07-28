@@ -35,6 +35,7 @@
     ".env",
     ".adonisrc.json",
     "resources/views/**/*.edge",
+    "resources/js/**",
     "public/**"
   ]
 }
