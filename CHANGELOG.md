@@ -11,20 +11,13 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* Move files to root directory. ([70ac504](https://github.com/KararTY/Twitchr/commit/70ac5048d096333eeaf14944c164d9d1c193dc70))
-* **config:** scopes & redirectURI now in a config ([c160167](https://github.com/KararTY/Twitchr/commit/c1601679cab7cabf0d9a9dbfba6874193186493f))
-* **splash:** Now shows updated statistics. ([f732a24](https://github.com/KararTY/Twitchr/commit/f732a247a36af36aa327acb0dfbd821f4c93600a))
-* **validation:** Validation schemas now cached. ([cf76367](https://github.com/KararTY/Twitchr/commit/cf76367cc16313d4fb93897efbbf11617709f374))
+* Move files to root directory. ([70ac504](https://github.com/KararTY/BeFriendlier-Web/commit/70ac5048d096333eeaf14944c164d9d1c193dc70))
 
 
 ### Bug Fixes
 
-* **gitignore:** Ignore pnpm-lock.yaml ([f401ffd](https://github.com/KararTY/Twitchr/commit/f401ffd5e21fa2fe4b5345bf5d126f8854646804))
-* **middlewares:** Use luxon math ([3477db0](https://github.com/KararTY/Twitchr/commit/3477db0108659f2de382909dfa531952466a407d))
-* **README:** Fix links & cross Todo items. ([3c0fe87](https://github.com/KararTY/Twitchr/commit/3c0fe872353d1daaf67b11458c9c1efbc9e6b3ea))
-* **splash:** Typo, hours when it should be minutes ([bfefe63](https://github.com/KararTY/Twitchr/commit/bfefe63676799db6b268fa28884b3e44f7fc3b4f))
-* **Websocket:** Fix import reference to module. ([fed2847](https://github.com/KararTY/Twitchr/commit/fed2847ce7e5e8f624f9d9fbe86b0d764d6fc0b0))
-* Refactor dev error when seeds not run. ([7a8c475](https://github.com/KararTY/Twitchr/commit/7a8c475d733ddd46ff0e7c5be1a4273d47e4c155))
+* **README:** Fix links & cross Todo items. ([3c0fe87](https://github.com/KararTY/BeFriendlier-Web/commit/3c0fe872353d1daaf67b11458c9c1efbc9e6b3ea))
+* **Websocket:** Fix import reference to module. ([fed2847](https://github.com/KararTY/BeFriendlier-Web/commit/fed2847ce7e5e8f624f9d9fbe86b0d764d6fc0b0))
 
 ## 0.1.0 (2020-07-26)
 
@@ -35,26 +28,26 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* **config:** scopes & redirectURI now in a config ([c160167](https://github.com/KararTY/Twitchr/commit/c1601679cab7cabf0d9a9dbfba6874193186493f))
-* **package:** Add new modules. ([ba792b5](https://github.com/KararTY/Twitchr/commit/ba792b5b20cd7de7ff559d97f9914cc4063633f4))
-* **Profile:** Add /paginate end-point. ([921cb6a](https://github.com/KararTY/Twitchr/commit/921cb6a4d6aec91405f23342fa9dcb3b78967201))
-* **Profile:** Check if users are matched ([2847858](https://github.com/KararTY/Twitchr/commit/2847858941c9d208a5179076dda9ca662ef9c65d))
-* **Profile:** New Match columns. ([9b09e1f](https://github.com/KararTY/Twitchr/commit/9b09e1f64a95db396af7c8dd3876698724fde7fd))
-* **splash:** Now shows updated statistics. ([f732a24](https://github.com/KararTY/Twitchr/commit/f732a247a36af36aa327acb0dfbd821f4c93600a))
-* **validation:** Validation schemas now cached. ([cf76367](https://github.com/KararTY/Twitchr/commit/cf76367cc16313d4fb93897efbbf11617709f374))
-* **Websocket:** Added prototype websocket logic. ([aa0cbcc](https://github.com/KararTY/Twitchr/commit/aa0cbcc4c78bf3d70d12ed9e9e30647bad32165e))
+* **config:** scopes & redirectURI now in a config ([c160167](https://github.com/KararTY/BeFriendlier-Web/commit/c1601679cab7cabf0d9a9dbfba6874193186493f))
+* **package:** Add new modules. ([ba792b5](https://github.com/KararTY/BeFriendlier-Web/commit/ba792b5b20cd7de7ff559d97f9914cc4063633f4))
+* **Profile:** Add /paginate end-point. ([921cb6a](https://github.com/KararTY/BeFriendlier-Web/commit/921cb6a4d6aec91405f23342fa9dcb3b78967201))
+* **Profile:** Check if users are matched ([2847858](https://github.com/KararTY/BeFriendlier-Web/commit/2847858941c9d208a5179076dda9ca662ef9c65d))
+* **Profile:** New Match columns. ([9b09e1f](https://github.com/KararTY/BeFriendlier-Web/commit/9b09e1f64a95db396af7c8dd3876698724fde7fd))
+* **splash:** Now shows updated statistics. ([f732a24](https://github.com/KararTY/BeFriendlier-Web/commit/f732a247a36af36aa327acb0dfbd821f4c93600a))
+* **validation:** Validation schemas now cached. ([cf76367](https://github.com/KararTY/BeFriendlier-Web/commit/cf76367cc16313d4fb93897efbbf11617709f374))
+* **Websocket:** Added prototype websocket logic. ([aa0cbcc](https://github.com/KararTY/BeFriendlier-Web/commit/aa0cbcc4c78bf3d70d12ed9e9e30647bad32165e))
 
 
 ### Bug Fixes
 
-* **gitignore:** Ignore pnpm-lock.yaml ([f401ffd](https://github.com/KararTY/Twitchr/commit/f401ffd5e21fa2fe4b5345bf5d126f8854646804))
-* **lint:** Lint tsconfig. ([f081bcc](https://github.com/KararTY/Twitchr/commit/f081bcc1c39f0110c8f11b089a1bd32581b1e23a))
-* **middlewares:** Use luxon math ([3477db0](https://github.com/KararTY/Twitchr/commit/3477db0108659f2de382909dfa531952466a407d))
-* **Seeding:** Add new user to test banned users. ([94fa520](https://github.com/KararTY/Twitchr/commit/94fa520b5cc5e6728a12eb369ad94159c1f6bcd0))
-* **Twitch:** Allow Twitch module to throw errors. ([b8e0a50](https://github.com/KararTY/Twitchr/commit/b8e0a50e16fd562dca477ba1908753b2ae3967d4))
-* Refactor dev error when seeds not run. ([7a8c475](https://github.com/KararTY/Twitchr/commit/7a8c475d733ddd46ff0e7c5be1a4273d47e4c155))
-* Remove `/ws` end-point. ([a0795c5](https://github.com/KararTY/Twitchr/commit/a0795c571a54f4192c42fdd47da9c602913370ea))
-* **splash:** Typo, hours when it should be minutes ([bfefe63](https://github.com/KararTY/Twitchr/commit/bfefe63676799db6b268fa28884b3e44f7fc3b4f))
+* **gitignore:** Ignore pnpm-lock.yaml ([f401ffd](https://github.com/KararTY/BeFriendlier-Web/commit/f401ffd5e21fa2fe4b5345bf5d126f8854646804))
+* **lint:** Lint tsconfig. ([f081bcc](https://github.com/KararTY/BeFriendlier-Web/commit/f081bcc1c39f0110c8f11b089a1bd32581b1e23a))
+* **middlewares:** Use luxon math ([3477db0](https://github.com/KararTY/BeFriendlier-Web/commit/3477db0108659f2de382909dfa531952466a407d))
+* **Seeding:** Add new user to test banned users. ([94fa520](https://github.com/KararTY/BeFriendlier-Web/commit/94fa520b5cc5e6728a12eb369ad94159c1f6bcd0))
+* **Twitch:** Allow Twitch module to throw errors. ([b8e0a50](https://github.com/KararTY/BeFriendlier-Web/commit/b8e0a50e16fd562dca477ba1908753b2ae3967d4))
+* Refactor dev error when seeds not run. ([7a8c475](https://github.com/KararTY/BeFriendlier-Web/commit/7a8c475d733ddd46ff0e7c5be1a4273d47e4c155))
+* Remove `/ws` end-point. ([a0795c5](https://github.com/KararTY/BeFriendlier-Web/commit/a0795c571a54f4192c42fdd47da9c602913370ea))
+* **splash:** Typo, hours when it should be minutes ([bfefe63](https://github.com/KararTY/BeFriendlier-Web/commit/bfefe63676799db6b268fa28884b3e44f7fc3b4f))
 
 ### v0019a (ba7ccef867e5c3e4c258fb2b4420eabce18d2bb3)
   * This was supposed to be uploaded with c1601679cab7cabf0d9a9dbfba6874193186493f.
@@ -313,7 +306,7 @@ All notable changes to this project will be documented in this file. See [standa
   * Added `streamerMode` blur to profiles.edge template.
   * `SplashController.index` now uses `Middleware/Redirect`.
 ### v0002a commit (ed12016) 2020-06-21
-  * [Fixed error on startup.](https://github.com/KararTY/Twitchr/commit/ed120167b83dc10cac9da1e3109793b1dbd38ab4#diff-fa492029d36185ca8534a9e413b02a4fR107)
+  * [Fixed error on startup.](https://github.com/KararTY/BeFriendlier-Web/commit/ed120167b83dc10cac9da1e3109793b1dbd38ab4#diff-fa492029d36185ca8534a9e413b02a4fR107)
   * Fixed links in updateProfile.edge template, profiles.edge template.
 ### v0001a commit (1ac2181) 2020-06-21
   * Changed README file to reflect changes made to Profile model.
