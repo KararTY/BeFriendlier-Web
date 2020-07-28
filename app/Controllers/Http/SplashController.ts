@@ -1,6 +1,7 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Database from '@ioc:Adonis/Lucid/Database'
 import { DateTime } from 'luxon'
+import User from 'App/Models/User'
+import Profile from 'App/Models/Profile'
 
 let splashLastUpdate = DateTime.fromJSDate(new Date())
 let statistics = {
@@ -18,8 +19,8 @@ export default class SplashController {
   public async index ({ auth, view }: HttpContextContract) {
     if (splashLastUpdate.diffNow('minutes').minutes <= 0) {
       splashLastUpdate = splashLastUpdate.plus({ minutes: 30 })
-      await this.refreshStatistics()
     }
+    await this.refreshStatistics()
 
     return view.render('core', {
       user: auth.user?.toJSON(),
@@ -36,18 +37,16 @@ export default class SplashController {
       .fromJSDate(new Date())
       .set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).toJSDate()
 
-    const countTotalUsers = Database.query().from('users').countDistinct('id as total').first()
-    const countTotalChannels = Database.query().from('profiles').countDistinct('chat_user_id as total').first()
+    const countTotalUsers = User.query().count('*', 'total').first()
+    const countTotalChannels = User.query().where({ host: true }).count('*', 'total').first()
 
-    const countNewUsers = Database.query()
-      .from('users')
-      .whereBetween('created_at', [dateMidnight, new Date()])
-      .countDistinct('id as total')
+    const countNewUsers = User.query()
+      .whereBetween('createdAt', [dateMidnight, new Date()])
+      .count('*', 'total')
       .first()
-    const countNewChannels = Database.query()
-      .from('profiles')
-      .whereBetween('created_at', [dateMidnight, new Date()])
-      .countDistinct('chat_user_id as total')
+    const countNewChannels = Profile.query()
+      .whereBetween('createdAt', [dateMidnight, new Date()])
+      .count('*', 'total')
       .first()
 
     const [
