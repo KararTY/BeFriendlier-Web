@@ -3,6 +3,7 @@
     "**/*"
   ],
   "exclude": [
+    "resources/**/*",
     "node_modules",
     "build"
   ],
