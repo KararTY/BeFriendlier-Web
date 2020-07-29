@@ -63,7 +63,7 @@ export class Client {
       })
       return body
     } catch (error) {
-      this.logger.error('Twitch.requestToken()', error)
+      this.logger.error(null, 'Twitch.requestToken(): %O', error.response.body)
       return null
     }
   }
@@ -87,7 +87,7 @@ export class Client {
         return body.data[0] !== undefined ? body.data[0] as TwitchUsersBody : null
       }
     } catch (error) {
-      this.logger.error('Twitch.getUser()', error)
+      this.logger.error(null, 'Twitch.getUser(): %O', error.response.body)
       return null
     }
   }
@@ -110,7 +110,7 @@ export class Client {
 
       return body as TwitchAuthBody
     } catch (error) {
-      this.logger.error('Twitch.refreshToken()', error)
+      this.logger.error(null, 'Twitch.refreshToken(): %O', error.response.body)
       return null
     }
   }
@@ -128,7 +128,7 @@ export class Client {
 
       return body as TwitchValidateBody
     } catch (error) {
-      this.logger.error('Twitch.validateToken()', error)
+      this.logger.error(null, 'Twitch.validateToken() %O', error.response.body)
       return null
     }
   }

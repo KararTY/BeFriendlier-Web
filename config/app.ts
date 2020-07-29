@@ -68,7 +68,7 @@ export const http: HttpConfig = {
   | HTTP request and set it as `x-request-id` header.
   |
   */
-  generateRequestId: false,
+  generateRequestId: true,
 
   /*
   |--------------------------------------------------------------------------
