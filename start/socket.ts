@@ -1,21 +1,22 @@
 import Ws from 'App/Services/Ws'
+import Logger from '@ioc:Adonis/Core/Logger'
 
 Ws.start((socket, request) => {
   const userAgent = request.headers['user-agent']
 
   if (userAgent === undefined) {
-    console.log(
-      'Terminating attempted websocket connection from (%s) %s:%n',
+    Logger.warn(null,
+      'Terminating attempted websocket connection from (%s) %s:%s',
+      request.socket.remoteFamily,
       request.socket.remoteAddress,
       request.socket.remotePort,
-      request.socket.remoteFamily,
     )
 
     socket.terminate()
     return
   }
 
-  console.log('New websocket connection by %s', userAgent)
+  Logger.info('New websocket connection by %s', userAgent)
 
   // On a new connection.
   socket.id = userAgent
