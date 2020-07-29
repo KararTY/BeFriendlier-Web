@@ -10,19 +10,9 @@ function initBlurButtons () {
     (ev: Event) => {
       ev.preventDefault()
 
-      const target = ev.currentTarget as HTMLElement
-
-      if (target === null) {
-        return
-      }
-
-      const blurButtonValue = target.dataset.blurButton
-
-      if (typeof blurButtonValue === 'undefined') {
-        console.error('data-blur-button is undefined.')
-        return
-      }
-
+      const target: HTMLElement = ensureIsOfType(ev.currentTarget, HTMLElement)
+      // We're expecting this function's rendered element to have a "data-blur-button" field with a string.
+      const blurButtonValue: string = target.dataset.blurButton
       const targetElement = document.querySelector(`[data-blur="${blurButtonValue}"`)
 
       if (!(targetElement instanceof window.HTMLElement)) {
@@ -33,7 +23,7 @@ function initBlurButtons () {
       target.classList.toggle('has-background-slightly-dark')
 
       if (dataset.blurText === 'true') {
-        if (targetElement.classList.contains('blur')) {
+        if (targetElement.classList.contains('blur') as boolean) {
           target.innerText = 'Unblur'
         } else {
           target.innerText = ''
@@ -49,24 +39,17 @@ function initBlurButtons () {
   const blurToggles = document.querySelectorAll('[data-blur]')
 
   for (let index = 0; index < blurToggles.length; index++) {
-    const element = blurToggles[index] as HTMLElement
-
-    if (typeof element === 'undefined') {
-      return
-    }
-
+    const element: HTMLElement = ensureIsOfType(blurToggles[index], HTMLElement)
     const parentElement = element.parentElement
 
-    if (parentElement === null) {
-      return
+    if (parentElement !== null) {
+      parentElement.appendChild(showImageEl(element.dataset))
     }
-
-    parentElement.appendChild(showImageEl(element.dataset))
   }
 }
 
 function initToastButton () {
-  const toast = document.querySelector('.toast')
+  const toast: HTMLElement | null = document.querySelector('.toast')
 
   if (toast instanceof window.HTMLElement) {
     toast.addEventListener('click', () => {
@@ -87,7 +70,7 @@ export function displayToast (message: ToastMessage) {
 
   const toast = document.querySelector('.toast')
 
-  if (toast instanceof window.HTMLElement) {
+  if (toast instanceof HTMLElement) {
     toast.outerHTML = ''
   }
 
@@ -140,24 +123,20 @@ function setToSCookies () {
     return
   }
 
-  if (!(login.firstElementChild instanceof HTMLAnchorElement)) {
-    console.error('Parent element has no anchor as first child.')
-    return
-  }
-
+  const firstElementChild: HTMLAnchorElement = ensureIsOfType(login.firstElementChild, HTMLAnchorElement)
   const cookies = new Cookies()
-
   const path = window.location.pathname
+
   switch (path) {
     case '/': {
       if (!(cookies.getCookie('privacyPolicyAccepted') as boolean)) {
-        login.firstElementChild.href = '/privacy'
+        firstElementChild.href = '/privacy'
       } else if (!(cookies.getCookie('termsOfServiceAccepted') as boolean)) {
-        login.firstElementChild.href = '/terms'
+        firstElementChild.href = '/terms'
       }
 
-      if (!login.firstElementChild.href.startsWith('https://id')) {
-        const el = login.firstElementChild.lastElementChild
+      if (!(firstElementChild.href.startsWith('https://id') as boolean)) {
+        const el = firstElementChild.lastElementChild
         if (el !== null) {
           el.textContent = 'Register'
         }
@@ -171,25 +150,25 @@ function setToSCookies () {
         return
       }
 
-      login.firstElementChild.addEventListener('click', ev => {
+      firstElementChild.addEventListener('click', ev => {
         ev.preventDefault()
 
         cookies.setCookie('privacyPolicyAccepted', true)
 
-        displayToast({ message: 'Successfully accepted privacy policy, please wait a second...' });
+        displayToast({ message: 'Successfully accepted privacy policy, please wait a second...' })
 
-        (document.body.firstElementChild as HTMLElement).classList.add('blur')
+        document.body.firstElementChild.classList.add('blur')
 
         setTimeout(() => {
-          window.location.href = (login.firstElementChild as HTMLAnchorElement).href
+          window.location.href = firstElementChild.href
         }, 2500)
       })
       break
     }
     case '/terms': {
       if (!(cookies.getCookie('privacyPolicyAccepted') as boolean)) {
-        login.firstElementChild.href = window.location.origin + '/privacy'
-        login.firstElementChild.addEventListener('click', ev => {
+        firstElementChild.href = String(window.location.origin) + '/privacy'
+        firstElementChild.addEventListener('click', ev => {
           ev.preventDefault()
 
           redirect({
@@ -206,7 +185,7 @@ function setToSCookies () {
         return
       }
 
-      login.firstElementChild.addEventListener('click', ev => {
+      firstElementChild.addEventListener('click', ev => {
         ev.preventDefault()
 
         cookies.setCookie('termsOfServiceAccepted', true)
@@ -221,13 +200,22 @@ function setToSCookies () {
 }
 
 function redirect (toastMessage: ToastMessage, url: string) {
-  displayToast(toastMessage);
+  displayToast(toastMessage)
 
-  (document.body.firstElementChild as HTMLElement).classList.add('blur')
+  document.body.firstElementChild.classList.add('blur')
 
   setTimeout(() => {
     window.location.href = url
   }, 2500)
+}
+
+export function ensureIsOfType (el, Type) {
+  if (!(el instanceof Type)) {
+    throw new Error(`${String(el)} is not of type ${String(Type)}`)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+  return el as typeof Type
 }
 
 initBlurButtons()

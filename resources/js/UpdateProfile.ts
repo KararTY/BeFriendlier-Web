@@ -1,8 +1,7 @@
 import { html } from 'uhtml'
-import { displayToast } from './App'
+import { displayToast, ensureIsOfType } from './App'
 
 class UpdateProfileForm {
-  private readonly form: HTMLFormElement
   private readonly elements: HTMLFormControlsCollection
   private readonly named: {
     bioInput: HTMLInputElement
@@ -14,23 +13,21 @@ class UpdateProfileForm {
 
   constructor (form: Element | null) {
     if (form instanceof HTMLFormElement) {
-      this.form = form
       this.elements = form.elements
 
       this.named = {
-        bioInput: this.elements.namedItem('bio') as HTMLInputElement,
-        colorInput: this.elements.namedItem('color') as HTMLInputElement,
-        csrfToken: this.elements.namedItem('_csrf') as HTMLInputElement,
-        submitBtn: this.form.querySelector('[data-name="submitBtn"]') as HTMLButtonElement,
+        bioInput: ensureIsOfType(this.elements.namedItem('bio'), HTMLInputElement),
+        colorInput: ensureIsOfType(this.elements.namedItem('color'), HTMLInputElement),
+        csrfToken: ensureIsOfType(this.elements.namedItem('_csrf'), HTMLInputElement),
+        submitBtn: form.querySelector('[data-name="submitBtn"]'),
         matches: document.body.querySelectorAll('[data-unmatch]'),
       }
 
       this.named.colorInput.addEventListener('input', (ev: Event) => {
-        const styleEl = document.getElementById('color')
+        const styleEl: HTMLStyleElement = ensureIsOfType(document.getElementById('color'), HTMLStyleElement)
+        const targetEl: HTMLInputElement = ensureIsOfType(ev.currentTarget, HTMLInputElement)
 
-        if (styleEl instanceof HTMLStyleElement && ev.currentTarget instanceof HTMLInputElement) {
-          styleEl.innerHTML = `.hero-body{background-color:${ev.currentTarget.value}}`
-        }
+        styleEl.innerHTML = `.hero-body{background-color:${String(targetEl.value)}}`
       })
 
       this.named.matches.forEach(el => {
@@ -41,15 +38,11 @@ class UpdateProfileForm {
     }
   }
 
-  private readonly removeMatch = (ev: any) => {
+  private readonly removeMatch = (ev: Event) => {
     ev.preventDefault()
 
-    if (!(ev instanceof MouseEvent)) {
-      return
-    }
-
-    const target = ev.currentTarget as HTMLElement
-
+    const mouseEvent: MouseEvent = ensureIsOfType(ev, MouseEvent)
+    const target: HTMLElement = ensureIsOfType(mouseEvent.currentTarget, HTMLElement)
     const parentElement = target.parentElement
 
     if (parentElement === null) {
@@ -70,11 +63,11 @@ class UpdateProfileForm {
     data.append('_csrf', this.named.csrfToken.value)
     data.append('profileID', target.dataset.unmatch ?? 'Error')
 
-    fetch(`${window.location.href}/unmatch`, {
+    fetch(`${String(window.location.href)}/unmatch`, {
       body: data,
       method: 'POST',
       credentials: 'same-origin',
-    }).then(async request => await request.json()).then(res => {
+    }).then(request => request.json()).then(res => {
       displayToast(res)
       if (res.error === undefined) {
         parentParentElement.removeChild(parentElement)
