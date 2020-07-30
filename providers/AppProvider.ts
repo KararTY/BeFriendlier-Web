@@ -16,7 +16,7 @@ export default class AppProvider {
         clientToken: config.get('twitch.clientToken'),
         clientSecret: config.get('twitch.clientSecret'),
         redirectURI: config.get('twitch.redirectURI'),
-        scopes: config.get('twitch.scopes'),
+        scope: config.get('twitch.scope'),
         headers: config.get('twitch.headers'),
       }, logger.level)
 

@@ -46,7 +46,7 @@
     "@adonisjs/view": "^2.0.7",
     "@hapi/bourne": "^2.0.0",
     "@types/ws": "^7.2.6",
-    "befriendlier-shared": "github:kararty/befriendlier-shared#semver:4.3.6",
+    "befriendlier-shared": "github:kararty/befriendlier-shared#semver:4.4.0",
     "bulma": "^0.9.0",
     "feather-icons": "^4.28.0",
     "got": "^11.5.1",
