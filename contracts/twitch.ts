@@ -1,6 +1,6 @@
 declare module '@ioc:Adonis/Addons/Twitch' {
-  import Twitch from 'src/Twitch'
+  import { TwitchAuth } from 'befriendlier-shared'
 
-  const twitch: Twitch
+  const twitch: TwitchAuth
   export default twitch
 }

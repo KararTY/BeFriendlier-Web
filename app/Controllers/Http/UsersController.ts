@@ -4,8 +4,8 @@ import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
 import BannedUser from 'App/Models/BannedUser'
 import User from 'App/Models/User'
+import { TwitchUsersBody } from 'befriendlier-shared' // For type definitions
 import { DateTime } from 'luxon'
-import { TwitchUsersBody } from 'src/Twitch' // For type definitions
 
 export default class UsersController {
   private readonly usersSchema = schema.create({

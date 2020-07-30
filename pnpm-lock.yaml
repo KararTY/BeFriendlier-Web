@@ -9,7 +9,7 @@ dependencies:
   '@adonisjs/view': 2.0.7_4a0b29b0694daa5f28dcf36cd4a1a73a
   '@hapi/bourne': 2.0.0
   '@types/ws': 7.2.6
-  befriendlier-shared: github.com/kararty/befriendlier-shared/f0f3c6f06ac55db28453a337908b816cd8fd4362
+  befriendlier-shared: github.com/kararty/befriendlier-shared/1008de5bc60d495fe80a7cf0af5aaf605cdd909e
   bulma: 0.9.0
   feather-icons: 4.28.0
   got: 11.5.1
@@ -58,6 +58,7 @@ packages:
       mustache: 4.0.1
       pluralize: 8.0.0
       slash: 3.0.0
+    dev: false
     peerDependencies:
       '@adonisjs/fold': ^6.0.0
     resolution:
@@ -202,6 +203,7 @@ packages:
   /@adonisjs/fold/6.3.5:
     dependencies:
       '@poppinss/utils': 2.5.2
+    dev: false
     resolution:
       integrity: sha512-6YQbqxbMYxs2+TkqVCeX11YcHkvgoERJnZU11V90B9ZAYb3cA54MT+9DBrPWNCVxMnC6mpBHKADJKVFESMIDMQ==
   /@adonisjs/hash/5.0.0:
@@ -3323,6 +3325,7 @@ packages:
     dependencies:
       node-gyp-build: 3.7.0
     dev: false
+    optional: true
     requiresBuild: true
     resolution:
       integrity: sha512-xowrxvpxojqkagPcWRQVXZl0YXhRhAtBEIq3VoER1NH5Mw1n1o0ojdspp+GS2J//2gCVyrzQDApQ4unGF+QOoA==
@@ -5665,6 +5668,7 @@ packages:
     resolution:
       integrity: sha1-3BXKHGcjh8p2vTesCjlbogQqLCg=
   /getopts/2.2.5:
+    dev: false
     resolution:
       integrity: sha512-9jb7AW5p3in+IiJWhQiZmmwkpLaR/ccTWdWQCtZM66HJcHHLegowh4q4tSD7gouUyeNvFWRavfK9GXosQHDpFA==
   /getpass/0.1.7:
@@ -6885,6 +6889,7 @@ packages:
     resolution:
       integrity: sha1-wuep93IJTe6dNCAq6KzORoeHVYA=
   /leven/3.1.0:
+    dev: false
     engines:
       node: '>=6'
     resolution:
@@ -7642,6 +7647,7 @@ packages:
     resolution:
       integrity: sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
   /node-addon-api/2.0.0:
+    dev: true
     resolution:
       integrity: sha512-ASCL5U13as7HhOExbT6OlWJJUV/lLzL2voOSP1UVehpRD8FbSrSDjfScK/KwAvVTI5AS6r4VwbOMlIqtvRidnA==
   /node-addon-api/2.0.2:
@@ -7667,6 +7673,7 @@ packages:
   /node-gyp-build/3.7.0:
     dev: false
     hasBin: true
+    optional: true
     resolution:
       integrity: sha512-L/Eg02Epx6Si2NXmedx+Okg+4UHqmaf3TNcxd50SF9NQGcJaON3AtU++kax69XV7YWz4tUspqZSAsVofhFKG2w==
   /node-gyp-build/4.2.3:
@@ -7705,6 +7712,7 @@ packages:
       rimraf: 2.7.1
       semver: 5.7.1
       tar: 4.4.13
+    dev: true
     hasBin: true
     resolution:
       integrity: sha512-TwWAOZb0j7e9eGaf9esRx3ZcLaE5tQ2lvYy1pb5IAaG1a2e2Kv5Lms1Y4hpj+ciXJRofIxxlt5haeQ/2ANeE0Q==
@@ -8539,6 +8547,7 @@ packages:
     resolution:
       integrity: sha512-gQR3WpIgNIKwBMVLkpMUeR3e1/E1y42bqDQZfql+kDeXd8COYfM8PQA4X6y7a8u9Ua9FHmsrrmirW2vHs45hWg==
   /pluralize/8.0.0:
+    dev: false
     engines:
       node: '>=4'
     resolution:
@@ -9972,6 +9981,7 @@ packages:
     dependencies:
       node-addon-api: 2.0.0
       node-pre-gyp: 0.11.0
+    dev: true
     optionalDependencies:
       node-gyp: 3.8.0
     peerDependenciesMeta:
@@ -10794,6 +10804,7 @@ packages:
     dependencies:
       node-gyp-build: 3.7.0
     dev: false
+    optional: true
     requiresBuild: true
     resolution:
       integrity: sha512-SwV++i2gTD5qh2XqaPzBnNX88N6HdyhQrNNRykvcS0QKvItV9u3vPEJr+X5Hhfb1JC0r0e1alL0iB09rY8+nmw==
@@ -11123,13 +11134,15 @@ packages:
     dev: true
     resolution:
       integrity: sha512-qPLQW2TuwlcK9sm5i1Gbb9ezRZRZyzr6NsY5cqxsbh+2iEyKPxLlz0OSAc+pQ7mv1pYZLri1MXynggP6R2FcNQ==
-  github.com/kararty/befriendlier-shared/f0f3c6f06ac55db28453a337908b816cd8fd4362:
+  github.com/kararty/befriendlier-shared/1008de5bc60d495fe80a7cf0af5aaf605cdd909e:
+    dependencies:
+      '@adonisjs/logger': 2.1.0
+      got: 11.5.1
     dev: false
     name: befriendlier-shared
     resolution:
-      registry: 'https://registry.npmjs.org/'
-      tarball: 'https://codeload.github.com/kararty/befriendlier-shared/tar.gz/f0f3c6f06ac55db28453a337908b816cd8fd4362'
-    version: 4.1.0
+      tarball: 'https://codeload.github.com/kararty/befriendlier-shared/tar.gz/1008de5bc60d495fe80a7cf0af5aaf605cdd909e'
+    version: 4.3.6
   github.com/thetutlage/matchit/fae24de689471ddb5e20d2a3bebe88eb80eca86e:
     dependencies:
       '@arr/every': 1.0.1
@@ -11155,7 +11168,7 @@ specifiers:
   '@types/ws': ^7.2.6
   '@typescript-eslint/eslint-plugin': ^3.7.1
   adonis-preset-ts: ^1.0.4
-  befriendlier-shared: 'github:kararty/befriendlier-shared#semver:^4.1.0'
+  befriendlier-shared: 'github:kararty/befriendlier-shared#semver:4.3.6'
   bufferutil: ^4.0.1
   bulma: ^0.9.0
   eslint: ^7.5.0
