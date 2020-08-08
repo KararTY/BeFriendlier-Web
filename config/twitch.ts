@@ -27,7 +27,7 @@ const TwitchConfig = {
   /**
    * Scopes to ask for.
    */
-  scope: ['user_subscriptions'],
+  scope: [],
 
   /**
    * HTTP request headers.

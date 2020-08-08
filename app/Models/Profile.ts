@@ -55,7 +55,7 @@ export default class Profile extends BaseModel {
   public rolls: number[]
 
   @column.dateTime()
-  public nextRoll: DateTime
+  public nextRolls: DateTime
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
