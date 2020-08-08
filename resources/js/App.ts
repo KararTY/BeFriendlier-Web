@@ -5,7 +5,7 @@ interface ToastMessage {
   message?: string
 }
 
-function initBlurButtons () {
+(function initBlurButtons () {
   const showImageEl = (dataset: DOMStringMap) => html.node`<a class="${(dataset.blurText === 'true' ? 'is-size-3 ' : '') + 'is-overlay center-text has-text-white has-background-slightly-dark'}" data-blur-button="${dataset.blur}" onclick="${
     (ev: Event) => {
       ev.preventDefault()
@@ -46,7 +46,7 @@ function initBlurButtons () {
       parentElement.appendChild(showImageEl(element.dataset))
     }
   }
-}
+})()
 
 function initToastButton () {
   const toast: HTMLElement | null = document.querySelector('.toast')
@@ -116,7 +116,7 @@ class Cookies {
   }
 }
 
-function setToSCookies () {
+(function setToSCookies () {
   const login = document.getElementById('login')
 
   if (!(login instanceof HTMLDivElement)) {
@@ -197,7 +197,7 @@ function setToSCookies () {
       break
     }
   }
-}
+})()
 
 function redirect (toastMessage: ToastMessage, url: string) {
   displayToast(toastMessage)
@@ -209,7 +209,21 @@ function redirect (toastMessage: ToastMessage, url: string) {
   }, 2500)
 }
 
-export function ensureIsOfType (el, Type) {
+(function initNavbarToggles () {
+  const navbarButtons: NodeListOf<HTMLElement> = document.querySelectorAll('.navbar-brand .navbar-burger')
+
+  if (navbarButtons.length > 0) {
+    for (let index = 0; index < navbarButtons.length; index++) {
+      const navbarButton = navbarButtons[index]
+      navbarButton.addEventListener('click', function onClickNavbar (this: HTMLElement) {
+        this.classList.toggle('is-active')
+        document.querySelector(`[data-menu="${String(this.dataset.target)}"]`).classList.toggle('is-active')
+      })
+    }
+  }
+})()
+
+export function ensureIsOfType (el: any, Type: any) {
   if (!(el instanceof Type)) {
     throw new Error(`${String(el)} is not of type ${String(Type)}`)
   }
@@ -218,8 +232,4 @@ export function ensureIsOfType (el, Type) {
   return el as typeof Type
 }
 
-initBlurButtons()
 initToastButton()
-setToSCookies()
-
-console.log('Loaded.')
