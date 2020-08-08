@@ -59,21 +59,7 @@ export default class ProfilesController {
       const userJSON = auth.user.toJSON()
       const profileJSON = profile.toJSON()
 
-      const matches = await profile.related('matches').query().limit(10)
-      if (matches !== null) {
-        profileJSON.matches = []
-        for (let index = 0; index < matches.length; index++) {
-          const profile = matches[index]
-          const user = await User.find(profile.userId)
-
-          if (user !== null) {
-            profileJSON.matches.push({
-              profile: profile.toJSON(),
-              user: user.toJSON(),
-            })
-          }
-        }
-      }
+      profileJSON.matches = await this.getMatchesList(auth.user, profile)
 
       if (ownProfile) {
         // If own, allow access.
@@ -232,22 +218,7 @@ export default class ProfilesController {
     const ownProfile = profile.userId === auth.user.id
 
     if (ownProfile) {
-      const matches = await profile.related('matches').query().offset(paginationNumber).limit(10)
-      const matchesJSON: any[] = []
-
-      if (matches !== null) {
-        for (let index = 0; index < matches.length; index++) {
-          const profile = matches[index]
-          const user = await User.find(profile.userId)
-
-          if (user !== null) {
-            matchesJSON.push({
-              profile: profile.toJSON(),
-              user: user.toJSON(),
-            })
-          }
-        }
-      }
+      const matchesJSON = await this.getMatchesList(auth.user, profile, paginationNumber)
 
       return response.json(matchesJSON)
     } else {
@@ -297,15 +268,17 @@ export default class ProfilesController {
         return response.notFound({ error: this.Error.notFound })
       }
 
+      const serializedProfile = profile.serialize()
+
+      serializedProfile.mismatches.push(match.id)
+
+      // We don't want to attempt to match with this user again in the future, so add them to the mismatches list.
+      profile.mismatches = serializedProfile.mismatches
+
+      await profile.save()
+
       // Remove match from this profile.
       await profile.related('matches').detach([match.id])
-
-      // Remove match from match's profile
-      await Database.from('matches_lists').where({
-        profile_id: profileIDNumber,
-        match_user_id: auth.user.id,
-        match_profile_id: profile.id,
-      }).delete()
 
       return response.ok({ message: 'Successfully removed match from profile.' })
     } else {
@@ -334,6 +307,44 @@ export default class ProfilesController {
     }
 
     return profiles
+  }
+
+  private async getMatchesList (user: User, profile: Profile, pagination = 0): Promise<any[] | undefined> {
+    const matches = await profile.related('matches').query().offset(pagination).limit(10)
+    const matchesJSON: any[] = []
+
+    if (matches !== null) {
+      for (let index = 0; index < matches.length; index++) {
+        const profileMatched = matches[index]
+        const userMatched = await User.find(profileMatched.userId)
+
+        if (userMatched === null) {
+          continue
+        }
+
+        /**
+           * Make sure user has also matched with us before sending it.
+           * Do not ruin the surprise if they're not matched yet.
+           */
+
+        // Someone else's, check if the requested profile has matched this requesting user.
+        const hasMatched = await Database.query().from('matches_lists').where({
+          profile_id: profileMatched.id,
+          match_user_id: user.id,
+        }).first()
+
+        if (hasMatched === null) {
+          return
+        }
+
+        matchesJSON.push({
+          profile: profileMatched.toJSON(),
+          user: userMatched.toJSON(),
+        })
+      }
+
+      return matchesJSON
+    }
   }
 
   private readonly profilesSchema = schema.create({

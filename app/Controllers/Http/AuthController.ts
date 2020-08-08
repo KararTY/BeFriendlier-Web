@@ -1,8 +1,8 @@
+import { AuthContract } from '@ioc:Adonis/Addons/Auth'
 import Twitch from '@ioc:Adonis/Addons/Twitch'
 import Env from '@ioc:Adonis/Core/Env'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
-import { AuthContract } from '@ioc:Adonis/Addons/Auth'
 
 export default class AuthController {
   private readonly devError = new Error('Using NODE_ENV=development without existing TestUser. ' +
@@ -84,7 +84,7 @@ export default class AuthController {
   }
 
   private async developmentLogin (auth: AuthContract) {
-    const testUser = await User.findBy('twitchID', '0')
+    const testUser = await User.findBy('createdAt', '1970-01-01 01:00:00')
     if (testUser === null) {
       throw this.devError
     } else {
