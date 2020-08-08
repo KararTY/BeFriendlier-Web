@@ -164,7 +164,12 @@ export default class UsersController {
         // Remove all matches to this user.
         // await Database.query().from('matches_lists').where('match_user_id', user.id).delete()
 
-        await profile.delete()
+        profile.bio = 'Hello!'
+        profile.favoriteEmotes = []
+        profile.color = '#ffffff'
+        profile.enabled = false
+
+        await profile.save()
       }
 
       // await user.preload('favoriteStreamers')
@@ -222,6 +227,7 @@ export default class UsersController {
     auth.user.displayName = twitchBody.display_name
     auth.user.name = twitchBody.login
     auth.user.avatar = twitchBody.profile_image_url
+    auth.user.twitchID = twitchBody.id
     auth.user.updatedAt = DateTime.fromJSDate(new Date())
     await auth.user.save()
 
