@@ -15,7 +15,7 @@ validator.rule('hexColorString', (value, _, { pointer, arrayExpressionPointer, e
    * Skip validation when value is not a string. The string
    * schema rule will handle it
    */
-  if (typeof (value) !== 'string') {
+  if (typeof value !== 'string') {
     return
   }
 
@@ -31,7 +31,7 @@ validator.rule('validTwitchName', (value, _, { pointer, arrayExpressionPointer, 
    * Skip validation when value is not a string. The string
    * schema rule will handle it
    */
-  if (typeof (value) !== 'string') {
+  if (typeof value !== 'string') {
     return
   }
 

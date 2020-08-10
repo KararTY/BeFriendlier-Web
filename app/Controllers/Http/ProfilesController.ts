@@ -268,12 +268,8 @@ export default class ProfilesController {
         return response.notFound({ error: this.Error.notFound })
       }
 
-      const serializedProfile = profile.serialize()
-
-      serializedProfile.mismatches.push(match.id)
-
       // We don't want to attempt to match with this user again in the future, so add them to the mismatches list.
-      profile.mismatches = serializedProfile.mismatches
+      profile.mismatches.push(match.id)
 
       await profile.save()
 

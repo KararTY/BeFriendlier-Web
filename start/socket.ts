@@ -1,27 +1,49 @@
-import Ws from 'App/Services/Ws'
+import Ws, { prettySocketInfo } from 'App/Services/Ws'
 import Logger from '@ioc:Adonis/Core/Logger'
+import { MessageType } from 'befriendlier-shared'
 
 Ws.start((socket, request) => {
-  const userAgent = request.headers['user-agent']
+  request.socket.pause()
 
-  if (userAgent === undefined) {
-    Logger.warn(null,
-      'Terminating attempted websocket connection from (%s) %s:%s',
-      request.socket.remoteFamily,
-      request.socket.remoteAddress,
-      request.socket.remotePort,
-    )
+  const xForwardedFor = request.headers['X-Forwarded-For'] as string | undefined
+  const remoteAddr = request.socket.remoteAddress
+  const allow = typeof xForwardedFor !== 'string' || remoteAddr === '127.0.0.1'
 
+  // Kill connections from NON-LOCALHOST sources. TODO: Setup "Trusted Sources" later.
+  if (!allow) {
+    Logger.warn(`WEBSOCKET CONNECTION FROM A NON ALLOWED SOURCE! X-Forwarded-For:${String(xForwardedFor)}, remoteAddress:${String(remoteAddr)}`)
     socket.terminate()
     return
   }
 
-  Logger.info('New websocket connection by %s', userAgent)
+  const userAgent = request.headers['user-agent']
+
+  if (userAgent === undefined) {
+    Logger.warn(`NO USER-AGENT: Connection from ${prettySocketInfo(request.socket)}. TERMINATING.`)
+    socket.terminate()
+    return
+  }
+
+  request.socket.resume()
 
   // On a new connection.
   socket.id = userAgent
-  socket.isAlive = true
   socket.connection = request.socket
+  socket.channels = []
+  socket.isAlive = true
 
-  socket.on('message', (msg) => Ws.onMessage(socket, msg))
+  Logger.info(`NEW CONNECTION: [${socket.id}] from ${prettySocketInfo(socket.connection)}.`)
+
+  // eslint-disable-next-line no-void
+  socket.on('message', (msg) => void Ws.queue.add(async () => await Ws.onMessage(socket, msg)))
+
+  socket.on('close', (code, reason) => Ws.onClose(socket, code, reason))
+
+  socket.on('error', (error) => Ws.onError(socket, error))
+
+  // https://github.com/websockets/ws#how-to-detect-and-close-broken-connections
+  socket.on('pong', (data) => Ws.heartbeat(socket, data))
+
+  // Send "welcome" to client.
+  socket.send(Ws.socketMessage(MessageType.WELCOME, JSON.stringify('')))
 })

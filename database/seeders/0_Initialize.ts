@@ -8,6 +8,7 @@ import TwitchConfig from '../../config/twitch'
 export default class InitializeSeeder extends BaseSeeder {
   public async run () {
     await User.firstOrCreate({
+      id: 0,
       twitchID: TwitchConfig.user.id,
       name: TwitchConfig.user.name,
       displayName: TwitchConfig.user.name,
