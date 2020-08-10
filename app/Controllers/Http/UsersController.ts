@@ -96,6 +96,7 @@ export default class UsersController {
               name: streamer.login,
               displayName: streamer.display_name,
               avatar: streamer.profile_image_url,
+              createdAt: DateTime.fromJSDate(new Date('1970-01-01 02:00:00')),
             }
           }))
 
