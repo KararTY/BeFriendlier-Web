@@ -24,7 +24,13 @@ export default class Profile extends BaseModel {
 
   @column({
     prepare: (value: Emote[]) => JSON.stringify(value),
-    consume: (value: string) => JSON.parse(value),
+    consume: (value: string | any) => {
+      if (typeof value === 'string') {
+        return JSON.parse(value)
+      } else {
+        return value
+      }
+    },
   })
   public favoriteEmotes: Emote[]
 
@@ -40,13 +46,25 @@ export default class Profile extends BaseModel {
 
   @column({
     prepare: (value: number[]) => JSON.stringify(value),
-    consume: (value: string) => JSON.parse(value),
+    consume: (value: string | any) => {
+      if (typeof value === 'string') {
+        return JSON.parse(value)
+      } else {
+        return value
+      }
+    },
   })
   public mismatches: number[]
 
   @column({
     prepare: (value: number[]) => JSON.stringify(value),
-    consume: (value: string) => JSON.parse(value),
+    consume: (value: string | any) => {
+      if (typeof value === 'string') {
+        return JSON.parse(value)
+      } else {
+        return value
+      }
+    },
   })
   public rolls: number[]
 
