@@ -1,7 +1,12 @@
 @charset "utf-8";
 
-// Source Sans Pro
-@import url('https://fonts.googleapis.com/css?family=Fira+Sans&display=swap');
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Fira Sans Regular'), local('FiraSans-Regular'), url('../font/FiraSans-Regular.ttf') format('truetype');
+}
 
 // Brand colors
 
