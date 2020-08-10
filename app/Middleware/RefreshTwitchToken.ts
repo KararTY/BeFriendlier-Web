@@ -1,8 +1,6 @@
-import { DateTime } from 'luxon'
-
-import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-
 import Twitch from '@ioc:Adonis/Addons/Twitch'
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { DateTime } from 'luxon'
 
 export default class RefreshTwitchToken {
   private async refresh ({ session, auth }: HttpContextContract) {

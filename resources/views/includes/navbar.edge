@@ -1,28 +1,34 @@
-<nav class="navbar">
+<nav class="navbar is-light">
   <div class="container">
     <div class="navbar-brand">
-      <a href="{{ route('SplashController.index') }}" class="navbar-item">Twitchr</a>
+      <a href="{{ route('SplashController.index') }}" class="has-text-weight-bold navbar-item">BeFriendlier</a>
       @if(user)
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
+        <a role="button" class="navbar-burger" data-target="topnavbarmenu">
+          <span></span>
+          <span></span>
+          <span></span>
         </a>
       @endif
     </div>
     @if(user)
-      <div class="navbar-menu">
+      <div class="navbar-menu" data-menu="topnavbarmenu">
         <div class="navbar-end">
-          <form action="{{ route('AuthController.logout') }}" class="navbar-item" method="POST">
-            {{ csrfField() }}
-            <button class="button is-text" type="submit">Logout</button>
-          </form>
-          <a href="{{ route('ProfilesController.read') }}" class="navbar-item">Profiles</a>
-          <a href="{{ route('UsersController.read') }}" class="navbar-item">
-            <figure class="image is-24x24">
-              <img class="is-rounded" src="{{ user.avatar.replace('300x300', '70x70') }}" alt="Twitch profile image">
-            </figure>
-          </a>
+          <div class="navbar-item has-dropdown is-hoverable">
+            <div class="navbar-link">
+              <figure class="image is-24x24">
+                <img class="is-rounded" src="{{ user.avatar.replace('300x300', '70x70') }}" alt="Twitch profile image">
+              </figure>
+            </div>
+            <div class="navbar-dropdown is-right is-boxed">
+              <a href="{{ route('UsersController.read') }}" class="navbar-item">Your settings</a>
+              <a href="{{ route('ProfilesController.read') }}" class="navbar-item">Your profiles</a>
+              <hr class="navbar-divider">
+              <form action="{{ route('AuthController.logout') }}" method="POST">
+                {{ csrfField() }}
+                <button class="button is-text is-fullwidth" type="submit">Logout</button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     @endif

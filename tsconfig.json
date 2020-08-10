@@ -3,11 +3,15 @@
     "**/*"
   ],
   "exclude": [
+    "resources/js/*",
     "node_modules",
     "build"
   ],
   "extends": "./node_modules/adonis-preset-ts/tsconfig",
   "compilerOptions": {
+    "lib": [
+      "ES2020"
+    ],
     "outDir": "build",
     "rootDir": "./",
     "sourceMap": true,
@@ -26,9 +30,6 @@
       "@adonisjs/auth",
       "@adonisjs/lucid",
       "@adonisjs/shield"
-    ],
-    "lib": [
-      "DOM"
     ]
   },
   "files": [

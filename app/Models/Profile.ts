@@ -1,16 +1,6 @@
+import { BaseModel, column, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
 import { DateTime } from 'luxon'
-
-import {
-  column,
-  BaseModel,
-  manyToMany,
-  ManyToMany,
-} from '@ioc:Adonis/Lucid/Orm'
-
-interface Emotes {
-  name: string
-  url: string
-}
+import { Emote } from 'befriendlier-shared'
 
 export default class Profile extends BaseModel {
   @column({ isPrimary: true })
@@ -33,10 +23,10 @@ export default class Profile extends BaseModel {
   public color: string
 
   @column({
-    prepare: (value: Emotes[]) => JSON.stringify(value),
-    serialize: (value: string) => JSON.parse(value),
+    prepare: (value: Emote[]) => JSON.stringify(value),
+    consume: (value: string) => JSON.parse(value),
   })
-  public favoriteEmotes: Emotes[]
+  public favoriteEmotes: Emote[]
 
   @manyToMany(() => Profile, {
     localKey: 'id',
@@ -50,18 +40,18 @@ export default class Profile extends BaseModel {
 
   @column({
     prepare: (value: number[]) => JSON.stringify(value),
-    serialize: (value: string) => JSON.parse(value),
+    consume: (value: string) => JSON.parse(value),
   })
   public mismatches: number[]
 
   @column({
     prepare: (value: number[]) => JSON.stringify(value),
-    serialize: (value: string) => JSON.parse(value),
+    consume: (value: string) => JSON.parse(value),
   })
   public rolls: number[]
 
   @column.dateTime()
-  public nextRoll: DateTime
+  public nextRolls: DateTime
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

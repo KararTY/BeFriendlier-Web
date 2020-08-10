@@ -1,23 +1,27 @@
 {
-    "extends": [
-        "standard-with-typescript",
-        "plugin:adonis/typescriptApp"
-        
-    ],
-    "globals": {
-        "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly"
-    },
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": 2018,
-        "sourceType": "module"
-    },
-    "plugins": [
-        "@typescript-eslint"
-    ],
-    "rules": {
-        "@typescript-eslint/class-name-casing": "off",
-        "@typescript-eslint/interface-name-prefix": "off"
-    }
+  "env": {
+    "es2020": true,
+    "node": true
+  },
+  "extends": [
+    "standard-with-typescript",
+    "plugin:adonis/typescriptApp"
+  ],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": ["tsconfig.eslint.json"],
+    "ecmaVersion": 11,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "rules": {
+    "@typescript-eslint/class-name-casing": "off",
+    "@typescript-eslint/interface-name-prefix": "off"
+  }
 }

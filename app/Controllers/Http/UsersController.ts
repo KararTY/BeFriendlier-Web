@@ -1,14 +1,11 @@
-import { DateTime } from 'luxon'
-
-import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { schema, rules } from '@ioc:Adonis/Core/Validator'
-import Database from '@ioc:Adonis/Lucid/Database'
-
 import Twitch from '@ioc:Adonis/Addons/Twitch'
-import { TwitchUsersBody } from 'src/Twitch' // For type definitions
-
-import User from 'App/Models/User'
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { rules, schema } from '@ioc:Adonis/Core/Validator'
+// import Database from '@ioc:Adonis/Lucid/Database'
 import BannedUser from 'App/Models/BannedUser'
+import User from 'App/Models/User'
+import { TwitchUsersBody } from 'befriendlier-shared' // For type definitions
+import { DateTime } from 'luxon'
 
 export default class UsersController {
   private readonly usersSchema = schema.create({
@@ -114,7 +111,10 @@ export default class UsersController {
 
     const globalProfile = auth.user.profile.find(profile => profile.chatUserId === 0)
 
-    // Global profile can't be undefined, this is here because typescript is strict.
+    /**
+     * Global profile can't be undefined unless database hasn't been seeded,
+     * this is here because typescript is strict.
+     */
     if (globalProfile !== undefined) {
       globalProfile.enabled = validated.globalProfile !== undefined
 
@@ -156,21 +156,36 @@ export default class UsersController {
 
     if (user !== null) {
       await user.preload('profile')
-      await user.preload('favoriteStreamers')
 
       for (let i = 0; i < user.profile.length; i++) {
         const profile = user.profile[i]
         await profile.related('matches').detach()
 
         // Remove all matches to this user.
-        await Database.query().from('matches_lists').where('match_user_id', user.id).delete()
+        // await Database.query().from('matches_lists').where('match_user_id', user.id).delete()
 
-        await profile.delete()
+        profile.bio = 'Hello!'
+        profile.favoriteEmotes = []
+        profile.color = '#ffffff'
+        profile.enabled = false
+
+        await profile.save()
       }
 
+      // await user.preload('favoriteStreamers')
       await user.related('favoriteStreamers').detach()
 
-      await user.delete()
+      // ANONYMIZE USER ON DELETE
+      user.twitchID = ''
+      user.name = '$deleted'
+      user.displayName = 'Deleted User'
+      user.avatar = ''
+      user.streamerMode = false
+      user.host = false
+      user.createdAt = DateTime.fromJSDate(new Date())
+      // user.updatedAt automatically changes as soon as we save this.
+
+      await user.save()
       await auth.logout()
       accountDeleted = true
     }
@@ -212,6 +227,7 @@ export default class UsersController {
     auth.user.displayName = twitchBody.display_name
     auth.user.name = twitchBody.login
     auth.user.avatar = twitchBody.profile_image_url
+    auth.user.twitchID = twitchBody.id
     auth.user.updatedAt = DateTime.fromJSDate(new Date())
     await auth.user.save()
 

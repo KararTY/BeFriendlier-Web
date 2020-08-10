@@ -5,8 +5,8 @@
 * file.
 */
 
-import User from 'App/Models/User'
 import { AuthConfig } from '@ioc:Adonis/Addons/Auth'
+import User from 'App/Models/User'
 
 /*
 |--------------------------------------------------------------------------

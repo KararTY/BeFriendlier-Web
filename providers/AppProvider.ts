@@ -1,12 +1,27 @@
 import { IocContract } from '@adonisjs/fold'
 import feather from 'feather-icons'
+import { TwitchAuth } from 'befriendlier-shared'
 
 export default class AppProvider {
-  constructor (protected $container: IocContract) {
+  constructor (protected container: IocContract) {
   }
 
   public register () {
     // Register your own bindings
+    this.container.singleton('Adonis/Addons/Twitch', app => {
+      const config = app.use('Adonis/Core/Config')
+      const logger = app.use('Adonis/Core/Logger')
+
+      const TwitchInstance = new TwitchAuth({
+        clientToken: config.get('twitch.clientToken'),
+        clientSecret: config.get('twitch.clientSecret'),
+        redirectURI: config.get('twitch.redirectURI'),
+        scope: config.get('twitch.scope'),
+        headers: config.get('twitch.headers'),
+      }, logger.level)
+
+      return TwitchInstance
+    })
   }
 
   public async boot () {
@@ -42,7 +57,7 @@ export default class AppProvider {
     const App = await import('@ioc:Adonis/Core/Application')
 
     /**
-     * Only import socket file, when environment is `web`. In other
+     * Only import files, when environment is `web`. In other
      * words do not import during ace commands.
      */
     if (App.default.environment === 'web') {

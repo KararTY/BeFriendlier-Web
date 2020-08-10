@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import { DateTime } from 'luxon'
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
+import { DateTime } from 'luxon'
 
 export default class Profiles extends BaseSchema {
   protected tableName = 'profiles'

@@ -1,8 +1,9 @@
 import BaseSeeder from '@ioc:Adonis/Lucid/Seeder'
-import User from 'App/Models/User'
 import BannedUser from 'App/Models/BannedUser'
+import User from 'App/Models/User'
+import { DateTime } from 'luxon'
 
-export default class UserSeeder extends BaseSeeder {
+export default class DevelopmentSeeder extends BaseSeeder {
   public static developmentOnly = true
 
   public async run () {
@@ -14,6 +15,7 @@ export default class UserSeeder extends BaseSeeder {
         name: 'testuser',
         displayName: '[DEVELOPMENT ACCOUNT]',
         avatar: 'https://brand.twitch.tv/assets/emotes/lib/kappa.png',
+        createdAt: DateTime.fromJSDate(new Date(0)),
       },
       {
         twitchID: '450408427',
@@ -54,7 +56,7 @@ export default class UserSeeder extends BaseSeeder {
       const uniqueKey = { chatUserId: 0 }
 
       const profile = await user.related('profile').updateOrCreate(uniqueKey, {
-        enabled: false,
+        enabled: true,
         chatUserId: 0,
       })
 

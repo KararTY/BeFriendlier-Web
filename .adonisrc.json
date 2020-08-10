@@ -29,13 +29,13 @@
     "@adonisjs/view",
     "@adonisjs/auth",
     "@adonisjs/lucid",
-    "@adonisjs/shield",
-    "./providers/TwitchProvider"
+    "@adonisjs/shield"
   ],
   "metaFiles": [
     ".env",
     ".adonisrc.json",
     "resources/views/**/*.edge",
+    "resources/js/**",
     "public/**"
   ]
 }

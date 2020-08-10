@@ -1,15 +1,6 @@
-import { DateTime } from 'luxon'
-
-import {
-  column,
-  BaseModel,
-  hasMany,
-  HasMany,
-  manyToMany,
-  ManyToMany,
-} from '@ioc:Adonis/Lucid/Orm'
-
+import { BaseModel, column, hasMany, HasMany, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
 import Profile from 'App/Models/Profile'
+import { DateTime } from 'luxon'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -48,6 +39,9 @@ export default class User extends BaseModel {
 
   @column()
   public streamerMode: boolean
+
+  @column()
+  public host: boolean
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
