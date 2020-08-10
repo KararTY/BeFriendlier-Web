@@ -2,7 +2,7 @@ import Logger from '@ioc:Adonis/Core/Logger'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Profile from 'App/Models/Profile'
 import User from 'App/Models/User'
-import { BASE, MessageType, NameAndId, ROLLMATCH, UNMATCH, ADDEMOTES } from 'befriendlier-shared'
+import { BASE, BIO, EMOTES, MessageType, NameAndId, ROLLMATCH, UNMATCH } from 'befriendlier-shared'
 import { DateTime } from 'luxon'
 
 class Handler {
@@ -180,10 +180,18 @@ class Handler {
     await profile.save()
   }
 
-  public async addEmotes ({ userTwitch, channelTwitch, emotes }: ADDEMOTES) {
+  public async setEmotes ({ userTwitch, channelTwitch, emotes }: EMOTES) {
     const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch)
 
     profile.favoriteEmotes = emotes
+
+    await profile.save()
+  }
+
+  public async setBio ({ userTwitch, channelTwitch, bio }: BIO) {
+    const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch)
+
+    profile.bio = bio
 
     await profile.save()
   }

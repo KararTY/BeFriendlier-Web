@@ -5,8 +5,10 @@ import Server from '@ioc:Adonis/Core/Server'
 import { schema, validator } from '@ioc:Adonis/Core/Validator'
 import User from 'App/Models/User'
 import {
-  ADDEMOTES,
-  BASE, JOINCHAT,
+  BASE,
+  BIO,
+  EMOTES,
+  JOINCHAT,
   MessageType,
   More,
   NameAndId,
@@ -16,10 +18,10 @@ import {
 } from 'befriendlier-shared'
 import { IncomingMessage } from 'http'
 import { Socket } from 'net'
+import PQueue from 'p-queue'
 import WS from 'ws'
 import TwitchConfig from '../../config/twitch'
 import Handler from './Handler'
-import PQueue from 'p-queue'
 
 interface Token {
   expiration: Date
@@ -325,17 +327,24 @@ class Ws {
             }
             break
           }
-          case MessageType.ADDEMOTES: {
+          case MessageType.EMOTES: {
             if (res.data !== undefined) {
-              const data: ADDEMOTES = JSON.parse(res.data)
+              const data: EMOTES = JSON.parse(res.data)
 
               // static-cdn.jtvnw.net/emoticons/v1/${matchesTwitch.id}/3.0
-              await Handler.addEmotes(data)
+              await Handler.setEmotes(data)
 
-              data.result = { value: `Successfully set the following emotes: ${data.emotes.map(emote => emote.name).join(' ')}` }
-              socket.send(this.socketMessage(MessageType.ADDEMOTES, JSON.stringify(data)))
+              data.result = { value: `Successfully set the following emotes: ${String(data.emotes.map(emote => emote.name).join(' '))}` }
+              socket.send(this.socketMessage(MessageType.EMOTES, JSON.stringify(data)))
             }
             break
+          }
+          case MessageType.BIO: {
+            if (res.data !== undefined) {
+              const data: BIO = JSON.parse(res.data)
+
+              await Handler.setBio(data)
+            }
           }
         // case MessageType.TOKEN: {
         //   socket.send(this.socketMessage(MessageType.TOKEN, JSON.stringify(this.token)))
