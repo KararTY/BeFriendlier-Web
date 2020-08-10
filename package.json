@@ -12,8 +12,9 @@
     "lint": "eslint .",
     "lintfix": "eslint . --ext=.ts --fix",
     "migrate:rollback": "npm run build && node ace migration:rollback",
-    "migrate:run": "npm run build && node ace migration:run",
-    "seed": "npm run build && node ace db:seed",
+    "migrate:run": "npm run build-server && node ace migration:run",
+    "seed": "npm run build-server && node ace db:seed",
+    "m:s": "noed ace migration:run && node ace db:seed",
     "r:m:s": "npm run build-server && node ace migration:rollback && node ace migration:run && node ace db:seed",
     "release": "standard-version"
   },
