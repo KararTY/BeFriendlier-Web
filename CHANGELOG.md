@@ -2,6 +2,59 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/KararTY/Twitchr/compare/v0.2.0...v0.3.0) (2020-08-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* Moved TwitchProvider logic to AppProvider.
+
+### Features
+
+* Add parcel bundler & update packages. ([de993fe](https://github.com/KararTY/Twitchr/commit/de993fec7687eda929997f2ae0bfe0e2f9a5c14d))
+* Enable healthChecks for db. ([b9ef963](https://github.com/KararTY/Twitchr/commit/b9ef96375b1889991c75d72e1d5991ca6da0fcfb))
+* Moved TwitchProvider logic to AppProvider. ([e10fc9e](https://github.com/KararTY/Twitchr/commit/e10fc9e443733d0da2d080ab3d211c0de7c9bacb))
+* Now disconnects websockets without userAgent ([62561a3](https://github.com/KararTY/Twitchr/commit/62561a321b615026b92c24b9cfe6bd2cb3bdf392))
+* The big #$!? update. ([37ee515](https://github.com/KararTY/Twitchr/commit/37ee515c405b64f10e525ff21b70f2103ec5e166))
+* Use parcel bundler for frontend javascript. ([34863b1](https://github.com/KararTY/Twitchr/commit/34863b1b91609f6845025b049ba74ce69f57d09f))
+* **Twitch:** Added 2 new env variables. ([801cc40](https://github.com/KararTY/Twitchr/commit/801cc40c69e0dee3ae77fed1a13a68dd8dd9ff7c))
+* **Twitch:** Move redirectURI string to env file. ([b5c84bc](https://github.com/KararTY/Twitchr/commit/b5c84bc3c7af1fec2a3e910e36902b88a6be6ea6))
+* **User:** Add `host` column to model. ([9cb928e](https://github.com/KararTY/Twitchr/commit/9cb928e8092f01c8ab221f978e7ac61f536ade12))
+
+
+### Bug Fixes
+
+*  Fix initialize not existing, it exists now. ([4be99ba](https://github.com/KararTY/Twitchr/commit/4be99ba54d02c3dad44975841ccb76119e96e252))
+*  Will now "build" resources. ([6a72710](https://github.com/KararTY/Twitchr/commit/6a72710a0c9432c68ca718f7af233b6b94b494f7))
+* Add LOG_LEVEL to .env.example ([28bba5a](https://github.com/KararTY/Twitchr/commit/28bba5aafeb8d20dd8d5a7e1f6b5f89606dd80ac))
+* emote.url changed to emote.id. ([bde3049](https://github.com/KararTY/Twitchr/commit/bde3049af57fc459311f9f54546d3ed684261a78))
+* Formatting files. ([63e2748](https://github.com/KararTY/Twitchr/commit/63e274895b367a67c6f745df7e9bfe8840895af7))
+* Moved dev login logic to separate function. ([57cf13d](https://github.com/KararTY/Twitchr/commit/57cf13def0b2fffbe0ad6c34b839808f06b2d7d3))
+* Moved Emote interface to shared module. ([1efd4de](https://github.com/KararTY/Twitchr/commit/1efd4defc09f63a87157fd112df561bed79c45cb))
+* Moving matches list to its own function. ([0170f16](https://github.com/KararTY/Twitchr/commit/0170f1656e8182feb6626f3c7d9892789218d802))
+* nextRoll -> nextRolls ([b3d7bab](https://github.com/KararTY/Twitchr/commit/b3d7bab0ce11266a9b8c4aa547797aa60edd59a2))
+* Now anonymizing profiles on user delete. ([71d445d](https://github.com/KararTY/Twitchr/commit/71d445dcb376f7fda4a155868a1d5b4af9deff2f))
+* **frontend:** Add navbar toggle logic. ([fd57387](https://github.com/KararTY/Twitchr/commit/fd57387cf0a2c09bb5e556b861dde596e20754c4))
+* **frontend:** Improve navbar & footer. ([1a2abb3](https://github.com/KararTY/Twitchr/commit/1a2abb340bceb378fd00d465f610c434b4a55209))
+* Added & Used ensureIsOfType for frontend. ([f9be75d](https://github.com/KararTY/Twitchr/commit/f9be75d92d3dd6f82383b492bdadda70fc9c5bfa))
+* Fix eslint inclusion for resources directory ([bfac947](https://github.com/KararTY/Twitchr/commit/bfac947721e958b2dbae805905988208452a21ad))
+* No longer building the resources folder. ([9d2f020](https://github.com/KararTY/Twitchr/commit/9d2f0202dd51865210cd47bd310b674596fdbecd))
+* One consistent gitignore file in all projects ([c0f11e9](https://github.com/KararTY/Twitchr/commit/c0f11e95b6060c2dc16cd65e6b5e70069cfa5210))
+* Remove comments from json file. ([190f5ce](https://github.com/KararTY/Twitchr/commit/190f5ce8180aebb0225be605505260977335006c))
+* Update befriendlier-shared related code. ([934a261](https://github.com/KararTY/Twitchr/commit/934a261a4ea7582baad9c5ba1674c9d73667c30b))
+* Update code to the new befriendlier-shared. ([89ba791](https://github.com/KararTY/Twitchr/commit/89ba79187afa0dbf5def9fdcb5b18b9d7cf29a01))
+* Users are now anonymized on deletion. ([712fd09](https://github.com/KararTY/Twitchr/commit/712fd09ab1db2d9d64214fd59a5d531b6f34ed85))
+* **Healthcheck:** No longer checking all db health ([3e968ee](https://github.com/KararTY/Twitchr/commit/3e968ee3a773e45bef88633b4caf7d5cc438acd0))
+* **Seeders:** Initialize.ts should no longer error ([d335db9](https://github.com/KararTY/Twitchr/commit/d335db92d1c62cd074cff6df0a6c2a789becd3e6))
+* **Splash:** Use models for querying. ([6cf7dd4](https://github.com/KararTY/Twitchr/commit/6cf7dd4029a925eed95ec14dc1f3f8a65f97cca6))
+* **Twitch:** Log errors now slightly more readable ([817aa84](https://github.com/KararTY/Twitchr/commit/817aa8414aaa530294b4e45334acc8562e5c0c09))
+* **Ws:** Fix ws termination log. ([bc5d087](https://github.com/KararTY/Twitchr/commit/bc5d087ba9c485311f53d0e8fa6c40ee4b2b0df2))
+* Typos. ([cfee85d](https://github.com/KararTY/Twitchr/commit/cfee85d0354e84ab028b89ca24f6737ed8d352b2))
+* Update eslintrc file. ([1e7ee83](https://github.com/KararTY/Twitchr/commit/1e7ee838eec02e24a9785c925e89cac33ab53dc0))
+* **Ws:** Fix Match.ts to use new shared types. ([8a08467](https://github.com/KararTY/Twitchr/commit/8a08467c6591b8c3042c49868736b8dbd99c5a06))
+* Rename instances of Twitchr to Befriendlier. ([268091f](https://github.com/KararTY/Twitchr/commit/268091f15da75a8f2e227acb979a2744e83b779f))
+* **Twitch:** Moved env logic to config file. ([ca539d8](https://github.com/KararTY/Twitchr/commit/ca539d854ecc9629c1a0025530be0404a2dca4cf))
+
 ## 0.2.0 (2020-07-26)
 
 
