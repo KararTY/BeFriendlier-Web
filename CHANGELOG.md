@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/KararTY/Twitchr/compare/v0.2.0...v0.3.1) (2020-08-10)
+
+
+### Bug Fixes
+
+* build-server instead of build ([ec8acba](https://github.com/KararTY/Twitchr/commit/ec8acba6f9c548aca422b10de1b5f5c84e6c7324))
+* Should now work with postgresql. ([89f380c](https://github.com/KararTY/Twitchr/commit/89f380c886a788bb32c1d4d21346f1ee395d60e6))
+* **CSS:** Use local font. ([5e25cf0](https://github.com/KararTY/Twitchr/commit/5e25cf03c729e0b84144dd67b7885d8ea7e4a102))
+* **LEGAL:**  Updated date for Privacy Policy. ([10f2909](https://github.com/KararTY/Twitchr/commit/10f29094d676dc0e302da5e6083919a79e7d186b))
+* Replace example.com with actual website URL. ([0bf438d](https://github.com/KararTY/Twitchr/commit/0bf438dca946de2de8ef1ad457bbc9534330f3fc))
+* **View:** Move footer in error to proper place. ([c5ea163](https://github.com/KararTY/Twitchr/commit/c5ea1637705b96b8df3575707c21ea1c181d0a64))
+
 ## [0.3.0](https://github.com/KararTY/Twitchr/compare/v0.2.0...v0.3.0) (2020-08-10)
 
 
