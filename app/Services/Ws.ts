@@ -104,7 +104,7 @@ class Ws {
 
   // Is called from "start/socket.ts" file.
   public async onMessage (socket: ExtendedWebSocket, msg: WS.Data) {
-    return await new Promise((resolve, reject) => {
+    return await new Promise((resolve) => {
       Logger.debug({ msg }, 'Ws.onMessage()')
       let json
 
