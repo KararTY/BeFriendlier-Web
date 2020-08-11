@@ -5,8 +5,8 @@
   "scripts": {
     "build": "npm run build-js && npm run build-css && npm run build-server",
     "build-server": "node ace build",
-    "build-js": "parcel build resources/js/Index.ts --dist-dir public/js/ --detailed-report",
     "build-css": "node-sass resources/sass/style.scss public/css/stylesheet.css --output-style compressed",
+    "build-js": "parcel build resources/js/Index.ts --dist-dir public/js/ --detailed-report",
     "start": "node ace serve",
     "start-test": "node ace serve --watch --node-args=\"--inspect\"",
     "lint": "eslint .",
@@ -16,7 +16,8 @@
     "seed": "npm run build-server && node ace db:seed",
     "m:s": "node ace migration:run && node ace db:seed",
     "r:m:s": "npm run build-server && node ace migration:rollback && node ace migration:run && node ace db:seed",
-    "release": "standard-version"
+    "release": "standard-version",
+    "update": "git pull && pnpm i --shamefully-hoist && npm run build && pm2 restart Web"
   },
   "devDependencies": {
     "@adonisjs/assembler": "^2.1.3",
