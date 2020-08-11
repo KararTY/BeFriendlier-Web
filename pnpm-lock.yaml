@@ -9,7 +9,7 @@ dependencies:
   '@adonisjs/view': 2.0.7_4a0b29b0694daa5f28dcf36cd4a1a73a
   '@hapi/bourne': 2.0.0
   '@types/ws': 7.2.6
-  befriendlier-shared: github.com/kararty/befriendlier-shared/98c9dacbf999197732ee134e5e5f761306a6a88c
+  befriendlier-shared: github.com/kararty/befriendlier-shared/15ddc437b56990f93074809022f8f05ce8bddbd6
   bulma: 0.9.0
   feather-icons: 4.28.0
   got: 11.5.1
@@ -11190,15 +11190,15 @@ packages:
     dev: true
     resolution:
       integrity: sha512-qPLQW2TuwlcK9sm5i1Gbb9ezRZRZyzr6NsY5cqxsbh+2iEyKPxLlz0OSAc+pQ7mv1pYZLri1MXynggP6R2FcNQ==
-  github.com/kararty/befriendlier-shared/98c9dacbf999197732ee134e5e5f761306a6a88c:
+  github.com/kararty/befriendlier-shared/15ddc437b56990f93074809022f8f05ce8bddbd6:
     dependencies:
       '@adonisjs/logger': 2.1.0
       got: 11.5.1
     dev: false
     name: befriendlier-shared
     resolution:
-      tarball: 'https://codeload.github.com/kararty/befriendlier-shared/tar.gz/98c9dacbf999197732ee134e5e5f761306a6a88c'
-    version: 6.0.1
+      tarball: 'https://codeload.github.com/kararty/befriendlier-shared/tar.gz/15ddc437b56990f93074809022f8f05ce8bddbd6'
+    version: 6.1.3
   github.com/thetutlage/matchit/fae24de689471ddb5e20d2a3bebe88eb80eca86e:
     dependencies:
       '@arr/every': 1.0.1
@@ -11224,7 +11224,7 @@ specifiers:
   '@types/ws': ^7.2.6
   '@typescript-eslint/eslint-plugin': ^3.7.1
   adonis-preset-ts: ^1.0.4
-  befriendlier-shared: 'github:kararty/befriendlier-shared#semver:6.0.1'
+  befriendlier-shared: 'github:kararty/befriendlier-shared#dev'
   bufferutil: ^4.0.1
   bulma: ^0.9.0
   eslint: ^7.5.0

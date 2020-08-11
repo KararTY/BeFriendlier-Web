@@ -347,6 +347,7 @@ export default class ProfilesController {
     bio: schema.string({}, [
       rules.maxLength(128),
       rules.minLength(1),
+      rules.nonToxicBio(),
     ]),
     color: schema.string({}, [
       rules.hexColorString(),

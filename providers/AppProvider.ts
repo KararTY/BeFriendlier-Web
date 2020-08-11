@@ -1,6 +1,6 @@
 import { IocContract } from '@adonisjs/fold'
 import feather from 'feather-icons'
-import { TwitchAuth } from 'befriendlier-shared'
+import { TwitchAuth, PerspectiveAPI } from 'befriendlier-shared'
 
 export default class AppProvider {
   constructor (protected container: IocContract) {
@@ -21,6 +21,19 @@ export default class AppProvider {
       }, logger.level)
 
       return TwitchInstance
+    })
+
+    this.container.singleton('Adonis/Addons/PerspectiveAPI', app => {
+      const config = app.use('Adonis/Core/Config')
+      const logger = app.use('Adonis/Core/Logger')
+
+      const PerspectiveAPIInstance = new PerspectiveAPI({
+        token: config.get('perspective.token'),
+        throttleInMs: config.get('perspective.throttleInMs'),
+        headers: config.get('perspective.headers'),
+      }, logger.level)
+
+      return PerspectiveAPIInstance
     })
   }
 
