@@ -363,7 +363,7 @@ class Ws {
           // socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(error)))
         }
         // Else ignore.
-        reject(new Error())
+        resolve()
       })
     })
   }
