@@ -4,13 +4,14 @@ import Profile from 'App/Models/Profile'
 import User from 'App/Models/User'
 import { BASE, BIO, EMOTES, MessageType, NameAndId, ROLLMATCH, UNMATCH } from 'befriendlier-shared'
 import { DateTime } from 'luxon'
+import TwitchConfig from '../../config/twitch'
 
 class Handler {
   /**
    * MAKE SURE TO CATCH ERRORS.
    */
-  public async rollMatch ({ userTwitch, channelTwitch }: ROLLMATCH) {
-    const { chatOwnerUser, profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch)
+  public async rollMatch ({ userTwitch, channelTwitch, global }: ROLLMATCH) {
+    const { chatOwnerUser, profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
     if (profile.rolls.length > 0) {
       // Return match
@@ -18,7 +19,7 @@ class Handler {
 
       if (rau instanceof Error) {
         throw this.error(MessageType.ERROR, userTwitch, channelTwitch,
-          'looks like you\'re not lucky today, rubber ducky 🦆 Try swiping again in a bit.')
+          'looks like it\'s not your lucky day today, rubber ducky 🦆 Try rolling a match again in a bit.')
       } else {
         const {
           rolls,
@@ -62,7 +63,7 @@ class Handler {
     if (profiles.length === 0) {
       await profile.save()
       throw this.error(MessageType.TAKEABREAK, userTwitch, channelTwitch,
-        `looks like you're not lucky today, rubber ducky 🦆 Try swiping again in ${String(profile.nextRolls.toRelative())}.`)
+        `looks like you're not lucky today, rubber ducky 🦆 Try rolling a match again in ${String(profile.nextRolls.toRelative())}.`)
     }
 
     // Shuffle the array!
@@ -80,8 +81,8 @@ class Handler {
   /**
    * MAKE SURE TO CATCH ERRORS.
    */
-  public async match ({ userTwitch, channelTwitch }: BASE) {
-    const { user, profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch)
+  public async match ({ userTwitch, channelTwitch, global }: BASE) {
+    const { user, profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
     const profileId = profile.rolls.shift()
 
@@ -164,8 +165,8 @@ class Handler {
     return true
   }
 
-  public async mismatch ({ userTwitch, channelTwitch }: BASE) {
-    const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch)
+  public async mismatch ({ userTwitch, channelTwitch, global }: BASE) {
+    const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
     const profileId = profile.rolls.shift()
 
@@ -180,8 +181,8 @@ class Handler {
     await profile.save()
   }
 
-  public async setEmotes ({ userTwitch, channelTwitch, emotes }: EMOTES) {
-    const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch)
+  public async setEmotes ({ userTwitch, channelTwitch, emotes, global }: EMOTES) {
+    const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
     profile.favoriteEmotes = emotes
 
@@ -209,10 +210,12 @@ class Handler {
     return user
   }
 
-  private async findProfileOrCreateByChatOwner (user: User | NameAndId, channel: User | NameAndId):
+  private async findProfileOrCreateByChatOwner (user: User | NameAndId, channel: User | NameAndId, global = false):
   Promise<{ user: User, chatOwnerUser: User, profile: Profile }> {
     const userModel = user instanceof User ? user : await User.findBy('twitchID', user.id)
-    const chatOwnerUserModel = channel instanceof User ? channel : await User.findBy('twitchID', channel.id)
+    const chatOwnerUserModel = channel instanceof User ? channel
+      : await User.findBy('twitchID', global ? TwitchConfig.user.id : channel.id)
+
     let profileModel: Profile | null
 
     if (userModel === null) {

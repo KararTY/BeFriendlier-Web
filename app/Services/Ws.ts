@@ -111,7 +111,7 @@ class Ws {
       try {
         json = bourne.parse(msg, null, { protoAction: 'remove' })
       } catch (error) {
-      // Data's not JSON.
+        // Data's not JSON.
         Logger.error({ err: error }, 'Ws.onMessage(): Error with parsing websocket data.')
         return
       }
@@ -139,21 +139,21 @@ class Ws {
 
               switch (rm.more) {
                 case More.NONE:
-                  rm.result = { value: `new match's bio: ${profile.bio.length > 64 ? `${String(profile.bio.substr(0, 32))}...` : String(profile.bio)}, reply with %prefix%more, %prefix%match or %prefix%no` }
+                  rm.result = { value: `new ${rm.global === true ? 'global ' : ''}match's bio: ${profile.bio.length > 64 ? `${String(profile.bio.substr(0, 32))}...` : String(profile.bio)}, reply with %prefix%more, %prefix%match or %prefix%no` }
                   socket.send(this.socketMessage(MessageType.ROLLMATCH, JSON.stringify(rm)))
                   break
                 case More.BIO:
-                  rm.result = { value: `full bio: ${String(profile.bio)}` }
+                  rm.result = { value: `${rm.global === true ? 'global\'s ' : ''}full bio: ${String(profile.bio)}` }
                   socket.send(this.socketMessage(MessageType.ROLLMATCH, JSON.stringify(rm)))
                   break
                 case More.FAVORITEEMOTES:
-                  rm.result = { value: `match's favorite emotes: ${profile.favoriteEmotes.length > 0 ? String(profile.favoriteEmotes.map(emote => emote.name).join(' ')) : 'None.'}` }
+                  rm.result = { value: `${rm.global === true ? 'global ' : ''}match's favorite emotes: ${profile.favoriteEmotes.length > 0 ? String(profile.favoriteEmotes.map(emote => emote.name).join(' ')) : 'None.'}` }
                   socket.send(this.socketMessage(MessageType.ROLLMATCH, JSON.stringify(rm)))
                   break
                 case More.FAVORITESTREAMERS: {
                   await user.preload('favoriteStreamers')
 
-                  rm.result = { value: `match's favorite streamers: ${user.favoriteStreamers.length > 0 ? String(user.favoriteStreamers.map(streamer => streamer.name).join(', ')) : 'None'}.` }
+                  rm.result = { value: `${rm.global === true ? 'global ' : ''}match's favorite streamers: ${user.favoriteStreamers.length > 0 ? String(user.favoriteStreamers.map(streamer => streamer.name).join(', ')) : 'None'}.` }
                   socket.send(this.socketMessage(MessageType.ROLLMATCH, JSON.stringify(rm)))
                   break
                 }
@@ -167,18 +167,17 @@ class Ws {
               const result = await Handler.match(data)
               switch (result.attempt) {
                 case MessageType.MATCH: {
-                // Attempted to match. Must wait for receiving end.
+                  // Attempted to match. Must wait for receiving end.
                   data.result = {
-                    value: 'you are attempting to match with a new user. Good luck! ' +
-                  // eslint-disable-next-line comma-dangle
-                  'You will receive a notification on a successful match!'
+                    value: `you are attempting to match with a ${data.global === true ? 'global ' : ''}user. Good luck! ` +
+                    'You will receive a notification on a successful match!',
                   }
                   socket.send(this.socketMessage(MessageType.MATCH, JSON.stringify(data)))
                   break
                 }
                 case MessageType.SUCCESS: {
                   if (result.matchUser !== undefined) {
-                  // Successfully matched!
+                    // Successfully matched!
                     data.result = {
                       matchUsername: result.matchUser.name,
                       value: 'you have matched with %s%! Send them a message?',
@@ -224,8 +223,7 @@ class Ws {
               if (user === null) {
                 data.result = {
                   value: 'user does not exist in the database.' +
-                // eslint-disable-next-line comma-dangle
-                'Can only add favorited or otherwise registered users.'
+                  'Can only add favorited or otherwise registered users.',
                 }
                 socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(data)))
                 return
@@ -242,9 +240,10 @@ class Ws {
             if (res.data !== undefined) {
               const data = JSON.parse(res.data)
               if (data.requestTime !== undefined) {
+                // This is a request, probably by the "@@join" command.
                 this.parseRequestResponse(socket, data)
               } else {
-              // Client has sent back a list of all channels.
+                // Client has sent back a list of all channels.
 
                 const socketChannels: Array<{ id: string, channels: string[] }> = []
 
@@ -346,10 +345,10 @@ class Ws {
               await Handler.setBio(data)
             }
           }
-        // case MessageType.TOKEN: {
-        //   socket.send(this.socketMessage(MessageType.TOKEN, JSON.stringify(this.token)))
-        //   break
-        // }
+          // case MessageType.TOKEN: {
+          //   socket.send(this.socketMessage(MessageType.TOKEN, JSON.stringify(this.token)))
+          //   break
+          // }
         }
         resolve()
       }).catch(error => {
@@ -361,7 +360,7 @@ class Ws {
           socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(error.data)))
         } else if (error.message !== undefined) {
           Logger.error({ err: error }, 'Ws.handleMessage()')
-        // socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(error)))
+          // socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(error)))
         }
         // Else ignore.
         reject(new Error())
