@@ -153,7 +153,7 @@ class Ws {
                 case More.FAVORITESTREAMERS: {
                   await user.preload('favoriteStreamers')
 
-                  rm.result = { value: `${rm.global === true ? 'global ' : ''}match's favorite streamers: ${user.favoriteStreamers.length > 0 ? String(user.favoriteStreamers.map(streamer => streamer.name).join(', ')) : 'None'}.` }
+                  rm.result = { value: `${rm.global === true ? 'global ' : ''}match's favorite streamers: ${user.favoriteStreamers.length > 0 ? String(user.favoriteStreamers.map(streamer => `${streamer.name.substr(0, 1)}\u{E0000}${streamer.name.substr(1)}`).join(', ')) : 'None'}.` }
                   socket.send(this.socketMessage(MessageType.ROLLMATCH, JSON.stringify(rm)))
                   break
                 }
