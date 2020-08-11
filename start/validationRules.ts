@@ -61,4 +61,8 @@ validator.rule('nonToxicBio', async (value, _, { pointer, arrayExpressionPointer
   } else if (check.attributeScores.TOXICITY.summaryScore.value > PerspectiveAPIConfig.thresholdTOXICITY) {
     errorReporter.report(pointer, 'nonToxicBio', 'Your bio is too toxic. Try again.', arrayExpressionPointer)
   }
+}, () => { // Per: https://github.com/adonisjs/core/discussions/1333#discussioncomment-42239
+  return {
+    async: true,
+  }
 })
