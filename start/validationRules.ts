@@ -57,8 +57,8 @@ validator.rule('nonToxicBio', async (value, _, { pointer, arrayExpressionPointer
 
   if (check === null) {
     errorReporter.report(
-      pointer, 'nonToxicBio', 'We could not change your bio at this time. Try again later.', arrayExpressionPointer)
-  } else if (check.attributeScores.toxic.summaryScore.value > PerspectiveAPIConfig.thresholdTOXICITY) {
+      pointer, 'nonToxicBio', 'Could not change your bio at this time. Try again later.', arrayExpressionPointer)
+  } else if (check.attributeScores.TOXICITY.summaryScore.value > PerspectiveAPIConfig.thresholdTOXICITY) {
     errorReporter.report(pointer, 'nonToxicBio', 'Your bio is too toxic. Try again.', arrayExpressionPointer)
   }
 })
