@@ -2,9 +2,8 @@
 Looking to match with POG Twitch friends?
 
 ## Requirements
-
-## Idea
-Twitch "Tinder(TM)" bot.
+  * Production:
+    * postgresql
 
 ## Execution
   * 10 minute cooldown for a "swiping" command.
@@ -16,14 +15,9 @@ Twitch "Tinder(TM)" bot.
     * Profiles can be setup to be global or channel-specific.
     * Only one global profile.
     * Only one profile per channel.
-    * Setup asks you a few questions to better "match" you with other users.
   * Profiles also accessible via web link.
   * Choose between global results or channel results.
   * On "match", users are **whispered** the username of the person they matched with.
-
-Stay tuned.
-
-### Deadline: Meh.
 
 ## Features
   * Website profile page,
@@ -44,7 +38,7 @@ Stay tuned.
   * Check `config/` directory for other configurations to change. Default config values should be sufficient for development, however.
   * If your `DB_CONNECTION` is not set to `sqlite`, make sure to create a database with the same name under `DB_NAME`.
   * `npm run r:m:s` for seeding the database with initial values. If `NODE_ENV` is set to `development`, you will also get development values to test around with.
-  * `npm start-watch` to start web server in watch mode (Reloads on file change) with debugging websocket enabled.
+  * `npm start-test` to start web server in watch mode (Reloads on file change) with debugging websocket enabled.
   * Or alternatively `npm start` to start web server in "production" mode (No reloading on file change and no debugging websocket). That's it.
 
 ## Contributing
@@ -66,29 +60,4 @@ Stay tuned.
   * (Pivot) Matches list.
 
 ## Todo
-  * Website
-    * ~~Splash page~~
-    * ~~Login with Twitch page~~
-    * ~~User page~~
-    * ~~Profile page~~
-      * ~~Background color~~
-      * ~Twitch avatar~
-      * ~Twitch name~
-      * ~~Favorite emotes~~
-      * ~Favorite streamers~
-      * ~Profile bio~
-      * ~~Matched users list~~
-    * ~~Profile page settings~~
-    * ~~Make sure users go through privacy page & terms page (in that order) before being able to register via Twitch.~~
-    * Admin page
-      * Ban users
-      * Delete users
-    * Bots end-point
-      * ~~Keep track of clients.~~
-      * Refresh bot data.
-      * Tell bot to track new channel.
-      * ~~Roll a match.~~
-      * ~~Confirm matches.~~
-      * ~~Remove matches.~~
-  * Bot
-    * ~~TODO: Make a todo. Pepega~~
+[Check project page for Todo list.](https://github.com/users/KararTY/projects/1)
