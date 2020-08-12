@@ -302,6 +302,9 @@ export default class ProfilesController {
       }
     }
 
+    // Sort by ascending order.
+    profiles.sort((a, b) => a.id - b.id)
+
     return profiles
   }
 
