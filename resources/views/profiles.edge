@@ -15,17 +15,17 @@
                       <div class="level-left">
                         @if(profile.chat_user_id === 0)
                           <span class="level-item icon">{{{ icon('globe') }}}</span>
-                          <p class="level-item">Global profile</p>
+                          <p class="level-item">Your global profile</p>
                           @if(!profile.enabled)
                             <p class="level-item">(Disabled)</p>
                           @endif
                         @else
                           <div class="icon level-item">
                             <figure class="image">
-                              <img src="{{ profile.chat.avatar.replace('300x300', '70x70') }}" alt="{{ profile.chat.name }}'s avatar'">
+                              <img src="{{ profile.chat.avatar.replace('300x300', '70x70') }}" alt="{{ profile.chat.name }}'s avatar">
                             </figure>
                           </div>
-                          <p class="level-item">{{ profile.chat.display_name }} ({{profile.chat.name}})</p>
+                          <p class="level-item">Your profile in {{ profile.chat.display_name }}'s ({{profile.chat.name}}) chat</p>
                         @endif
                       </div>
                     </div>
