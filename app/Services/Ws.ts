@@ -358,7 +358,7 @@ class Ws {
 
               if (user === null) {
                 data.result = {
-                  value: 'user does not exist in the database.' +
+                  value: 'user does not exist in the database. ' +
                   'Can only add favorited or otherwise registered users.',
                 }
                 socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(data)))
@@ -389,7 +389,7 @@ class Ws {
 
               if (user === null) {
                 data.result = {
-                  value: 'user does not exist in the database.' +
+                  value: 'user does not exist in the database. ' +
                   'Can only remove favorited or otherwise registered users.',
                 }
                 socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(data)))
