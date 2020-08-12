@@ -195,6 +195,8 @@ class Handler {
     profile.bio = bio
 
     await profile.save()
+
+    return profile.bio
   }
 
   private async findUserByProfile (profile: Profile) {

@@ -359,7 +359,10 @@ class Ws {
             if (res.data !== undefined) {
               const data: BIO = JSON.parse(res.data)
 
-              await Handler.setBio(data)
+              const bio = (await Handler.setBio(data)).split(' ').map(word => `${word.substr(0, 1)}\u{E0000}${word.substr(1)}`).join(' ')
+
+              data.result = { value: `Successfully set your ${data.global === true ? 'global ' : ''}bio. Here's a part of it: ${bio.length > 32 ? `${bio.substr(0, 32)}...` : bio}` }
+              socket.send(this.socketMessage(MessageType.BIO, JSON.stringify(data)))
             }
           }
           // case MessageType.TOKEN: {
