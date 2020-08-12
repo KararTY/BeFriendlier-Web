@@ -189,8 +189,8 @@ class Handler {
     await profile.save()
   }
 
-  public async setBio ({ userTwitch, channelTwitch, bio }: BIO) {
-    const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch)
+  public async setBio ({ userTwitch, channelTwitch, bio, global }: BIO) {
+    const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
     profile.bio = bio
 
