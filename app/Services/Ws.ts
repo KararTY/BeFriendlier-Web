@@ -9,6 +9,7 @@ import {
   BIO,
   EMOTES,
   JOINCHAT,
+  LEAVECHAT,
   MessageType,
   More,
   NameAndId,
@@ -37,6 +38,10 @@ export interface ExtendedWebSocket extends WS {
 }
 
 interface ExtendedJOINCHAT extends JOINCHAT {
+  socketId: string
+}
+
+interface ExtendedLEAVECHAT extends LEAVECHAT {
   socketId: string
 }
 
@@ -230,29 +235,6 @@ class Ws {
             }
             break
           }
-          case MessageType.JOINCHAT: {
-            if (res.data !== undefined) {
-              const data: ExtendedJOINCHAT = JSON.parse(res.data)
-              const user = await User.findBy('twitchID', data.joinUserTwitch.id)
-
-              data.socketId = socket.id
-
-              if (user === null) {
-                data.result = {
-                  value: 'user does not exist in the database.' +
-                  'Can only add favorited or otherwise registered users.',
-                }
-                socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(data)))
-                return
-              }
-
-              user.host = true
-              await user.save()
-
-              this.request(data, this.addHost)
-            }
-            break
-          }
           case MessageType.CHATS: {
             if (res.data !== undefined) {
               const data = JSON.parse(res.data)
@@ -365,6 +347,70 @@ class Ws {
               data.result = { value: `Successfully set your ${data.global === true ? 'global ' : ''}bio. Here's a part of it: ${bio.length > 32 ? `${bio.substr(0, 32)}...` : bio}` }
               socket.send(this.socketMessage(MessageType.BIO, JSON.stringify(data)))
             }
+            break
+          }
+          case MessageType.JOINCHAT: {
+            if (res.data !== undefined) {
+              const data: ExtendedJOINCHAT = JSON.parse(res.data)
+              const user = await User.findBy('twitchID', data.joinUserTwitch.id)
+
+              data.socketId = socket.id
+
+              if (user === null) {
+                data.result = {
+                  value: 'user does not exist in the database.' +
+                  'Can only add favorited or otherwise registered users.',
+                }
+                socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(data)))
+                return
+              }
+
+              user.host = true
+              await user.save()
+
+              if (data.userTwitch.name.length > 0 && data.userTwitch.id.length > 0) {
+                data.result = {
+                  value: `joining ${data.joinUserTwitch.name}...`,
+                }
+
+                socket.send(this.socketMessage(MessageType.SUCCESS, JSON.stringify(data)))
+              }
+
+              this.request(data, this.addHost)
+            }
+            break
+          }
+          case MessageType.LEAVECHAT: {
+            if (res.data !== undefined) {
+              const data: ExtendedLEAVECHAT = JSON.parse(res.data)
+              const user = await User.findBy('twitchID', data.leaveUserTwitch.id)
+
+              data.socketId = socket.id
+
+              if (user === null) {
+                data.result = {
+                  value: 'user does not exist in the database.' +
+                  'Can only remove favorited or otherwise registered users.',
+                }
+                socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(data)))
+                return
+              }
+
+              user.host = false
+              await user.save()
+
+              // When the bot gets banned, the userTwitch's variables are empty.
+              if (data.userTwitch.name.length > 0 && data.userTwitch.id.length > 0) {
+                data.result = {
+                  value: `leaving ${data.leaveUserTwitch.name}...`,
+                }
+
+                socket.send(this.socketMessage(MessageType.SUCCESS, JSON.stringify(data)))
+              }
+
+              this.request(data, this.removeHost)
+            }
+            break
           }
           // case MessageType.TOKEN: {
           //   socket.send(this.socketMessage(MessageType.TOKEN, JSON.stringify(this.token)))
@@ -452,6 +498,30 @@ class Ws {
         this.requests.delete(request.id)
         break
       }
+    }
+  }
+
+  private removeHost (request: REQUEST) {
+    const foundChannelBot = request.sockets.find(sockRes => sockRes.value.includes(request.by.leaveUserTwitch.name))
+
+    if (foundChannelBot !== undefined) {
+      for (const client of this.server.clients) {
+        const socket = client as ExtendedWebSocket
+
+        if (socket.id === foundChannelBot.id) {
+          // When the bot gets banned, the userTwitch's variables are empty.
+          const data: LEAVECHAT = {
+            channelTwitch: request.by.channelTwitch,
+            userTwitch: request.by.userTwitch,
+            leaveUserTwitch: request.by.leaveUserTwitch,
+          }
+
+          socket.send(this.socketMessage(MessageType.LEAVECHAT, JSON.stringify(data)))
+          break
+        }
+      }
+
+      this.requests.delete(request.id)
     }
   }
 
