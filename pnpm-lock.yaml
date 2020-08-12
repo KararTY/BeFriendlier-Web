@@ -12,7 +12,6 @@ dependencies:
   befriendlier-shared: github.com/kararty/befriendlier-shared/15ddc437b56990f93074809022f8f05ce8bddbd6
   bulma: 0.9.0
   feather-icons: 4.28.0
-  got: 11.5.1
   node-sass: 4.14.1
   p-queue: 6.6.0
   parcel: 2.0.0-nightly.352
@@ -11197,6 +11196,7 @@ packages:
     dev: false
     name: befriendlier-shared
     resolution:
+      registry: 'https://registry.npmjs.org/'
       tarball: 'https://codeload.github.com/kararty/befriendlier-shared/tar.gz/15ddc437b56990f93074809022f8f05ce8bddbd6'
     version: 6.1.3
   github.com/thetutlage/matchit/fae24de689471ddb5e20d2a3bebe88eb80eca86e:
@@ -11236,7 +11236,6 @@ specifiers:
   eslint-plugin-standard: ^4.0.1
   feather-icons: ^4.28.0
   fsevents: ^2.1.3
-  got: ^11.5.1
   node-sass: ^4.14.1
   p-queue: ^6.6.0
   parcel: ^2.0.0-nightly.352
