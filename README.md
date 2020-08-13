@@ -1,30 +1,20 @@
 # BeFriendlier
 Looking to match with POG Twitch friends?
 
+## External APIs in use:
+  * [Perspective API](https://www.perspectiveapi.com/)
+
 ## Requirements
   * Production:
     * postgresql
 
-## Execution
-  * 10 minute cooldown for a "swiping" command.
-  * "Swiping" gives you a text, consisting of the user's bio.
-  * You can reply to the bot with "more" to get more information.
-  * You can reply to the bot with "match" to try to match with the person.
-  * You can reply with "next" or "no" to skip the person.
-  * Profile can be setup via command. 128 characters bio.
-    * Profiles can be setup to be global or channel-specific.
-    * Only one global profile.
-    * Only one profile per channel.
-  * Profiles also accessible via web link.
-  * Choose between global results or channel results.
-  * On "match", users are **whispered** the username of the person they matched with.
-
 ## Features
-  * Website profile page,
+  * Website profile page.
     * Customizable background color.
     * 5 favorite streamers.
     * 5 favorite Twitch emotes.
     * 128 characters bio.
+  * Twitch bot.
 
 ## Changelogs
   * [Website](CHANGELOG.md)
