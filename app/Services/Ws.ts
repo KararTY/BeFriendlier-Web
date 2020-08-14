@@ -329,10 +329,17 @@ class Ws {
             if (res.data !== undefined) {
               const data: EMOTES = JSON.parse(res.data)
 
-              // static-cdn.jtvnw.net/emoticons/v1/${matchesTwitch.id}/3.0
-              await Handler.setEmotes(data)
+              if (data.emotes.length > 0) {
+                // static-cdn.jtvnw.net/emoticons/v1/${matchesTwitch.id}/3.0
+                await Handler.setEmotes(data)
 
-              data.result = { value: `Successfully set the following emotes: ${String(data.emotes.map(emote => emote.name).join(' '))}` }
+                data.result = { value: `Successfully set following ${data.global === true ? 'global' : 'channel'} profile emotes: ${String(data.emotes.map(emote => emote.name).join(' '))}` }
+              } else {
+                const emotes = await Handler.getEmotes(data)
+
+                data.result = { value: `your ${data.global === true ? 'global' : 'channel'} profile emotes: ${emotes.length > 0 ? emotes.map(emote => emote.name).join(' ') : 'None.'}` }
+              }
+
               socket.send(this.socketMessage(MessageType.EMOTES, JSON.stringify(data)))
             }
             break
@@ -341,10 +348,18 @@ class Ws {
             if (res.data !== undefined) {
               const data: BIO = JSON.parse(res.data)
 
-              const bioRes = await Handler.setBio(data)
-              const bio = bioRes.split(' ').map(word => `${word.substr(0, 1)}\u{E0000}${word.substr(1)}`).join(' ')
+              if (data.bio.length > 0) {
+                const bioRes = await Handler.setBio(data)
+                const bio = bioRes.split(' ').map(word => `${word.substr(0, 1)}\u{E0000}${word.substr(1)}`).join(' ')
 
-              data.result = { value: `Successfully set your ${data.global === true ? 'global ' : ''}bio. Here's a part of it: ${bio.length > 32 ? `${bio.substr(0, 32)}...` : bio}` }
+                data.result = { value: `Successfully set your ${data.global === true ? 'global' : 'profile'} bio. Here's a part of it: ${bio.length > 32 ? `${bio.substr(0, 32)}...` : bio}` }
+              } else {
+                const bioRes = await Handler.getBio(data)
+                const bio = bioRes.split(' ').map(word => `${word.substr(0, 1)}\u{E0000}${word.substr(1)}`).join(' ')
+
+                data.result = { value: `your ${data.global === true ? 'global' : 'profile'} bio: ${bio}` }
+              }
+
               socket.send(this.socketMessage(MessageType.BIO, JSON.stringify(data)))
             }
             break

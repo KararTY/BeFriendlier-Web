@@ -189,12 +189,24 @@ class Handler {
     await profile.save()
   }
 
+  public async getEmotes ({ userTwitch, channelTwitch, global }: EMOTES) {
+    const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
+
+    return profile.favoriteEmotes
+  }
+
   public async setBio ({ userTwitch, channelTwitch, bio, global }: BIO) {
     const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
     profile.bio = bio
 
     await profile.save()
+
+    return profile.bio
+  }
+
+  public async getBio ({ userTwitch, channelTwitch, global }: BIO) {
+    const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
     return profile.bio
   }
