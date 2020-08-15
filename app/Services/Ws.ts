@@ -1,5 +1,4 @@
 import bourne from '@hapi/bourne'
-import Twitch from '@ioc:Adonis/Addons/Twitch'
 import Logger from '@ioc:Adonis/Core/Logger'
 import Server from '@ioc:Adonis/Core/Server'
 import { schema, validator } from '@ioc:Adonis/Core/Validator'
@@ -15,6 +14,7 @@ import {
   NameAndId,
   REQUESTRESPONSE,
   ROLLMATCH,
+  TwitchAuth,
   UNMATCH,
 } from 'befriendlier-shared'
 import { IncomingMessage } from 'http'
@@ -59,6 +59,7 @@ class Ws {
   public server: WS.Server
   private readonly requests = new Map<string, REQUEST>()
 
+  private twitchAPI: TwitchAuth
   private token: Token
   private reconnectTimeout: NodeJS.Timeout
 
@@ -72,6 +73,14 @@ class Ws {
     this.server.on('close', () => {
       clearInterval(this.interval)
     })
+
+    this.twitchAPI = new TwitchAuth({
+      clientToken: TwitchConfig.clientToken,
+      clientSecret: TwitchConfig.clientSecret,
+      redirectURI: TwitchConfig.redirectURI,
+      scope: ['chat:read', 'chat:edit', 'whispers:read', 'whispers:edit'],
+      headers: TwitchConfig.headers,
+    }, Logger.level)
 
     // Connect to Twitch
     this.token = {
@@ -583,7 +592,7 @@ class Ws {
     const newToken = { ...token }
 
     // Generate a token!
-    const twitch = await Twitch.refreshToken(this.token.refreshToken)
+    const twitch = await this.twitchAPI.refreshToken(this.token.refreshToken)
 
     if (twitch === null) {
       throw new Error('Couldn\'t login to Twitch!')
@@ -600,7 +609,7 @@ class Ws {
     const newToken = { ...token }
 
     // Validate token
-    const twitch = await Twitch.validateToken(newToken.superSecret)
+    const twitch = await this.twitchAPI.validateToken(newToken.superSecret)
 
     if (twitch === null) {
       // Token is bad! Request a new one!
