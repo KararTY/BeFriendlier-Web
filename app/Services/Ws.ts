@@ -88,7 +88,7 @@ class Ws {
       clearTimeout(this.reconnectTimeout)
     }
 
-    this.refreshTwitchToken(this.token).then(async res => {
+    this.checkTwitchToken(this.token).then(async res => {
       if (res.superSecret !== this.token.superSecret) {
         this.token = res
 
@@ -100,10 +100,10 @@ class Ws {
         }
       }
 
-      this.reconnectTimeout = setTimeout(() => this.startTwitch(), 5000)
+      this.reconnectTimeout = setTimeout(() => this.startTwitch(), 10000)
     }).catch((error) => {
-      Logger.error({ err: error }, 'Twitch.start(): Something went wrong trying to refresh token!')
-      this.reconnectTimeout = setTimeout(() => this.startTwitch(), 1000)
+      Logger.error({ err: error }, 'Ws.startTwitch(): Something went wrong trying to refresh or validate token!')
+      this.reconnectTimeout = setTimeout(() => this.startTwitch(), 15000)
     })
   }
 
@@ -579,24 +579,45 @@ class Ws {
     return JSON.stringify({ type: type, data: data, timestamp: Date.now() })
   }
 
-  private async refreshTwitchToken (token: Token): Promise<Token> {
+  private async refreshTwitchToken (token: Token) {
     const newToken = { ...token }
-    if (Date.now() > token.expiration.getTime()) {
-      // Generate a token!
-      const twitch = await Twitch.refreshToken(this.token.refreshToken)
 
-      if (twitch === null) {
-        throw new Error('Couldn\'t login to Twitch!')
-      }
+    // Generate a token!
+    const twitch = await Twitch.refreshToken(this.token.refreshToken)
 
-      newToken.expiration = new Date(Date.now() + (twitch.expires_in * 1000))
-      newToken.superSecret = twitch.access_token
-      newToken.refreshToken = twitch.refresh_token
-
-      return newToken
+    if (twitch === null) {
+      throw new Error('Couldn\'t login to Twitch!')
     }
 
+    newToken.expiration = new Date(Date.now() + (twitch.expires_in * 1000))
+    newToken.superSecret = twitch.access_token
+    newToken.refreshToken = twitch.refresh_token
+
     return newToken
+  }
+
+  private async validateTwitchToken (token: Token) {
+    const newToken = { ...token }
+
+    // Validate token
+    const twitch = await Twitch.validateToken(newToken.superSecret)
+
+    if (twitch === null) {
+      // Token is bad! Request a new one!
+      return await this.refreshTwitchToken(newToken)
+    }
+
+    newToken.expiration = new Date(Date.now() + (twitch.expires_in * 1000))
+
+    return newToken
+  }
+
+  private async checkTwitchToken (token: Token): Promise<Token> {
+    if (token.superSecret !== undefined) {
+      return await this.validateTwitchToken(token)
+    }
+
+    return await this.refreshTwitchToken(token)
   }
 
   private readonly validationSchema = schema.create({
