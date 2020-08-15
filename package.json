@@ -7,7 +7,7 @@
     "build-server": "node ace build",
     "build-css": "node-sass resources/sass/style.scss public/css/stylesheet.css --output-style compressed",
     "build-js": "parcel build resources/js/Index.ts --dist-dir public/js/ --detailed-report",
-    "start": "node ace serve",
+    "start": "node build/server.js",
     "start-test": "node ace serve --watch --node-args=\"--inspect\"",
     "lint": "eslint .",
     "lintfix": "eslint . --ext=.ts --fix",
