@@ -1,5 +1,5 @@
-import Ws, { prettySocketInfo } from 'App/Services/Ws'
 import Logger from '@ioc:Adonis/Core/Logger'
+import Ws, { prettySocketInfo } from 'App/Services/Ws'
 import { MessageType } from 'befriendlier-shared'
 
 Ws.start((socket, request) => {

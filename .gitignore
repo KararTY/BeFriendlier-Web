@@ -58,3 +58,6 @@ public/css
 public/js
 
 pnpm-lock.yaml
+
+# Supersecret.
+.supersecret.json

@@ -1,4 +1,5 @@
 import bourne from '@hapi/bourne'
+import Env from '@ioc:Adonis/Core/Env'
 import Logger from '@ioc:Adonis/Core/Logger'
 import Server from '@ioc:Adonis/Core/Server'
 import { schema, validator } from '@ioc:Adonis/Core/Validator'
@@ -17,9 +18,11 @@ import {
   TwitchAuth,
   UNMATCH,
 } from 'befriendlier-shared'
+import fs from 'fs'
 import { IncomingMessage } from 'http'
 import { Socket } from 'net'
 import PQueue from 'p-queue'
+import path from 'path'
 import WS from 'ws'
 import TwitchConfig from '../../config/twitch'
 import Handler from './Handler'
@@ -77,16 +80,33 @@ class Ws {
     this.twitchAPI = new TwitchAuth({
       clientToken: TwitchConfig.clientToken,
       clientSecret: TwitchConfig.clientSecret,
-      redirectURI: TwitchConfig.redirectURI,
+      redirectURI: '',
       scope: ['chat:read', 'chat:edit', 'whispers:read', 'whispers:edit'],
       headers: TwitchConfig.headers,
     }, Logger.level)
 
-    // Connect to Twitch
+    try {
+      // Define the file.
+      const dir = path.join(__dirname, '../../../.supersecret.json')
+      const token = JSON.parse(fs.readFileSync(dir.toString(), 'utf-8'))
+
+      // Set the environment variables.
+      Env.set('TWITCH_BOT_ACCESS_TOKEN', token.access_token)
+      Env.set('TWITCH_BOT_REFRESH_TOKEN', token.refresh_token)
+      Env.set('TWITCH_BOT_ACCESS_TOKEN_EXPIRES_IN', new Date(Date.now() + (token.expires_in * 1000)).toUTCString())
+
+      this.updateEnv()
+      this.startTwitch()
+    } catch (error) {
+      Logger.error({ err: error }, 'Ws.start(): Could not load .supersecret.json')
+    }
+  }
+
+  public updateEnv () {
     this.token = {
-      expiration: new Date(Date.now() - 1),
-      superSecret: TwitchConfig.superSecret,
-      refreshToken: TwitchConfig.refreshToken,
+      expiration: new Date(Env.get('TWITCH_BOT_ACCESS_TOKEN_EXPIRES_IN') as string),
+      superSecret: Env.get('TWITCH_BOT_ACCESS_TOKEN') as string,
+      refreshToken: Env.get('TWITCH_BOT_REFRESH_TOKEN') as string,
     }
 
     this.startTwitch()
@@ -95,6 +115,12 @@ class Ws {
   public startTwitch () {
     if (this.reconnectTimeout !== undefined) {
       clearTimeout(this.reconnectTimeout)
+    }
+
+    if (this.token === undefined || this.token.superSecret === undefined) {
+      Logger.warn('Ws.startTwitch(): Waiting for bot login...')
+      this.reconnectTimeout = setTimeout(() => this.startTwitch(), 1000)
+      return
     }
 
     this.checkTwitchToken(this.token).then(async res => {
