@@ -52,7 +52,6 @@
     "befriendlier-shared": "github:kararty/befriendlier-shared#dev",
     "bulma": "^0.9.0",
     "feather-icons": "^4.28.0",
-    "kontra": "^7.0.0",
     "node-sass": "^4.14.1",
     "p-queue": "^6.6.0",
     "parcel": "^2.0.0-nightly.352",
