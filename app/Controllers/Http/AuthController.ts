@@ -9,6 +9,10 @@ export default class AuthController {
   'Run `npm run seed` (`node ace db:seed`).')
 
   public async register ({ request, auth, response, session }: HttpContextContract) {
+    if (auth.user !== undefined) {
+      return response.redirect('/')
+    }
+
     const { code } = request.get()
 
     const token = await Twitch.requestToken(code)
