@@ -48,7 +48,7 @@ export default class BotLoginController {
       // Tell the Ws.
       Ws.updateEnv()
 
-      return response.ok('OK')
+      return response.redirect('/')
     }
   }
 }
