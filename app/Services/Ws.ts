@@ -128,6 +128,7 @@ class Ws {
       if (res.superSecret !== this.token.superSecret) {
         this.token = res
 
+        Logger.info('Ws.startTwitch(): Attempting to send login information to bots...')
         // Send new token to all clients.
         for (const client of this.server.clients) {
           const socket = client as ExtendedWebSocket
@@ -629,6 +630,8 @@ class Ws {
     newToken.superSecret = twitch.access_token
     newToken.refreshToken = twitch.refresh_token
 
+    Logger.debug('Ws.refreshTwitchToken(): Refreshed Twitch token.')
+
     return newToken
   }
 
@@ -644,6 +647,8 @@ class Ws {
     }
 
     newToken.expiration = new Date(Date.now() + (twitch.expires_in * 1000))
+
+    Logger.debug('Ws.validateTwitchToken(): Validated Twitch token.')
 
     return newToken
   }
