@@ -96,10 +96,11 @@ class Ws {
       Env.set('TWITCH_BOT_ACCESS_TOKEN_EXPIRES_IN', new Date(Date.now() + (token.expires_in * 1000)).toUTCString())
 
       this.updateEnv()
-      this.startTwitch()
     } catch (error) {
       Logger.error({ err: error }, 'Ws.start(): Could not load .supersecret.json')
     }
+
+    this.startTwitch()
   }
 
   public updateEnv () {
