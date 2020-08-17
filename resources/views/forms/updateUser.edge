@@ -85,7 +85,7 @@
                 <div class="tag" data-streamername="{{ streamer.name }}">
                   <span class="icon">
                     <figure class="image is-24x24">
-                      <img src="{{ streamer.avatar.replace('300x300', '70x70') }}" alt="{{ streamer.name }}'s avatar">
+                      <img class="is-rounded" src="{{ streamer.avatar.replace('300x300', '70x70') }}" alt="{{ streamer.name }}'s avatar">
                     </figure>
                   </span>
                   <span>{{ streamer.name }}</span>
@@ -141,6 +141,12 @@
             <div class="control">
               {{ csrfField() }}
               <button class="button is-success" type="submit" data-name="submitBtn">Update</button>
+            </div>
+            <div class="control">
+              <button title="You must not have recently updated your account details to be able to download this data: It can only be requested every 1 hour." type="submit" formaction="/user/data" class="button">
+                <span class="icon">{{{ icon('database', 'small') }}}</span>
+                <span>My data</span>
+              </button>
             </div>
             <div class="control">
               <button type="submit" formaction="/user/delete" class="button is-danger">

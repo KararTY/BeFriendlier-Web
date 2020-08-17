@@ -1,5 +1,6 @@
 <section class="hero is-fullheight">
   <div class="hero-head">
+    <div class="notification is-warning is-marginless"><a href="/terms">Terms of Service</a> & <a href="/privacy">Privacy Policy</a> have recently been updated! Please read them carefully. <strong>Effective date: August 12</strong></div>
     @include('includes/navbar')
   </div>
   <div class="hero-body">
@@ -10,17 +11,17 @@
         @if(!user)
           <div id="login">
             <a href="{{ twitchAuthURL(csrfToken) }}" class="button is-large" type="submit">
-              <span class="icon">{{{ icon('twitch', 'big') }}}</span>
+              <span class="icon">{{{ icon('twitch') }}}</span>
               <span>Login with Twitch</span>
             </a>
           </div>
         @else
           <a href="{{ route('UsersController.read') }}" class="button is-large" type="submit">
-            <span class="icon">{{{ icon('settings', 'big') }}}</span>
+            <span class="icon">{{{ icon('settings') }}}</span>
             <span>Settings</span>
           </a>
           <a href="{{ route('ProfilesController.read') }}" class="button is-large" type="submit">
-            <span class="icon">{{{ icon('user', 'big') }}}</span>
+            <span class="icon">{{{ icon('user') }}}</span>
             <span>Profiles</span>
           </a>
         @endif

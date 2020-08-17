@@ -26,7 +26,7 @@ export default class SplashController {
       user: auth.user?.toJSON(),
       web: {
         template: 'splash',
-        title: 'Find friends!',
+        title: 'Find Twitch people!',
         statistics: statistics,
       },
     })
@@ -37,7 +37,8 @@ export default class SplashController {
       .fromJSDate(new Date())
       .set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).toJSDate()
 
-    const countTotalUsers = User.query().count('*', 'total').first()
+    const countTotalUsers = User.query()
+      .where('created_at', '>', String(DateTime.fromJSDate(new Date('1971')).toSQL())).count('*', 'total').first()
     const countTotalChannels = User.query().where({ host: true }).count('*', 'total').first()
 
     const countNewUsers = User.query()

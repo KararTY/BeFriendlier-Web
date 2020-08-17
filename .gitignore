@@ -56,3 +56,8 @@ build/
 # public files, created with npm run build-css && npm run build-js
 public/css
 public/js
+
+pnpm-lock.yaml
+
+# Supersecret.
+.supersecret.json

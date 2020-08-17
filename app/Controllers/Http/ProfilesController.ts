@@ -3,6 +3,7 @@ import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Profile from 'App/Models/Profile'
 import User from 'App/Models/User'
+import { DateTime } from 'luxon'
 
 export default class ProfilesController {
   public async read ({ params, auth, view, session, response }: HttpContextContract) {
@@ -135,12 +136,6 @@ export default class ProfilesController {
       return response.redirect('/profile/')
     }
 
-    // Validate input
-    const validated = await request.validate({
-      schema: this.profilesSchema,
-      cacheKey: 'profilesSchema',
-    }) // Request may fail here if values do not pass validation.
-
     const profile = await Profile.find(idNumber)
 
     if (profile === null) {
@@ -151,6 +146,24 @@ export default class ProfilesController {
     const ownProfile = profile.userId === auth.user.id
 
     if (ownProfile) {
+      if (profile.updatedAt.diffNow('seconds').seconds > -60) {
+        session.flash('message', {
+          error: 'Error: Profile has recently been changed. ' +
+          'Please wait at least 1 minute before updating your profile.',
+        })
+
+        return response.redirect(`/profile/${id}`)
+      }
+
+      profile.updatedAt = DateTime.fromJSDate(new Date())
+      await profile.save()
+
+      // Validate input
+      const validated = await request.validate({
+        schema: this.profilesSchema,
+        cacheKey: 'profilesSchema',
+      }) // Request may fail here if values do not pass validation.
+
       profile.color = validated.color
       profile.bio = validated.bio
 
@@ -302,6 +315,9 @@ export default class ProfilesController {
       }
     }
 
+    // Sort by ascending order.
+    profiles.sort((a, b) => a.id - b.id)
+
     return profiles
   }
 
@@ -347,6 +363,7 @@ export default class ProfilesController {
     bio: schema.string({}, [
       rules.maxLength(128),
       rules.minLength(1),
+      rules.nonToxicBio(),
     ]),
     color: schema.string({}, [
       rules.hexColorString(),

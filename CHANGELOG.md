@@ -2,6 +2,59 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.2](https://github.com/KararTY/Twitchr/compare/v0.3.1...v0.3.2) (2020-08-17)
+
+
+### Features
+
+* Add BIO & Fix EMOTES ([5ed3cff](https://github.com/KararTY/Twitchr/commit/5ed3cff93a596d859aabbaf6f564dbb092a0f184))
+* Add experimental PerspectiveAPI support. ([697f02c](https://github.com/KararTY/Twitchr/commit/697f02c5134fdd978d7ec595ef8118f43bf08942))
+* Allow user to see bio & emotes. ([2e811fd](https://github.com/KararTY/Twitchr/commit/2e811fd3ce483fb0f60f069bafbb6a769f4d6664))
+* Escape potential pinged users in ROLLMATCH ([393e92f](https://github.com/KararTY/Twitchr/commit/393e92fb647d1404b735e980554190c05b5d206c))
+
+
+### Bug Fixes
+
+* add space ([dc9d80f](https://github.com/KararTY/Twitchr/commit/dc9d80f8dea7bc87e8558038fb4f3b9a98b653ea))
+* Add update script. ([000b1f2](https://github.com/KararTY/Twitchr/commit/000b1f23b703a4c7e449fee98136bc46ba9deb13))
+* Allow global profile bio to be changed. ([a2cb223](https://github.com/KararTY/Twitchr/commit/a2cb223938ca05ab8140693bc967714b558d7d8e))
+* Allow rules accidentally allowed external access. ([73b3e43](https://github.com/KararTY/Twitchr/commit/73b3e43e1ee26b7c180565e2b8c9a854be5b0b97))
+* Allow server to handle global requests. ([fff9ee8](https://github.com/KararTY/Twitchr/commit/fff9ee8448586511d0d685feba328669a45b3046))
+* Allow user to download user data. ([06c7c98](https://github.com/KararTY/Twitchr/commit/06c7c98af0506aa4c7033b1ae71f8f8f94640b60))
+* Change start script. ([2f5154a](https://github.com/KararTY/Twitchr/commit/2f5154aff99b2b1c773906a55a3b3316136c9816))
+* Don't leak login details in URL. ([065d650](https://github.com/KararTY/Twitchr/commit/065d650883bcdd16697f487907a781c7c58706c7))
+* Don't ping favorite streamers. ([2025545](https://github.com/KararTY/Twitchr/commit/2025545278b2bb4a8f45674afcc49f424b470816))
+* Don't show "cached" users as new users. ([f01f9e5](https://github.com/KararTY/Twitchr/commit/f01f9e5642bc56207ac234dd140014e41d5f24ff))
+* Handle LEAVECHAT with empty userTwitch vars. ([53adaa4](https://github.com/KararTY/Twitchr/commit/53adaa4787f364b32cff9096fdeb6303d9803af5))
+* Ignore pnpm-lock.yaml ([becdf5c](https://github.com/KararTY/Twitchr/commit/becdf5c534323273db04bba98f450816927d7cd2))
+* Initialize script fix. ([4bbfbfd](https://github.com/KararTY/Twitchr/commit/4bbfbfde1b331700a89a19a333708e598836227f))
+* Make sure the timer to wait for bot login starts. ([36bd845](https://github.com/KararTY/Twitchr/commit/36bd8455f9eef9091d6fe6a27d2c849831e9e605))
+* Make validation rule compile as asynchronous. ([edef9b1](https://github.com/KararTY/Twitchr/commit/edef9b1b33efb18dec32563ebc55a5cbdece094d))
+* Make Ws have its own Twitch instance. ([9c66a23](https://github.com/KararTY/Twitchr/commit/9c66a2309bf735a40410a400dc9d3316fd16dfb0))
+* More verbosity. ([3e6db80](https://github.com/KararTY/Twitchr/commit/3e6db80f2ebb149febf8f852d76fbf4241ca65e2))
+* noed -> node ([575d531](https://github.com/KararTY/Twitchr/commit/575d531e531dcef2add7b0e55045e518f07c777d))
+* Potential fix for BIO response. ([e99679c](https://github.com/KararTY/Twitchr/commit/e99679c2ea833c75ce4018cf8dfccc0841a0ec6f))
+* Queue no longer throwing errors. ([94bbd77](https://github.com/KararTY/Twitchr/commit/94bbd77e6ec13bf57cdb92d86d1eabcabf1499e7))
+* Ratelimit profile updating to 1 minute. ([f3aa900](https://github.com/KararTY/Twitchr/commit/f3aa9001284c9a779fe99dd5a02b25862e3bbe74))
+* Refactor bot login. ([b370699](https://github.com/KararTY/Twitchr/commit/b370699855336e92d72c7c8df68a7610a8d149dc))
+* Remove reject from arguments. ([069d394](https://github.com/KararTY/Twitchr/commit/069d39434bd51a23d0544ac0567e9e4dca464c89))
+* Removing favorite streamers in total count. ([acd8b16](https://github.com/KararTY/Twitchr/commit/acd8b16eea6c6043a2cc919d702bd422fd3475e0))
+* Revert accidental uploads. ([afa022f](https://github.com/KararTY/Twitchr/commit/afa022fd66e7bb654d50ebd72ff822c443bb4722))
+* Send websocket back on BIO request. ([5ffe395](https://github.com/KararTY/Twitchr/commit/5ffe3951d24a1e5bdfe174c626bed1768b60b054))
+* Sort profiles by ascending with profile.id ([fb7c2fb](https://github.com/KararTY/Twitchr/commit/fb7c2fb8c9502fe3b3f6cd68258bf8481fae70e4))
+* Splash now correctly displays real users. ([5d66e14](https://github.com/KararTY/Twitchr/commit/5d66e1415ecfe3f440c2ec2a988af27726e12b29))
+* test ([39822d3](https://github.com/KararTY/Twitchr/commit/39822d347fa6e144e5d5c8105585ea966b724ab2))
+* Test adding middleware to register end-point. ([f5f8ee1](https://github.com/KararTY/Twitchr/commit/f5f8ee18a313efc1d50537121851ab241531fc47))
+* Users need access to register URL. ([1c32f8a](https://github.com/KararTY/Twitchr/commit/1c32f8ad24a95fd1d3ee66bed46ad6f10ca6e301))
+* **LEGAL:** Update Terms of Service & Privacy policy ([f4f267d](https://github.com/KararTY/Twitchr/commit/f4f267d02099132372d178644a2e33fb42b1617b))
+* **View:** `is-rounded` on favorite streamers icon ([d447d38](https://github.com/KararTY/Twitchr/commit/d447d382891c11f48800a5852103affd51e6a8a5))
+* **View:** Change commands prefix. ([ffb8a18](https://github.com/KararTY/Twitchr/commit/ffb8a18f7794ae6563e44dc70a382aaf7c4a6c8d))
+* **View:** Update commands & Clarify profiles. ([1e26cc3](https://github.com/KararTY/Twitchr/commit/1e26cc3b0f986c37dac52f09b87e822534753b0d))
+* **Ws:** Also validate token. ([a2c998d](https://github.com/KararTY/Twitchr/commit/a2c998d8254e985717c3a30719aa47ff8479d5b2))
+* toxic -> TOXICITY ([f100e2d](https://github.com/KararTY/Twitchr/commit/f100e2d160d29545968ed69039c9a5de661cbe91))
+* Update README. ([17d0197](https://github.com/KararTY/Twitchr/commit/17d0197052586dbd05d7960d07f3febccaf3c638))
+* **Views:** item -> emote ([1d492f1](https://github.com/KararTY/Twitchr/commit/1d492f133eb8766f5f4171ca1f79d516c5d4a4b0))
+
 ### [0.3.1](https://github.com/KararTY/Twitchr/compare/v0.2.0...v0.3.1) (2020-08-10)
 
 

@@ -1,25 +1,31 @@
 import bourne from '@hapi/bourne'
-import Twitch from '@ioc:Adonis/Addons/Twitch'
+import Env from '@ioc:Adonis/Core/Env'
 import Logger from '@ioc:Adonis/Core/Logger'
 import Server from '@ioc:Adonis/Core/Server'
 import { schema, validator } from '@ioc:Adonis/Core/Validator'
 import User from 'App/Models/User'
 import {
-  ADDEMOTES,
-  BASE, JOINCHAT,
+  BASE,
+  BIO,
+  EMOTES,
+  JOINCHAT,
+  LEAVECHAT,
   MessageType,
   More,
   NameAndId,
   REQUESTRESPONSE,
   ROLLMATCH,
+  TwitchAuth,
   UNMATCH,
 } from 'befriendlier-shared'
+import fs from 'fs'
 import { IncomingMessage } from 'http'
 import { Socket } from 'net'
+import PQueue from 'p-queue'
+import path from 'path'
 import WS from 'ws'
 import TwitchConfig from '../../config/twitch'
 import Handler from './Handler'
-import PQueue from 'p-queue'
 
 interface Token {
   expiration: Date
@@ -38,6 +44,10 @@ interface ExtendedJOINCHAT extends JOINCHAT {
   socketId: string
 }
 
+interface ExtendedLEAVECHAT extends LEAVECHAT {
+  socketId: string
+}
+
 interface REQUEST {
   id: string
   sockets: Array<{ id: string, value: any }>
@@ -52,6 +62,7 @@ class Ws {
   public server: WS.Server
   private readonly requests = new Map<string, REQUEST>()
 
+  private twitchAPI: TwitchAuth
   private token: Token
   private reconnectTimeout: NodeJS.Timeout
 
@@ -66,11 +77,37 @@ class Ws {
       clearInterval(this.interval)
     })
 
-    // Connect to Twitch
+    this.twitchAPI = new TwitchAuth({
+      clientToken: TwitchConfig.clientToken,
+      clientSecret: TwitchConfig.clientSecret,
+      redirectURI: '',
+      scope: ['chat:read', 'chat:edit', 'whispers:read', 'whispers:edit'],
+      headers: TwitchConfig.headers,
+    }, Logger.level)
+
+    try {
+      // Define the file.
+      const dir = path.join(__dirname, '../../../.supersecret.json')
+      const token = JSON.parse(fs.readFileSync(dir.toString(), 'utf-8'))
+
+      // Set the environment variables.
+      Env.set('TWITCH_BOT_ACCESS_TOKEN', token.access_token)
+      Env.set('TWITCH_BOT_REFRESH_TOKEN', token.refresh_token)
+      Env.set('TWITCH_BOT_ACCESS_TOKEN_EXPIRES_IN', new Date(Date.now() + (token.expires_in * 1000)).toUTCString())
+
+      this.updateEnv()
+    } catch (error) {
+      Logger.error({ err: error }, 'Ws.start(): Could not load .supersecret.json')
+    }
+
+    this.startTwitch()
+  }
+
+  public updateEnv () {
     this.token = {
-      expiration: new Date(Date.now() - 1),
-      superSecret: TwitchConfig.superSecret,
-      refreshToken: TwitchConfig.refreshToken,
+      expiration: new Date(Env.get('TWITCH_BOT_ACCESS_TOKEN_EXPIRES_IN') as string),
+      superSecret: Env.get('TWITCH_BOT_ACCESS_TOKEN') as string,
+      refreshToken: Env.get('TWITCH_BOT_REFRESH_TOKEN') as string,
     }
 
     this.startTwitch()
@@ -81,10 +118,17 @@ class Ws {
       clearTimeout(this.reconnectTimeout)
     }
 
-    this.refreshTwitchToken(this.token).then(async res => {
+    if (this.token === undefined || this.token.superSecret === undefined) {
+      Logger.warn('Ws.startTwitch(): Waiting for bot login...')
+      this.reconnectTimeout = setTimeout(() => this.startTwitch(), 1000)
+      return
+    }
+
+    this.checkTwitchToken(this.token).then(async res => {
       if (res.superSecret !== this.token.superSecret) {
         this.token = res
 
+        Logger.info('Ws.startTwitch(): Attempting to send login information to bots...')
         // Send new token to all clients.
         for (const client of this.server.clients) {
           const socket = client as ExtendedWebSocket
@@ -93,23 +137,23 @@ class Ws {
         }
       }
 
-      this.reconnectTimeout = setTimeout(() => this.startTwitch(), 5000)
+      this.reconnectTimeout = setTimeout(() => this.startTwitch(), 10000)
     }).catch((error) => {
-      Logger.error({ err: error }, 'Twitch.start(): Something went wrong trying to refresh token!')
-      this.reconnectTimeout = setTimeout(() => this.startTwitch(), 1000)
+      Logger.error({ err: error }, 'Ws.startTwitch(): Something went wrong trying to refresh or validate token!')
+      this.reconnectTimeout = setTimeout(() => this.startTwitch(), 15000)
     })
   }
 
   // Is called from "start/socket.ts" file.
   public async onMessage (socket: ExtendedWebSocket, msg: WS.Data) {
-    return await new Promise((resolve, reject) => {
+    return await new Promise((resolve) => {
       Logger.debug({ msg }, 'Ws.onMessage()')
       let json
 
       try {
         json = bourne.parse(msg, null, { protoAction: 'remove' })
       } catch (error) {
-      // Data's not JSON.
+        // Data's not JSON.
         Logger.error({ err: error }, 'Ws.onMessage(): Error with parsing websocket data.')
         return
       }
@@ -135,23 +179,40 @@ class Ws {
               const rm: ROLLMATCH = JSON.parse(res.data)
               const { user, profile } = await Handler.rollMatch(rm)
 
+              const bio = profile.bio.split(' ').map(word => `${word.substr(0, 1)}\u{E0000}${word.substr(1)}`).join(' ')
+
               switch (rm.more) {
                 case More.NONE:
-                  rm.result = { value: `new match's bio: ${profile.bio.length > 64 ? `${String(profile.bio.substr(0, 32))}...` : String(profile.bio)}, reply with %prefix%more, %prefix%match or %prefix%no` }
+                  rm.result = {
+                    value: `new ${rm.global === true ? 'global ' : ''}match's bio: ` +
+                    `${profile.bio.length > 32 ? `${bio.substr(0, 32)}...` : bio}, reply with %prefix%more, %prefix%match or %prefix%no`,
+                  }
                   socket.send(this.socketMessage(MessageType.ROLLMATCH, JSON.stringify(rm)))
                   break
+
                 case More.BIO:
-                  rm.result = { value: `full bio: ${String(profile.bio)}` }
+                  rm.result = {
+                    value: `${rm.global === true ? 'global\'s ' : ''}full bio: ` +
+                    `${bio}`,
+                  }
                   socket.send(this.socketMessage(MessageType.ROLLMATCH, JSON.stringify(rm)))
                   break
                 case More.FAVORITEEMOTES:
-                  rm.result = { value: `match's favorite emotes: ${profile.favoriteEmotes.length > 0 ? String(profile.favoriteEmotes.map(emote => emote.name).join(' ')) : 'None.'}` }
+                  rm.result = {
+                    value: `${rm.global === true ? 'global ' : ''}match's favorite emotes: ` +
+                    `${profile.favoriteEmotes.length > 0 ? profile.favoriteEmotes.map(emote => emote.name).join(' ') : 'None.'}`,
+                  }
                   socket.send(this.socketMessage(MessageType.ROLLMATCH, JSON.stringify(rm)))
                   break
                 case More.FAVORITESTREAMERS: {
                   await user.preload('favoriteStreamers')
 
-                  rm.result = { value: `match's favorite streamers: ${user.favoriteStreamers.length > 0 ? String(user.favoriteStreamers.map(streamer => streamer.name).join(', ')) : 'None'}.` }
+                  const favoriteStreamers = user.favoriteStreamers.map(streamer => `${streamer.name.substr(0, 1)}\u{E0000}${streamer.name.substr(1)}`).join(', ')
+
+                  rm.result = {
+                    value: `${rm.global === true ? 'global ' : ''}match's favorite streamers: ` +
+                    `${user.favoriteStreamers.length > 0 ? favoriteStreamers : 'None'}.`,
+                  }
                   socket.send(this.socketMessage(MessageType.ROLLMATCH, JSON.stringify(rm)))
                   break
                 }
@@ -165,18 +226,17 @@ class Ws {
               const result = await Handler.match(data)
               switch (result.attempt) {
                 case MessageType.MATCH: {
-                // Attempted to match. Must wait for receiving end.
+                  // Attempted to match. Must wait for receiving end.
                   data.result = {
-                    value: 'you are attempting to match with a new user. Good luck! ' +
-                  // eslint-disable-next-line comma-dangle
-                  'You will receive a notification on a successful match!'
+                    value: `you are attempting to match with a ${data.global === true ? 'global ' : ''}user. Good luck! ` +
+                    'You will receive a notification on a successful match!',
                   }
                   socket.send(this.socketMessage(MessageType.MATCH, JSON.stringify(data)))
                   break
                 }
                 case MessageType.SUCCESS: {
                   if (result.matchUser !== undefined) {
-                  // Successfully matched!
+                    // Successfully matched!
                     data.result = {
                       matchUsername: result.matchUser.name,
                       value: 'you have matched with %s%! Send them a message?',
@@ -212,37 +272,14 @@ class Ws {
             }
             break
           }
-          case MessageType.JOINCHAT: {
-            if (res.data !== undefined) {
-              const data: ExtendedJOINCHAT = JSON.parse(res.data)
-              const user = await User.findBy('twitchID', data.joinUserTwitch.id)
-
-              data.socketId = socket.id
-
-              if (user === null) {
-                data.result = {
-                  value: 'user does not exist in the database.' +
-                // eslint-disable-next-line comma-dangle
-                'Can only add favorited or otherwise registered users.'
-                }
-                socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(data)))
-                return
-              }
-
-              user.host = true
-              await user.save()
-
-              this.request(data, this.addHost)
-            }
-            break
-          }
           case MessageType.CHATS: {
             if (res.data !== undefined) {
               const data = JSON.parse(res.data)
               if (data.requestTime !== undefined) {
+                // This is a request, probably by the "@@join" command.
                 this.parseRequestResponse(socket, data)
               } else {
-              // Client has sent back a list of all channels.
+                // Client has sent back a list of all channels.
 
                 const socketChannels: Array<{ id: string, channels: string[] }> = []
 
@@ -325,22 +362,112 @@ class Ws {
             }
             break
           }
-          case MessageType.ADDEMOTES: {
+          case MessageType.EMOTES: {
             if (res.data !== undefined) {
-              const data: ADDEMOTES = JSON.parse(res.data)
+              const data: EMOTES = JSON.parse(res.data)
 
-              // static-cdn.jtvnw.net/emoticons/v1/${matchesTwitch.id}/3.0
-              await Handler.addEmotes(data)
+              if (data.emotes.length > 0) {
+                // static-cdn.jtvnw.net/emoticons/v1/${matchesTwitch.id}/3.0
+                await Handler.setEmotes(data)
 
-              data.result = { value: `Successfully set the following emotes: ${data.emotes.map(emote => emote.name).join(' ')}` }
-              socket.send(this.socketMessage(MessageType.ADDEMOTES, JSON.stringify(data)))
+                data.result = { value: `Successfully set following ${data.global === true ? 'global' : 'channel'} profile emotes: ${String(data.emotes.map(emote => emote.name).join(' '))}` }
+              } else {
+                const emotes = await Handler.getEmotes(data)
+
+                data.result = { value: `your ${data.global === true ? 'global' : 'channel'} profile emotes: ${emotes.length > 0 ? emotes.map(emote => emote.name).join(' ') : 'None.'}` }
+              }
+
+              socket.send(this.socketMessage(MessageType.EMOTES, JSON.stringify(data)))
             }
             break
           }
-        // case MessageType.TOKEN: {
-        //   socket.send(this.socketMessage(MessageType.TOKEN, JSON.stringify(this.token)))
-        //   break
-        // }
+          case MessageType.BIO: {
+            if (res.data !== undefined) {
+              const data: BIO = JSON.parse(res.data)
+
+              if (data.bio.length > 0) {
+                const bioRes = await Handler.setBio(data)
+                const bio = bioRes.split(' ').map(word => `${word.substr(0, 1)}\u{E0000}${word.substr(1)}`).join(' ')
+
+                data.result = { value: `Successfully set your ${data.global === true ? 'global' : 'profile'} bio. Here's a part of it: ${bio.length > 32 ? `${bio.substr(0, 32)}...` : bio}` }
+              } else {
+                const bioRes = await Handler.getBio(data)
+                const bio = bioRes.split(' ').map(word => `${word.substr(0, 1)}\u{E0000}${word.substr(1)}`).join(' ')
+
+                data.result = { value: `your ${data.global === true ? 'global' : 'profile'} bio: ${bio}` }
+              }
+
+              socket.send(this.socketMessage(MessageType.BIO, JSON.stringify(data)))
+            }
+            break
+          }
+          case MessageType.JOINCHAT: {
+            if (res.data !== undefined) {
+              const data: ExtendedJOINCHAT = JSON.parse(res.data)
+              const user = await User.findBy('twitchID', data.joinUserTwitch.id)
+
+              data.socketId = socket.id
+
+              if (user === null) {
+                data.result = {
+                  value: 'user does not exist in the database. ' +
+                  'Can only add favorited or otherwise registered users.',
+                }
+                socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(data)))
+                return
+              }
+
+              user.host = true
+              await user.save()
+
+              if (data.userTwitch.name.length > 0 && data.userTwitch.id.length > 0) {
+                data.result = {
+                  value: `joining ${data.joinUserTwitch.name}...`,
+                }
+
+                socket.send(this.socketMessage(MessageType.SUCCESS, JSON.stringify(data)))
+              }
+
+              this.request(data, this.addHost)
+            }
+            break
+          }
+          case MessageType.LEAVECHAT: {
+            if (res.data !== undefined) {
+              const data: ExtendedLEAVECHAT = JSON.parse(res.data)
+              const user = await User.findBy('twitchID', data.leaveUserTwitch.id)
+
+              data.socketId = socket.id
+
+              if (user === null) {
+                data.result = {
+                  value: 'user does not exist in the database. ' +
+                  'Can only remove favorited or otherwise registered users.',
+                }
+                socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(data)))
+                return
+              }
+
+              user.host = false
+              await user.save()
+
+              // When the bot gets banned, the userTwitch's variables are empty.
+              if (data.userTwitch.name.length > 0 && data.userTwitch.id.length > 0) {
+                data.result = {
+                  value: `leaving ${data.leaveUserTwitch.name}...`,
+                }
+
+                socket.send(this.socketMessage(MessageType.SUCCESS, JSON.stringify(data)))
+              }
+
+              this.request(data, this.removeHost)
+            }
+            break
+          }
+          // case MessageType.TOKEN: {
+          //   socket.send(this.socketMessage(MessageType.TOKEN, JSON.stringify(this.token)))
+          //   break
+          // }
         }
         resolve()
       }).catch(error => {
@@ -352,10 +479,10 @@ class Ws {
           socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(error.data)))
         } else if (error.message !== undefined) {
           Logger.error({ err: error }, 'Ws.handleMessage()')
-        // socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(error)))
+          // socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(error)))
         }
         // Else ignore.
-        reject(new Error())
+        resolve()
       })
     })
   }
@@ -426,6 +553,30 @@ class Ws {
     }
   }
 
+  private removeHost (request: REQUEST) {
+    const foundChannelBot = request.sockets.find(sockRes => sockRes.value.includes(request.by.leaveUserTwitch.name))
+
+    if (foundChannelBot !== undefined) {
+      for (const client of this.server.clients) {
+        const socket = client as ExtendedWebSocket
+
+        if (socket.id === foundChannelBot.id) {
+          // When the bot gets banned, the userTwitch's variables are empty.
+          const data: LEAVECHAT = {
+            channelTwitch: request.by.channelTwitch,
+            userTwitch: request.by.userTwitch,
+            leaveUserTwitch: request.by.leaveUserTwitch,
+          }
+
+          socket.send(this.socketMessage(MessageType.LEAVECHAT, JSON.stringify(data)))
+          break
+        }
+      }
+
+      this.requests.delete(request.id)
+    }
+  }
+
   private parseRequestResponse (socket: ExtendedWebSocket, message: REQUESTRESPONSE) {
     const req = this.requests.get(message.requestTime)
 
@@ -465,24 +616,49 @@ class Ws {
     return JSON.stringify({ type: type, data: data, timestamp: Date.now() })
   }
 
-  private async refreshTwitchToken (token: Token): Promise<Token> {
+  private async refreshTwitchToken (token: Token) {
     const newToken = { ...token }
-    if (Date.now() > token.expiration.getTime()) {
-      // Generate a token!
-      const twitch = await Twitch.refreshToken(this.token.refreshToken)
 
-      if (twitch === null) {
-        throw new Error('Couldn\'t login to Twitch!')
-      }
+    // Generate a token!
+    const twitch = await this.twitchAPI.refreshToken(this.token.refreshToken)
 
-      newToken.expiration = new Date(Date.now() + (twitch.expires_in * 1000))
-      newToken.superSecret = twitch.access_token
-      newToken.refreshToken = twitch.refresh_token
-
-      return newToken
+    if (twitch === null) {
+      throw new Error('Couldn\'t login to Twitch!')
     }
 
+    newToken.expiration = new Date(Date.now() + (twitch.expires_in * 1000))
+    newToken.superSecret = twitch.access_token
+    newToken.refreshToken = twitch.refresh_token
+
+    Logger.debug('Ws.refreshTwitchToken(): Refreshed Twitch token.')
+
     return newToken
+  }
+
+  private async validateTwitchToken (token: Token) {
+    const newToken = { ...token }
+
+    // Validate token
+    const twitch = await this.twitchAPI.validateToken(newToken.superSecret)
+
+    if (twitch === null) {
+      // Token is bad! Request a new one!
+      return await this.refreshTwitchToken(newToken)
+    }
+
+    newToken.expiration = new Date(Date.now() + (twitch.expires_in * 1000))
+
+    Logger.debug('Ws.validateTwitchToken(): Validated Twitch token.')
+
+    return newToken
+  }
+
+  private async checkTwitchToken (token: Token): Promise<Token> {
+    if (token.superSecret !== undefined) {
+      return await this.validateTwitchToken(token)
+    }
+
+    return await this.refreshTwitchToken(token)
   }
 
   private readonly validationSchema = schema.create({

@@ -17,14 +17,9 @@ const TwitchConfig = {
   redirectURI: Env.getOrFail('TWITCH_REDIRECT_URI') as string,
 
   /**
-   * SUPERSECRET TOKEN
+   * Bot Login Redirect URI.
    */
-  superSecret: Env.getOrFail('TWITCH_BOT_ACCESS_TOKEN') as string,
-
-  /**
-   * REFRESH TOKEN
-   */
-  refreshToken: Env.getOrFail('TWITCH_BOT_REFRESH_TOKEN') as string,
+  botRedirectURI: Env.getOrFail('TWITCH_BOT_REDIRECT_URI') as string,
 
   /**
    * Twitch username. Used to make bot join default channel.

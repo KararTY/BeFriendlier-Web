@@ -96,6 +96,7 @@ export default class UsersController {
               name: streamer.login,
               displayName: streamer.display_name,
               avatar: streamer.profile_image_url,
+              createdAt: DateTime.fromJSDate(new Date('1970-01-01 02:00:00')),
             }
           }))
 
@@ -152,13 +153,11 @@ export default class UsersController {
 
     let accountDeleted = false
 
-    const user = await User.find(auth.user.id)
+    if (auth.user !== null) {
+      await auth.user.preload('profile')
 
-    if (user !== null) {
-      await user.preload('profile')
-
-      for (let i = 0; i < user.profile.length; i++) {
-        const profile = user.profile[i]
+      for (let i = 0; i < auth.user.profile.length; i++) {
+        const profile = auth.user.profile[i]
         await profile.related('matches').detach()
 
         // Remove all matches to this user.
@@ -173,27 +172,26 @@ export default class UsersController {
       }
 
       // await user.preload('favoriteStreamers')
-      await user.related('favoriteStreamers').detach()
+      await auth.user.related('favoriteStreamers').detach()
 
       // ANONYMIZE USER ON DELETE
-      user.twitchID = ''
-      user.name = '$deleted'
-      user.displayName = 'Deleted User'
-      user.avatar = ''
-      user.streamerMode = false
-      user.host = false
-      user.createdAt = DateTime.fromJSDate(new Date())
+      auth.user.twitchID = ''
+      auth.user.name = '$deleted'
+      auth.user.displayName = 'Deleted User'
+      auth.user.avatar = ''
+      auth.user.streamerMode = false
+      auth.user.host = false
+      auth.user.createdAt = DateTime.fromJSDate(new Date())
       // user.updatedAt automatically changes as soon as we save this.
 
-      await user.save()
+      await auth.user.save()
       await auth.logout()
       accountDeleted = true
     }
 
     session.flash('message', accountDeleted
       ? { message: 'Account has been deleted.' }
-      // eslint-disable-next-line comma-dangle
-      : { error: 'Error: Something went wrong, please try again later! Reference: #USERDELETE1' }
+      : { error: 'Error: Something went wrong, please try again later! Reference: #USERDELETE1' },
     )
 
     return response.redirect('/')
@@ -207,8 +205,7 @@ export default class UsersController {
     if (auth.user.updatedAt.diffNow('minutes').minutes > -5) {
       session.flash('message', {
         error: 'Error: Account has recently been changed. ' +
-        // eslint-disable-next-line comma-dangle
-        'Please wait at least 5 minutes before refreshing Twitch data.'
+        'Please wait at least 5 minutes before refreshing Twitch data.',
       })
       return response.redirect('/user')
     }
@@ -218,9 +215,9 @@ export default class UsersController {
     if (twitchBody === null) {
       session.flash('message', {
         error: 'Error: Twitch returned nothing after repeated attempts. ' +
-        // eslint-disable-next-line comma-dangle
-        'Try again later. Reference: #USERREFRESH1'
+        'Try again later. Reference: #USERREFRESH1',
       })
+
       return response.redirect('/user')
     }
 
@@ -234,5 +231,28 @@ export default class UsersController {
     session.flash('message', { message: 'Successfully refreshed your Twitch data.' })
 
     return response.redirect('/user')
+  }
+
+  public async requestData ({ auth, response, session }: HttpContextContract) {
+    if (auth.user === undefined) {
+      return
+    }
+
+    if (auth.user.updatedAt.diffNow('minutes').minutes > -60) {
+      session.flash('message', {
+        error: 'Error: Account has recently been changed. ' +
+        'Please wait at least 1 hour before downloading your data.',
+      })
+
+      return response.redirect('/user')
+    }
+
+    auth.user.updatedAt = DateTime.fromJSDate(new Date())
+    await auth.user.save()
+
+    await auth.user.preload('profile')
+    await auth.user.preload('favoriteStreamers')
+
+    return response.json(auth.user.serialize())
   }
 }
