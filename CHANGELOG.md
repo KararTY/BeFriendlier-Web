@@ -4,9 +4,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [0.3.3](https://github.com/KararTY/Twitchr/compare/v0.2.0...v0.3.3) (2020-08-17)
 
-### [0.3.2](https://github.com/KararTY/Twitchr/compare/v0.3.1...v0.3.2) (2020-08-17)
-
-
 ### Features
 
 * Add BIO & Fix EMOTES ([5ed3cff](https://github.com/KararTY/Twitchr/commit/5ed3cff93a596d859aabbaf6f564dbb092a0f184))
