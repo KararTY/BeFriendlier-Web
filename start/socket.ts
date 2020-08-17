@@ -5,15 +5,16 @@ import { MessageType } from 'befriendlier-shared'
 Ws.start((socket, request) => {
   request.socket.pause()
 
-  const xForwardedFor = request.headers['X-Forwarded-For'] as string | undefined
-  const remoteAddr = request.socket.remoteAddress
-  const allow = typeof xForwardedFor !== 'string' || remoteAddr === '127.0.0.1'
+  const xForwardedFor = request.headers['x-forwarded-for'] as string | undefined
+  const xRealIp = request.headers['x-real-ip'] as string | undefined
 
-  console.log(xForwardedFor, remoteAddr, allow, request.headers['X-Real-IP'])
+  const allow = typeof xForwardedFor !== 'string' && typeof xRealIp !== 'string'
+  const allowHost = request.headers.host === 'localhost:3000'
 
   // Kill connections from NON-LOCALHOST sources. TODO: Setup "Trusted Sources" later.
-  if (!allow) {
-    Logger.warn(`WEBSOCKET CONNECTION FROM A NON ALLOWED SOURCE! X-Forwarded-For:${String(xForwardedFor)}, remoteAddress:${String(remoteAddr)}`)
+  if (!allow && !allowHost) {
+    Logger.warn('WEBSOCKET CONNECTION FROM A NON ALLOWED SOURCE!' +
+    `X-Forwarded-For:${String(xForwardedFor)}, xRealIp:${String(xRealIp)}, host:${String(request.headers.host)}`)
     socket.terminate()
     return
   }
