@@ -13,7 +13,7 @@ Ws.start((socket, request) => {
 
   // Kill connections from NON-LOCALHOST sources. TODO: Setup "Trusted Sources" later.
   if (!allow && !allowHost) {
-    Logger.warn('WEBSOCKET CONNECTION FROM A NON ALLOWED SOURCE!' +
+    Logger.warn('WEBSOCKET CONNECTION FROM A NON ALLOWED SOURCE! ' +
     `X-Forwarded-For:${String(xForwardedFor)}, xRealIp:${String(xRealIp)}, host:${String(request.headers.host)}`)
     socket.terminate()
     return
