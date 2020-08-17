@@ -108,8 +108,8 @@ export const http: HttpConfig = {
     path: '/',
     maxAge: '2h',
     httpOnly: true,
-    secure: false,
-    sameSite: false,
+    secure: true,
+    sameSite: true,
   },
 
   /*

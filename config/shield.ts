@@ -74,7 +74,7 @@ export const csp: ShieldConfig['csp'] = {
   | Set all headers
   |--------------------------------------------------------------------------
   |
-  | Headers staring with `X` have been depreciated, since all major browsers
+  | Headers staring with `X` have been deprecated, since all major browsers
   | supports the standard CSP header. So its better to disable deperciated
   | headers, unless you want them to be set.
   |
