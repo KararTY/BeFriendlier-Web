@@ -9,6 +9,8 @@ Ws.start((socket, request) => {
   const remoteAddr = request.socket.remoteAddress
   const allow = typeof xForwardedFor !== 'string' || remoteAddr === '127.0.0.1'
 
+  console.log(xForwardedFor, remoteAddr, allow, request.headers['X-Real-IP'])
+
   // Kill connections from NON-LOCALHOST sources. TODO: Setup "Trusted Sources" later.
   if (!allow) {
     Logger.warn(`WEBSOCKET CONNECTION FROM A NON ALLOWED SOURCE! X-Forwarded-For:${String(xForwardedFor)}, remoteAddress:${String(remoteAddr)}`)
