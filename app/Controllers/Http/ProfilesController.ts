@@ -183,9 +183,15 @@ export default class ProfilesController {
 
     const { id } = params
 
+    const idNumber = Number(id)
+    if (Number.isNaN(idNumber)) {
+      session.flash('message', { error: this.Error.parameterBadRequest })
+      return response.redirect('/profile/')
+    }
+
     await auth.user.preload('profile')
 
-    const profile = auth.user.profile.find(profile => profile.id === id)
+    const profile = auth.user.profile.find(profile => profile.id === idNumber)
     if (profile !== undefined) {
       await profile.related('matches').detach()
 
