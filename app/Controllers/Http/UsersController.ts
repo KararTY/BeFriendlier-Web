@@ -168,6 +168,7 @@ export default class UsersController {
         profile.favoriteEmotes = []
         profile.color = '#ffffff'
         profile.enabled = false
+        profile.userId = -1
         profile.createdAt = DateTime.fromJSDate(new Date())
         // profile.updatedAt automatically changes as soon as we save this.
 
