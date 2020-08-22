@@ -251,9 +251,53 @@ export default class UsersController {
     auth.user.updatedAt = DateTime.fromJSDate(new Date())
     await auth.user.save()
 
+    const userData: any = {
+      id: auth.user.id,
+      name: auth.user.name,
+      display_name: auth.user.displayName,
+      twitchID: auth.user.twitchID,
+      avatar: auth.user.avatar,
+      profiles: [],
+      streamer_mode: auth.user.streamerMode,
+      favorite_streamers: [],
+      created_at: auth.user.createdAt.toUTC(),
+      updated_at: auth.user.updatedAt.toUTC(),
+    }
+
     await auth.user.preload('profile')
+
+    for (let index = 0; index < auth.user.profile.length; index++) {
+      const profile = auth.user.profile[index]
+      const profileJSON: any = {
+        ...profile.serialize({
+          fields: ['created_at', 'updated_at', 'id', 'favorite_emotes', 'color', 'bio', 'enabled'],
+        }),
+        matches: [],
+      }
+
+      await profile.preload('matches')
+
+      for (let index = 0; index < profile.matches.length; index++) {
+        const match = profile.matches[index]
+
+        profileJSON.matches.push(match.serialize({
+          fields: ['name', 'display_name', 'avatar'],
+        }))
+      }
+
+      userData.favorite_streamers.push(profileJSON)
+    }
+
     await auth.user.preload('favoriteStreamers')
 
-    return response.json(auth.user.serialize())
+    for (let index = 0; index < auth.user.favoriteStreamers.length; index++) {
+      const favoriteStreamer = auth.user.favoriteStreamers[index]
+
+      userData.favorite_streamers.push(favoriteStreamer.serialize({
+        fields: ['name', 'display_name', 'avatar'],
+      }))
+    }
+
+    return response.json(userData)
   }
 }
