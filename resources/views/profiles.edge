@@ -6,7 +6,7 @@
     <div class="container">
       <div>
         <div {{{ user.streamer_mode ? 'class="blur" data-blur="updateUser" data-blur-vanish="true" data-blur-text="true"' : '' }}}>
-          @each(profile in profiles.filter(profile => profile.enabled))
+          @each(profile in profiles)
             <a href="{{ route('ProfilesController.read', { params: { id: profile.id } }) }}">
               <div class="card">
                 <div class="card-header">
