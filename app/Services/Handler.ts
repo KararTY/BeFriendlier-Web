@@ -255,6 +255,10 @@ class Handler {
       })
     }
 
+    if (!profileModel.enabled) {
+      throw this.error(MessageType.ERROR, user, channel, 'this profile is disabled.')
+    }
+
     return { user: userModel, chatOwnerUser: chatOwnerUserModel, profile: profileModel }
   }
 
