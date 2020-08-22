@@ -273,7 +273,7 @@ export default class UsersController {
       const profile = auth.user.profile[index]
       const profileJSON: any = {
         ...profile.serialize({
-          fields: ['created_at', 'updated_at', 'id', 'favorite_emotes', 'color', 'bio', 'enabled'],
+          fields: ['created_at', 'updated_at', 'id', 'favorite_emotes', 'color', 'bio', 'enabled', 'chat_user_id'],
         }),
         matches: [],
       }
@@ -283,9 +283,19 @@ export default class UsersController {
       for (let index = 0; index < profile.matches.length; index++) {
         const match = profile.matches[index]
 
-        profileJSON.matches.push(match.serialize({
-          fields: ['name', 'display_name', 'avatar'],
-        }))
+        if (match.userId !== -1) {
+          const user = await User.find(match.userId)
+          if (user !== null) {
+            profileJSON.matches.push(user.serialize({
+              fields: ['name', 'display_name', 'avatar', 'id'],
+            }))
+          }
+        } else {
+          // Deleted match user.
+          profileJSON.matches.push({
+            name: 'Deleted User',
+          })
+        }
       }
 
       userData.favorite_streamers.push(profileJSON)
@@ -297,7 +307,7 @@ export default class UsersController {
       const favoriteStreamer = auth.user.favoriteStreamers[index]
 
       userData.favorite_streamers.push(favoriteStreamer.serialize({
-        fields: ['name', 'display_name', 'avatar'],
+        fields: ['name', 'display_name', 'avatar', 'id'],
       }))
     }
 
