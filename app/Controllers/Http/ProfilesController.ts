@@ -207,6 +207,8 @@ export default class ProfilesController {
       profile.createdAt = DateTime.fromJSDate(new Date())
       // profile.updatedAt automatically changes as soon as we save this.
 
+      await profile.save()
+
       session.flash('message', { message: 'Profile has been deleted.' })
     }
 
