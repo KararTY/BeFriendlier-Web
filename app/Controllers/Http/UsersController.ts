@@ -168,6 +168,8 @@ export default class UsersController {
         profile.favoriteEmotes = []
         profile.color = '#ffffff'
         profile.enabled = false
+        profile.createdAt = DateTime.fromJSDate(new Date())
+        // profile.updatedAt automatically changes as soon as we save this.
 
         await profile.save()
       }
@@ -183,7 +185,7 @@ export default class UsersController {
       auth.user.streamerMode = false
       auth.user.host = false
       auth.user.createdAt = DateTime.fromJSDate(new Date())
-      // user.updatedAt automatically changes as soon as we save this.
+      // auth.user.updatedAt automatically changes as soon as we save this.
 
       await auth.user.save()
       await auth.logout()

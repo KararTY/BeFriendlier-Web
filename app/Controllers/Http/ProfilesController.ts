@@ -203,6 +203,8 @@ export default class ProfilesController {
       profile.favoriteEmotes = []
       profile.color = '#ffffff'
       profile.enabled = false
+      profile.createdAt = DateTime.fromJSDate(new Date())
+      // profile.updatedAt automatically changes as soon as we save this.
 
       session.flash('message', { message: 'Profile has been deleted.' })
     }
