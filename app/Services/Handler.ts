@@ -165,6 +165,9 @@ class Handler {
     return true
   }
 
+  /**
+   * MAKE SURE TO CATCH ERRORS.
+   */
   public async mismatch ({ userTwitch, channelTwitch, global }: BASE) {
     const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
@@ -181,6 +184,9 @@ class Handler {
     await profile.save()
   }
 
+  /**
+   * MAKE SURE TO CATCH ERRORS.
+   */
   public async setEmotes ({ userTwitch, channelTwitch, emotes, global }: EMOTES) {
     const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
@@ -189,12 +195,18 @@ class Handler {
     await profile.save()
   }
 
+  /**
+   * MAKE SURE TO CATCH ERRORS.
+   */
   public async getEmotes ({ userTwitch, channelTwitch, global }: EMOTES) {
     const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
     return profile.favoriteEmotes
   }
 
+  /**
+   * MAKE SURE TO CATCH ERRORS.
+   */
   public async setBio ({ userTwitch, channelTwitch, bio, global }: BIO) {
     const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
@@ -205,6 +217,9 @@ class Handler {
     return profile.bio
   }
 
+  /**
+   * MAKE SURE TO CATCH ERRORS.
+   */
   public async getBio ({ userTwitch, channelTwitch, global }: BIO) {
     const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
