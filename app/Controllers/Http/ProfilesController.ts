@@ -198,7 +198,12 @@ export default class ProfilesController {
       // Remove all matches to this profile.
       await Database.query().from('matches_lists').where('match_profile_id', profile.id).delete()
 
-      await profile.delete()
+      // Anonymize profile
+      profile.bio = 'Hello!'
+      profile.favoriteEmotes = []
+      profile.color = '#ffffff'
+      profile.enabled = false
+
       session.flash('message', { message: 'Profile has been deleted.' })
     }
 

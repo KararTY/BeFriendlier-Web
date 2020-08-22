@@ -163,6 +163,7 @@ export default class UsersController {
         // Remove all matches to this user.
         // await Database.query().from('matches_lists').where('match_user_id', user.id).delete()
 
+        // Anonymize profile
         profile.bio = 'Hello!'
         profile.favoriteEmotes = []
         profile.color = '#ffffff'
