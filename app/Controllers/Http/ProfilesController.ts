@@ -60,7 +60,7 @@ export default class ProfilesController {
       const userJSON = auth.user.toJSON()
       const profileJSON = profile.toJSON()
 
-      profileJSON.matches = await this.getMatchesList(auth.user, profile)
+      profileJSON.matches = await this.getMatchesList(auth.user, profile, 0)
 
       if (ownProfile) {
         // If own, allow access.
@@ -351,9 +351,9 @@ export default class ProfilesController {
         }
 
         /**
-           * Make sure user has also matched with us before sending it.
-           * Do not ruin the surprise if they're not matched yet.
-           */
+         * Make sure user has also matched with us before sending it.
+         * Do not ruin the surprise if they're not matched yet.
+         */
 
         // Someone else's, check if the requested profile has matched this requesting user.
         const hasMatched = await Database.query().from('matches_lists').where({
@@ -362,7 +362,7 @@ export default class ProfilesController {
         }).first()
 
         if (hasMatched === null) {
-          return
+          continue
         }
 
         matchesJSON.push({
