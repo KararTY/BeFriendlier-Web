@@ -1,7 +1,7 @@
 import Twitch from '@ioc:Adonis/Addons/Twitch'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
-// import Database from '@ioc:Adonis/Lucid/Database'
+import Database from '@ioc:Adonis/Lucid/Database'
 import BannedUser from 'App/Models/BannedUser'
 import User from 'App/Models/User'
 import { TwitchUsersBody } from 'befriendlier-shared' // For type definitions
@@ -285,11 +285,22 @@ export default class UsersController {
 
         if (match.userId !== -1) {
           const user = await User.find(match.userId)
-          if (user !== null) {
-            profileJSON.matches.push(user.serialize({
-              fields: ['name', 'display_name', 'avatar', 'id'],
-            }))
+          if (user === null) {
+            continue
           }
+
+          const hasMatched = await Database.query().from('matches_lists').where({
+            profile_id: match.id,
+            match_user_id: auth.user.id,
+          }).first()
+
+          if (hasMatched === null) {
+            continue
+          }
+
+          profileJSON.matches.push(user.serialize({
+            fields: ['name', 'display_name', 'avatar', 'id'],
+          }))
         } else {
           // Deleted match user.
           profileJSON.matches.push({
