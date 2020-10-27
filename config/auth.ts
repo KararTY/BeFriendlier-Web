@@ -6,7 +6,6 @@
  */
 
 import { AuthConfig } from '@ioc:Adonis/Addons/Auth'
-import User from 'App/Models/User'
 
 /*
 |--------------------------------------------------------------------------
@@ -75,7 +74,8 @@ const authConfig: AuthConfig = {
         | The model to use for fetching or finding users
         |
         */
-        model: User,
+        // eslint-disable-next-line @typescript-eslint/promise-function-async
+        model: () => import('App/Models/User'),
       },
     },
   },

@@ -58,7 +58,7 @@ class Handler {
       ])
 
     // Ratelimit user's rolls to every 5 hours.
-    profile.nextRolls = DateTime.fromJSDate(new Date(Date.now() + (18000 * 1000)))
+    profile.nextRolls = DateTime.fromJSDate(new Date()).plus({ hours: 5 })
 
     if (profiles.length === 0) {
       await profile.save()
@@ -99,6 +99,8 @@ class Handler {
       [matchProfile.id]: {
         user_id: profile.userId,
         match_user_id: matchProfile.userId,
+        created_at: DateTime.fromJSDate(new Date()),
+        updated_at: DateTime.fromJSDate(new Date()),
       },
     })
 
