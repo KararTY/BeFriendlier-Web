@@ -71,10 +71,12 @@ const authConfig: AuthConfig = {
         | Model
         |--------------------------------------------------------------------------
         |
-        | The model to use for fetching or finding users
+        | The model to use for fetching or finding users. The model is imported
+        | lazily since the config files are read way earlier in the lifecycle
+        | of booting the app and the models may not be in a usable state at
+        | that time.
         |
         */
-        // eslint-disable-next-line @typescript-eslint/promise-function-async
         model: () => import('App/Models/User'),
       },
     },

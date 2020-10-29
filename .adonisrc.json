@@ -45,5 +45,7 @@
       "reloadServer": false
     }
   ],
-  "aceProviders": ["@adonisjs/repl"]
+  "aceProviders": [
+    "@adonisjs/repl"
+  ]
 }
