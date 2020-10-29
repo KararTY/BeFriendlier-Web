@@ -25,7 +25,6 @@
   ],
   "providers": [
     "./providers/AppProvider",
-    "@adonisjs/env",
     "@adonisjs/core",
     "@adonisjs/session",
     "@adonisjs/view",
