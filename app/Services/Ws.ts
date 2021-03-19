@@ -184,7 +184,7 @@ class WebSocketServer {
         //   socket.send(this.socketMessage(MessageType.TOKEN, JSON.stringify(this.token)))
         //   break
         // }
-        resolve()
+        resolve(0)
       }).catch(error => {
         if (error.message === MessageType.UNREGISTERED) {
           socket.send(this.socketMessage(MessageType.UNREGISTERED, JSON.stringify(error.data)))
@@ -197,7 +197,7 @@ class WebSocketServer {
           // socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(error)))
         }
         // Else ignore.
-        resolve()
+        resolve(0)
       })
     })
   }
@@ -308,7 +308,9 @@ class WebSocketServer {
   }
 
   public removeHost (request: REQUEST) {
-    const foundChannelBot = request.sockets.find(sockRes => sockRes.value.includes(request.by.leaveUserTwitch.name))
+    const foundChannelBot = request.sockets.find(sockRes => {
+      return sockRes.value.find((r: { name:string, id: string }) => r.name === request.by.leaveUserTwitch.name)
+    })
 
     if (foundChannelBot !== undefined) {
       for (const client of this.server.clients) {
