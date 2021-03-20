@@ -2,7 +2,7 @@ import Logger from '@ioc:Adonis/Core/Logger'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Profile from 'App/Models/Profile'
 import User from 'App/Models/User'
-import { BASE, BIO, EMOTES, MessageType, NameAndId, ROLLMATCH, UNMATCH } from 'befriendlier-shared'
+import { BASE, BIO, Emote, EMOTES, MessageType, NameAndId, ROLLMATCH, UNMATCH } from 'befriendlier-shared'
 import { DateTime } from 'luxon'
 import TwitchConfig from '../../config/twitch'
 
@@ -10,7 +10,7 @@ class Handler {
   /**
    * MAKE SURE TO CATCH ERRORS.
    */
-  public async rollMatch ({ userTwitch, channelTwitch, global }: ROLLMATCH) {
+  public async rollMatch ({ userTwitch, channelTwitch, global }: ROLLMATCH): Promise<{ user: User, profile: Profile}> {
     const { chatOwnerUser, profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
     if (profile.rolls.length > 0) {
@@ -63,7 +63,7 @@ class Handler {
     if (profiles.length === 0) {
       await profile.save()
       throw this.error(MessageType.TAKEABREAK, userTwitch, channelTwitch,
-        `looks like you're not lucky today, rubber ducky 🦆 Try rolling a match again in ${String(profile.nextRolls.toRelative())}.`)
+        `looks like you're not lucky today, rubber ducky 🦆 Try rolling a match again ${String(profile.nextRolls.toRelative())}.`)
     }
 
     // Shuffle the array!
@@ -81,7 +81,7 @@ class Handler {
   /**
    * MAKE SURE TO CATCH ERRORS.
    */
-  public async match ({ userTwitch, channelTwitch, global }: BASE) {
+  public async match ({ userTwitch, channelTwitch, global }: BASE): Promise<{ attempt: MessageType, user?: User, matchUser?: User }> {
     const { user, profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
     const profileId = profile.rolls.shift()
@@ -130,7 +130,7 @@ class Handler {
   /**
    * MAKE SURE TO CATCH ERRORS.
    */
-  public async unmatch ({ userTwitch, matchUserTwitch, channelTwitch }: UNMATCH) {
+  public async unmatch ({ userTwitch, matchUserTwitch, channelTwitch }: UNMATCH): Promise<boolean> {
     const { profile, chatOwnerUser } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch)
 
     const matchUser = await User.findBy('name', matchUserTwitch.name)
@@ -170,7 +170,7 @@ class Handler {
   /**
    * MAKE SURE TO CATCH ERRORS.
    */
-  public async mismatch ({ userTwitch, channelTwitch, global }: BASE) {
+  public async mismatch ({ userTwitch, channelTwitch, global }: BASE): Promise<void> {
     const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
     const profileId = profile.rolls.shift()
@@ -189,7 +189,7 @@ class Handler {
   /**
    * MAKE SURE TO CATCH ERRORS.
    */
-  public async setEmotes ({ userTwitch, channelTwitch, emotes, global }: EMOTES) {
+  public async setEmotes ({ userTwitch, channelTwitch, emotes, global }: EMOTES): Promise<void> {
     const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
     profile.favoriteEmotes = emotes
@@ -200,7 +200,7 @@ class Handler {
   /**
    * MAKE SURE TO CATCH ERRORS.
    */
-  public async getEmotes ({ userTwitch, channelTwitch, global }: EMOTES) {
+  public async getEmotes ({ userTwitch, channelTwitch, global }: EMOTES): Promise<Emote[]> {
     const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
     return profile.favoriteEmotes
@@ -209,7 +209,7 @@ class Handler {
   /**
    * MAKE SURE TO CATCH ERRORS.
    */
-  public async setBio ({ userTwitch, channelTwitch, bio, global }: BIO) {
+  public async setBio ({ userTwitch, channelTwitch, bio, global }: BIO): Promise<string> {
     const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
     profile.bio = bio
@@ -222,13 +222,13 @@ class Handler {
   /**
    * MAKE SURE TO CATCH ERRORS.
    */
-  public async getBio ({ userTwitch, channelTwitch, global }: BIO) {
+  public async getBio ({ userTwitch, channelTwitch, global }: BIO): Promise<string> {
     const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
     return profile.bio
   }
 
-  private async findUserByProfile (profile: Profile) {
+  private async findUserByProfile (profile: Profile): Promise<User> {
     const user = await User.find(profile.userId)
 
     if (user === null) {
@@ -279,6 +279,7 @@ class Handler {
     return { user: userModel, chatOwnerUser: chatOwnerUserModel, profile: profileModel }
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private async rollUntilAvailableUser (rolls: number[]) {
     if (rolls.length === 0) {
       return new Error()
@@ -296,7 +297,7 @@ class Handler {
     return { rolls, user, profile }
   }
 
-  private error (type: MessageType, user: User | NameAndId, channel: User | NameAndId, message?: string) {
+  private error (type: MessageType, user: User | NameAndId, channel: User | NameAndId, message?: string): Error {
     const error = new Error(type)
 
     ;(error as any).data = {}
@@ -321,7 +322,7 @@ class Handler {
   }
 
   // https://stackoverflow.com/a/12646864
-  private durstenfeldShuffle (array: any[]) {
+  private durstenfeldShuffle (array: any[]): void {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]]
