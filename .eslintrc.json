@@ -4,8 +4,9 @@
     "node": true
   },
   "extends": [
-    "standard-with-typescript",
     "plugin:adonis/typescriptApp",
+    "standard",
+    "standard-with-typescript",
     "prettier",
     "prettier/@typescript-eslint"
   ],

@@ -72,7 +72,7 @@ class WebSocketServer {
   public handlers: DefaultHandler[] = []
   public readonly queue = new PQueue({ concurrency: 1 })
 
-  public start (callback: (socket: ExtendedWebSocket, request: IncomingMessage) => void) {
+  public start (callback: (socket: ExtendedWebSocket, request: IncomingMessage) => void): void {
     this.server = new WS.Server({ server: Server.instance })
 
     // eslint-disable-next-line no-void
@@ -110,7 +110,7 @@ class WebSocketServer {
     })
   }
 
-  public updateEnv () {
+  public updateEnv (): void {
     this.token = {
       expiration: new Date(Env.get('TWITCH_BOT_ACCESS_TOKEN_EXPIRES_IN') as string),
       superSecret: Env.get('TWITCH_BOT_ACCESS_TOKEN') as string,
@@ -120,7 +120,7 @@ class WebSocketServer {
     this.startTwitch()
   }
 
-  public startTwitch () {
+  public startTwitch (): void {
     if (this.reconnectTimeout !== undefined) {
       clearTimeout(this.reconnectTimeout)
     }
@@ -152,7 +152,7 @@ class WebSocketServer {
   }
 
   // Is called from "start/socket.ts" file.
-  public async onMessage (socket: ExtendedWebSocket, msg: WS.Data) {
+  public async onMessage (socket: ExtendedWebSocket, msg: WS.Data): Promise<void> {
     return await new Promise((resolve) => {
       Logger.debug({ msg }, 'Ws.onMessage()')
       let json
@@ -184,7 +184,7 @@ class WebSocketServer {
         //   socket.send(this.socketMessage(MessageType.TOKEN, JSON.stringify(this.token)))
         //   break
         // }
-        resolve(0)
+        resolve()
       }).catch(error => {
         if (error.message === MessageType.UNREGISTERED) {
           socket.send(this.socketMessage(MessageType.UNREGISTERED, JSON.stringify(error.data)))
@@ -197,28 +197,28 @@ class WebSocketServer {
           // socket.send(this.socketMessage(MessageType.ERROR, JSON.stringify(error)))
         }
         // Else ignore.
-        resolve(0)
+        resolve()
       })
     })
   }
 
-  public onClose (socket: ExtendedWebSocket, code: number, reason: string) {
+  public onClose (socket: ExtendedWebSocket, code: number, reason: string): void {
     Logger.warn(`WEBSOCKET CLOSED: [${socket.id}] from ${prettySocketInfo(socket.connection)}, code: ${code}${reason.length > 0 ? `, reason:\n${reason}` : ''}`)
   }
 
-  public onError (socket: ExtendedWebSocket, error: Error) {
+  public onError (socket: ExtendedWebSocket, error: Error): void {
     Logger.error({ err: error }, `WEBSOCKET ERROR: [${socket.id}] from ${prettySocketInfo(socket.connection)}.`)
   }
 
   // https://github.com/websockets/ws#how-to-detect-and-close-broken-connections
-  public heartbeat (socket: ExtendedWebSocket, data: Buffer) {
+  public heartbeat (socket: ExtendedWebSocket, data: Buffer): void {
     if (data.length > 0) {
       Logger.info(`PING MESSAGE: [${socket.id}] from ${prettySocketInfo(socket.connection)} \n${data.toString()}`)
     }
     socket.isAlive = true
   }
 
-  public parseRequestResponse (socket: ExtendedWebSocket, message: REQUESTRESPONSE) {
+  public parseRequestResponse (socket: ExtendedWebSocket, message: REQUESTRESPONSE): void {
     const req = this.requests.get(message.requestTime)
 
     if (req === undefined) {
@@ -233,7 +233,7 @@ class WebSocketServer {
     }
   }
 
-  public request (by, func, value?) {
+  public request (by, func, value?): void {
     const requestTime = Date.now().toString()
     this.requests.set(requestTime, {
       id: requestTime,
@@ -253,14 +253,14 @@ class WebSocketServer {
     })
   }
 
-  public socketMessage (type: MessageType, data: string) {
+  public socketMessage (type: MessageType, data: string): string {
     return JSON.stringify({ type: type, data: data, timestamp: Date.now() })
   }
 
   /**
    * Tell a bot to join the following user's chat.
    */
-  public addHost (request: REQUEST) {
+  public addHost (request: REQUEST): void {
     // Make sure channel isn't already added by another bot.
     const foundChannelBot = request.sockets.find(sockRes => sockRes.value.includes(request.by.joinUserTwitch.name))
 
@@ -307,9 +307,9 @@ class WebSocketServer {
     }
   }
 
-  public removeHost (request: REQUEST) {
+  public removeHost (request: REQUEST): void {
     const foundChannelBot = request.sockets.find(sockRes => {
-      return sockRes.value.find((r: { name:string, id: string }) => r.name === request.by.leaveUserTwitch.name)
+      return sockRes.value.find((r: { name: string, id: string }) => r.name === request.by.leaveUserTwitch.name)
     })
 
     if (foundChannelBot !== undefined) {
@@ -333,7 +333,7 @@ class WebSocketServer {
     }
   }
 
-  private async refreshTwitchToken (token: Token) {
+  private async refreshTwitchToken (token: Token): Promise<Token> {
     const newToken = { ...token }
 
     // Generate a token!
@@ -352,7 +352,7 @@ class WebSocketServer {
     return newToken
   }
 
-  private async validateTwitchToken (token: Token) {
+  private async validateTwitchToken (token: Token): Promise<Token> {
     const newToken = { ...token }
 
     // Validate token
@@ -425,7 +425,7 @@ class WebSocketServer {
   }
 }
 
-export function prettySocketInfo (connection: Socket) {
+export function prettySocketInfo (connection: Socket): string {
   return `(${String(connection.remoteFamily)}) ${String(connection.remoteAddress)}:${String(connection.remotePort)}`
 }
 
