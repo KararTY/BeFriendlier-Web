@@ -25,6 +25,14 @@
   ],
   "rules": {
     "@typescript-eslint/class-name-casing": "off",
-    "@typescript-eslint/interface-name-prefix": "off"
+    "@typescript-eslint/interface-name-prefix": "off",
+    "comma-dangle": "off",
+    "@typescript-eslint/comma-dangle": ["error", {
+      "arrays": "never",
+      "objects": "always-multiline",
+      "imports": "never",
+      "exports": "never",
+      "functions": "never"
+    }]
   }
 }

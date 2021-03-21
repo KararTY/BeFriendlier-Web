@@ -19,7 +19,7 @@ export default class LeaveChatHandler extends DefaultHandler {
     if (user === null) {
       data.result = {
         value: 'user does not exist in the database. ' +
-          'Can only remove favorited or otherwise registered users.'
+          'Can only remove favorited or otherwise registered users.',
       }
       socket.send(this.ws.socketMessage(MessageType.ERROR, JSON.stringify(data)))
       return

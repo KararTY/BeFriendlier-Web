@@ -54,7 +54,7 @@ class Handler {
       .whereNotIn('id', [
         profile.id,
         ...profile.mismatches,
-        ...profile.matches.map(match => match.id),
+        ...profile.matches.map(match => match.id)
       ])
 
     // Ratelimit user's rolls to every 5 hours.
@@ -331,6 +331,7 @@ class Handler {
   }
 
   // https://stackoverflow.com/a/12646864
+  // Mutates the array.
   private durstenfeldShuffle (array: any[]): void {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
