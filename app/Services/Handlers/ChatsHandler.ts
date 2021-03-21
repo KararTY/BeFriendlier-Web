@@ -1,7 +1,7 @@
 import { ExtendedWebSocket, ResSchema } from '../Ws'
 import DefaultHandler from './DefaultHandler'
 import { MessageType, NameAndId } from 'befriendlier-shared'
-import User from 'App/Models/User'
+import Handler from '../Handler'
 
 export default class ChatsHandler extends DefaultHandler {
   public messageType = MessageType.CHATS
@@ -49,7 +49,7 @@ export default class ChatsHandler extends DefaultHandler {
     // WARNING: THE FOLLOWING CODE IS SPAGHETTI. TODO: FIX THIS MESS.
 
     // Add channels not yet handled by any client.
-    const allHostedUsers = (await User.query().where({ host: true })).map(user => {
+    const allHostedUsers = (await Handler.findAllHostedChannels()).map(user => {
       return { id: user.twitchID, name: user.name }
     })
 

@@ -228,6 +228,15 @@ class Handler {
     return profile.bio
   }
 
+
+  public async findAllHostedChannels (): Promise<User[]> {
+    return await User.query().where({ host: true })
+  }
+
+  public async findUserByTwitchID (twitchID: string): Promise<User | null> {
+    return await User.findBy('twitchID', twitchID)
+  }
+
   private async findUserByProfile (profile: Profile): Promise<User> {
     const user = await User.find(profile.userId)
 
