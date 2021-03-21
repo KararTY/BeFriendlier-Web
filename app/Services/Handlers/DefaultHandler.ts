@@ -8,5 +8,5 @@ export default class DefaultHandler {
     this.ws = ws
   }
 
-  public async onClientResponse (_socket: ExtendedWebSocket, _res: ResSchema) {}
+  public async onClientResponse (_socket: ExtendedWebSocket, _res: ResSchema): Promise<void> {}
 }

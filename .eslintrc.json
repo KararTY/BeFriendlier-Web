@@ -5,10 +5,10 @@
   },
   "extends": [
     "plugin:adonis/typescriptApp",
-    "standard",
-    "standard-with-typescript",
     "prettier",
-    "prettier/@typescript-eslint"
+    "prettier/@typescript-eslint",
+    "standard",
+    "standard-with-typescript"
   ],
   "globals": {
     "Atomics": "readonly",
