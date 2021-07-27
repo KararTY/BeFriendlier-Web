@@ -2,7 +2,17 @@ import Logger from '@ioc:Adonis/Core/Logger'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Profile from 'App/Models/Profile'
 import User from 'App/Models/User'
-import { BASE, BIO, Emote, EMOTES, MessageType, NameAndId, ROLLMATCH, UNMATCH } from 'befriendlier-shared'
+import {
+  BASE,
+  BIO,
+  Emote,
+  EMOTES,
+  GIVEEMOTES,
+  MessageType,
+  NameAndId,
+  ROLLMATCH,
+  UNMATCH
+} from 'befriendlier-shared'
 import { DateTime } from 'luxon'
 import TwitchConfig from '../../config/twitch'
 
@@ -228,6 +238,81 @@ class Handler {
     return profile.bio
   }
 
+  // Deals with global profiles only.
+  public async giveEmotes ({ userTwitch, channelTwitch, recipientUserTwitch, emotes }: GIVEEMOTES): Promise<Emote[]> {
+    const { user } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, true)
+
+    // Check if they have emotes
+    const nonExistentEmotes: string[] = []
+    for (let index = 0; index < emotes.length; index++) {
+      const emote = emotes[index]
+      const existingEmote = user.emotes.find(ee => ee.id === emote.id)
+
+      // Does user have emote?
+      if (existingEmote === undefined) {
+        nonExistentEmotes.push(emote.name)
+        continue
+      }
+
+      // Change requested values to what currently exists.
+      if ((existingEmote.amount as number) < (emote.amount as number)) {
+        emote.amount = existingEmote.amount
+      }
+
+      // You've got 0 of this emote, therefore it is nonexistent.
+      if ((emote.amount as number) === 0) {
+        nonExistentEmotes.push(emote.name)
+      }
+    }
+
+    if (nonExistentEmotes.length > 0) {
+      throw this.error(MessageType.ERROR, userTwitch, channelTwitch, `you don't have the following emotes: ${nonExistentEmotes.join(' ')}`)
+    }
+
+    // Check if recipient exists in case the client bot doesn't check for some reason.
+    const recipientUserModel = await this.findUserByTwitchID(recipientUserTwitch.id)
+    if (recipientUserModel === null) {
+      throw this.error(MessageType.ERROR, userTwitch, channelTwitch, "the user you're attempting to give emotes to is not registered.")
+    }
+
+    // In case the client bot doesn't check for some reason.
+    if (recipientUserModel.id === user.id) {
+      throw this.error(MessageType.ERROR, userTwitch, channelTwitch, "No I don't think so, you're attempting to trade with yourself.")
+    }
+
+    // Recipient user isn't registered.
+    if (recipientUserModel.createdAt.year === 1970) {
+      throw this.error(MessageType.ERROR, userTwitch, channelTwitch, "you can't send to that user.")
+    }
+
+    for (let index = 0; index < emotes.length; index++) {
+      const emote = emotes[index]
+      const existingUserEmoteIndex = user.emotes.findIndex(ee => ee.id === emote.id)
+      const existingUserEmote = user.emotes[existingUserEmoteIndex]
+
+      // Remove this user's emotes
+      ;(existingUserEmote.amount as number) -= emote.amount as number
+
+      if (existingUserEmote.amount === 0) {
+        // Remove the entry completely.
+        user.emotes.splice(existingUserEmoteIndex, 1)
+      }
+
+      // Add emotes to recipient user
+      const existingRecipientUserEmote = recipientUserModel.emotes.find(ee => ee.id === emote.id)
+
+      if (existingRecipientUserEmote === undefined) {
+        recipientUserModel.emotes.push(emote)
+      } else {
+        (existingRecipientUserEmote.amount as number) += emote.amount as number
+      }
+    }
+
+    // Save both
+    await Promise.all([user.save(), recipientUserModel.save()])
+
+    return emotes
+  }
 
   public async findAllHostedChannels (): Promise<User[]> {
     return await User.query().where({ host: true })

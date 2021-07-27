@@ -18,7 +18,10 @@ export default class EmotesHandler extends DefaultHandler {
       } else {
         const emotes = await Handler.getEmotes(data)
 
-        data.result = { value: `your ${data.global === true ? 'global' : 'channel'} profile emotes: ${emotes.length > 0 ? emotes.map(emote => emote.name).join(' ') : 'None.'}` }
+        data.result = {
+          value: `your ${data.global === true ? 'global' : 'channel'} profile emotes: ${emotes.length > 0 ? emotes.map(emote => emote.name).join(' ') : 'None.'}`
+            + ' Your emote inventory is available at the website.'
+        }
       }
 
       socket.send(this.ws.socketMessage(MessageType.EMOTES, JSON.stringify(data)))
