@@ -64,7 +64,7 @@ class Handler {
       .whereNotIn('id', [
         profile.id,
         ...profile.mismatches,
-        ...profile.matches.map(match => match.id)
+        ...profile.matches.map(match => match.id),
       ])
 
     // Ratelimit user's rolls to every 5 hours.

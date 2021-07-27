@@ -70,7 +70,7 @@ export default class ChatsHandler extends DefaultHandler {
         return a.channels.length - b.channels.length
       })
 
-      // Udate current temporary array with channel count
+      // Update current temporary array with channel count
       socketChannels[0].channels.push(userNotHosted.id)
 
       for (const client of this.ws.server.clients) {
