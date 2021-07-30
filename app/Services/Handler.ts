@@ -11,10 +11,12 @@ import {
   MessageType,
   NameAndId,
   ROLLMATCH,
+  TwitchGlobalEmotes,
   UNMATCH
 } from 'befriendlier-shared'
 import { DateTime } from 'luxon'
 import TwitchConfig from '../../config/twitch'
+import WebSocketServer, { ExtendedWebSocket } from './Ws'
 
 class Handler {
   /**
@@ -312,6 +314,54 @@ class Handler {
     await Promise.all([user.save(), recipientUserModel.save()])
 
     return emotes
+  }
+
+  public async rollEmote(
+    { socket, emotes, ws }: { socket: ExtendedWebSocket, emotes: TwitchGlobalEmotes[], ws: typeof WebSocketServer },
+    { userTwitch, channelTwitch, global }: BASE): Promise<Emote | null> {
+    // Get Twitch's global emotes.
+    const { user, profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
+
+    if (!(user && emotes)) {
+      return null
+    }
+
+    if (profile.nextEmote.diffNow('hours').hours >= 0) {
+      return null
+    }
+
+    this.durstenfeldShuffle(emotes)
+
+    const emote = emotes[0]
+
+    const existingUserEmoteIndex = user.emotes.findIndex(ee => ee.id === emote.id)
+
+    if (existingUserEmoteIndex > -1) {
+      (user.emotes[existingUserEmoteIndex].amount as number) += 1
+    } else {
+      user.emotes.push({ id: emote.id, name: emote.name, amount: 1 })
+    }
+
+    // Ratelimit user's emotes to every 5 hours.
+    profile.nextEmote = DateTime.fromJSDate(new Date()).plus({ hours: 5 })
+
+    await user.save()
+    await profile.save()
+
+    socket.send(ws.socketMessage(
+      MessageType.WHISPER,
+      JSON.stringify({
+        channelTwitch, userTwitch, result: {
+          value: `rubber ducky 🦆 here, you've received an emote: ${emote.name} (On ${global ? 'GLOBAL' : channelTwitch.name}) `
+            + 'You can check your emote inventory at the website.'
+        }
+      })
+    ))
+
+    return {
+      id: emote.id,
+      name: emote.name
+    }
   }
 
   public async findAllHostedChannels (): Promise<User[]> {

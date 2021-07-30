@@ -20,21 +20,18 @@ export default class RollMatchHandler extends DefaultHandler {
           value: `new ${rm.global === true ? 'global ' : ''}match's bio: ` +
             `${profile.bio.length > 32 ? `${bio.substr(0, 32)}...` : bio}, reply with %prefix%more, %prefix%match or %prefix%no`,
         }
-        socket.send(this.ws.socketMessage(MessageType.ROLLMATCH, JSON.stringify(rm)))
         break
       case More.BIO:
         rm.result = {
           value: `${rm.global === true ? 'global\'s ' : ''}full bio: ` +
             `${bio}`,
         }
-        socket.send(this.ws.socketMessage(MessageType.ROLLMATCH, JSON.stringify(rm)))
         break
       case More.FAVORITEEMOTES:
         rm.result = {
           value: `${rm.global === true ? 'global ' : ''}match's favorite emotes: ` +
             `${profile.favoriteEmotes.length > 0 ? profile.favoriteEmotes.map(emote => emote.name).join(' ') : 'None.'}`,
         }
-        socket.send(this.ws.socketMessage(MessageType.ROLLMATCH, JSON.stringify(rm)))
         break
       case More.FAVORITESTREAMERS: {
         await user.preload('favoriteStreamers')
@@ -45,8 +42,10 @@ export default class RollMatchHandler extends DefaultHandler {
           value: `${rm.global === true ? 'global ' : ''}match's favorite streamers: ` +
             `${user.favoriteStreamers.length > 0 ? favoriteStreamers : 'None'}.`,
         }
-        socket.send(this.ws.socketMessage(MessageType.ROLLMATCH, JSON.stringify(rm)))
+        break
       }
     }
+
+    socket.send(this.ws.socketMessage(MessageType.ROLLMATCH, JSON.stringify(rm)))
   }
 }

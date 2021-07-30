@@ -71,6 +71,9 @@ export default class Profile extends BaseModel {
   @column.dateTime()
   public nextRolls: DateTime
 
+  @column.dateTime()
+  public nextEmote: DateTime
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

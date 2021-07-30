@@ -11,6 +11,11 @@ export default class MatchHandler extends DefaultHandler {
       const data: BASE = JSON.parse(res.data)
       const result = await Handler.match(data)
 
+      const emotes = await this.ws.twitchAPI.getGlobalEmotes(this.ws.token.superSecret)
+      if (emotes) {
+        await Handler.rollEmote({ socket, ws: this.ws, emotes }, data)
+      }
+
       switch (result.attempt) {
         case MessageType.MATCH: {
           // Attempted to match. Must wait for receiving end.

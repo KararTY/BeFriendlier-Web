@@ -1,0 +1,37 @@
+<section class="hero is-fullheight">
+  <div class="hero-head">
+    @include('includes/navbar')
+  </div>
+  <div class="hero-body">
+    <div class="container">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-header-title is-size-4">Your emotes - x{{ totalEmotes }} total</h4>
+        </div>
+        <div class="card-content">
+          <div class="columns is-multiline is-variable is-1">
+            @each(emote in user.emotes)
+              <div class="column is-narrow">
+                <div class="box">
+                  <small><span>x{{ emote.amount }}</span> <span>{{ emote.name }}</span></small>
+                </div>
+              </div>
+            @endeach
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-title is-size-4">Getting emotes</div>
+        </div>
+        <div class="card-content">
+          <p>Every 5 hours, you can match or unmatch and earn a random global Twitch emote. You can then trade these emotes with other people by using the <code>@@giveemotes</code> command.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-foot">
+    @include('includes/footer')
+  </div>
+</section>

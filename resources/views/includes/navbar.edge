@@ -22,6 +22,7 @@
             <div class="navbar-dropdown is-right is-boxed">
               <a href="{{ route('UsersController.read') }}" class="navbar-item">Your settings</a>
               <a href="{{ route('ProfilesController.read') }}" class="navbar-item">Your profiles</a>
+              <a href="{{ route('EmotesController.read') }}" class="navbar-item">Your emotes</a>
               <hr class="navbar-divider">
               <form action="{{ route('AuthController.logout') }}" method="POST">
                 {{ csrfField() }}
