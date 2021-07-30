@@ -62,10 +62,10 @@ export interface ResSchema {
 }
 
 class WebSocketServer {
-  private twitchAPI: TwitchAuth
   private reconnectTimeout: NodeJS.Timeout
   private readonly requests = new Map<string, REQUEST>()
 
+  public twitchAPI: TwitchAuth
   public isReady = false
   public server: WS.Server
   public token: Token
