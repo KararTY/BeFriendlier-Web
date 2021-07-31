@@ -22,7 +22,7 @@
             @if(flashMessages.has('errors.bio'))
               <p class="help has-text-weight-bold is-danger">{{ flashMessages.get('errors.bio').join(' ') }}</p>
             @endif
-            <p class="help">Change the profile bio. <strong>128 characters limit</strong>.</p>
+            <p class="help">Change the profile bio. <strong>128 characters limit</strong>. If you can't edit your bio here, try editing your bio in the profile's Twitch chat: <a href="{{ 'https://www.twitch.tv/' + profileChatUser }}" target="_blank">twitch.tv/{{profileChatUser}}</a></p>
           </div>
         </div>
       </div>

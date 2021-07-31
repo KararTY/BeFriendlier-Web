@@ -215,7 +215,7 @@ class Handler {
   public async getEmotes ({ userTwitch, channelTwitch, global }: EMOTES): Promise<Emote[]> {
     const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
-    return profile.favoriteEmotes
+    return profile.favoriteEmotes || []
   }
 
   /**

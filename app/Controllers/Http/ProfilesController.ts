@@ -68,6 +68,7 @@ export default class ProfilesController {
           user: userJSON,
           profile: profileJSON,
           profileUser: userJSON,
+          profileChatUser: chat ? chat.name : 'befriendlier',
           web: {
             template: 'profile',
             title: chat !== null ? `Your profile in ${chat.name}'s chat` : 'Your global profile',
@@ -143,37 +144,39 @@ export default class ProfilesController {
       return response.redirect('/profile/')
     }
 
-    const ownProfile = profile.userId === auth.user.id
-
-    if (ownProfile) {
-      if (profile.updatedAt.diffNow('seconds').seconds > -60) {
-        session.flash('message', {
-          error: 'Error: Profile has recently been changed. ' +
-          'Please wait at least 1 minute before updating your profile.',
-        })
-
-        return response.redirect(`/profile/${id}`)
-      }
-
-      profile.updatedAt = DateTime.fromJSDate(new Date())
-      await profile.save()
-
-      // Validate input
-      const validated = await request.validate({
-        schema: this.profilesSchema,
-        cacheKey: 'profilesSchema',
-      }) // Request may fail here if values do not pass validation.
-
-      profile.color = validated.color
-      profile.bio = validated.bio
-
-      await profile.save()
-      session.flash('message', { message: 'Successfully updated your profile.' })
-      return response.redirect(`/profile/${id}`)
-    } else {
+    // Is this the user's profile?
+    if (profile.userId !== auth.user.id) {
       session.flash('message', { error: this.Error.forbidden })
       return response.redirect('/profile/')
     }
+
+    if (profile.updatedAt.diffNow('seconds').seconds > -60) {
+      session.flash('message', {
+        error: 'Error: Profile has recently been changed. ' +
+        'Please wait at least 1 minute before updating your profile.',
+      })
+
+      return response.redirect(`/profile/${id}`)
+    }
+
+    profile.updatedAt = DateTime.fromJSDate(new Date())
+    await profile.save()
+
+    // Validate input
+    const validated = await request.validate({
+      schema: this.profilesSchema,
+      cacheKey: 'profilesSchema',
+    }) // Request may fail here if values do not pass validation.
+
+    profile.color = validated.color
+    await profile.save()
+
+    // Sometimes PerspectiveAPI is unavailable, so that's why we have multiple saving. At least color can be set.
+    profile.bio = validated.bio
+    await profile.save()
+
+    session.flash('message', { message: 'Successfully updated your profile.' })
+    return response.redirect(`/profile/${id}`)
   }
 
   public async delete ({ params, auth, response, session }: HttpContextContract) {
