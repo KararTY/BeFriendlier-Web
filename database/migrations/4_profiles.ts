@@ -6,8 +6,8 @@ export default class Profiles extends BaseSchema {
 
   public async up () {
     this.schema.alterTable(this.tableName, table => {
-      table.timestamp('next_emote').defaultTo(this.now())
-      table.timestamp('next_rolls').defaultTo(this.now())
+      table.timestamp('next_emote').defaultTo(this.now()).alter()
+      table.timestamp('next_rolls').defaultTo(this.now()).alter()
     })
   }
 

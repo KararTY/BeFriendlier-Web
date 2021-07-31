@@ -11,7 +11,7 @@
     "dev": "node ace serve --watch --node-args=\"--inspect\"",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write .",
-    "migrate:rollback": "npm run build && node ace migration:rollback",
+    "migrate:rollback": "npm run build-server && node ace migration:rollback",
     "migrate:run": "npm run build-server && node ace migration:run",
     "seed": "npm run build-server && node ace db:seed",
     "m:s": "node ace migration:run && node ace db:seed",

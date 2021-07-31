@@ -6,9 +6,8 @@ export default class FavoriteStreamerLists extends BaseSchema {
 
   public async up () {
     this.schema.alterTable(this.tableName, table => {
-      table.dropColumn('created_at')
-      table.dropColumn('updated_at')
-      table.timestamps(true)
+      table.timestamp('created_at', { useTz: true }).defaultTo(null).alter()
+      table.timestamp('updated_at', { useTz: true }).defaultTo(null).alter()
     })
   }
 
