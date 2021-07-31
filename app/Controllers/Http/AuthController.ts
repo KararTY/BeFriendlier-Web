@@ -3,6 +3,7 @@ import Twitch from '@ioc:Adonis/Addons/Twitch'
 import Env from '@ioc:Adonis/Core/Env'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
+import { DateTime } from 'luxon'
 
 export default class AuthController {
   private readonly devError = new Error('Using NODE_ENV=development without existing TestUser. ' +
@@ -54,6 +55,7 @@ export default class AuthController {
         return response.redirect('/')
       } else {
         // User exists.
+        let flashMessage = 'Welcome back!'
 
         // Check if not actually registered, and only just cached. For "favorite streamers" purposes.
         await userExists.preload('profile')
@@ -62,6 +64,10 @@ export default class AuthController {
             enabled: false,
             chatUserId: 0,
           })
+
+          userExists.createdAt = DateTime.fromJSDate(new Date())
+          flashMessage = 'Welcome! Take a look at your user settings to finalize your setup!'
+          await userExists.save()
         }
 
         // Login
@@ -74,7 +80,7 @@ export default class AuthController {
         session.put('token', token.access_token)
         session.put('refresh', token.refresh_token)
 
-        session.flash('message', { message: 'Welcome back!' })
+        session.flash('message', { message: flashMessage })
         return response.redirect('/')
       }
     }
