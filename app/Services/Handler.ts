@@ -32,21 +32,21 @@ class Handler {
       if (rau instanceof Error) {
         throw this.error(MessageType.ERROR, userTwitch, channelTwitch,
           'looks like it\'s not your lucky day today, rubber ducky 🦆 Try rolling a match again in a bit.')
-      } else {
-        const {
-          rolls,
-          user: matchUser,
-          profile: matchProfile,
-        } = rau
-
-        // We don't need to save the array if it's not been edited.
-        if (rolls instanceof Array && rolls.length !== profile.rolls.length) {
-          profile.rolls = rolls as number[]
-          await profile.save()
-        }
-
-        return { user: matchUser as User, profile: matchProfile as Profile }
       }
+
+      const {
+        rolls,
+        user: matchUser,
+        profile: matchProfile,
+      } = rau
+
+      // We don't need to save the array if it's not been edited.
+      if (rolls instanceof Array && rolls.length !== profile.rolls.length) {
+        profile.rolls = rolls as number[]
+        await profile.save()
+      }
+
+      return { user: matchUser as User, profile: matchProfile as Profile }
     }
 
     if (profile.nextRolls.diffNow('hours').hours >= 0) {
@@ -465,7 +465,7 @@ class Handler {
     return error
   }
 
-  // https://stackoverflow.com/a/12646864
+  // https://stackoverflow.com/a/12646864 CC BY-SA 4.0
   // Mutates the array.
   private durstenfeldShuffle (array: any[]): void {
     for (let i = array.length - 1; i > 0; i--) {
