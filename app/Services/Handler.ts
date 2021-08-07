@@ -438,6 +438,8 @@ class Handler {
 
     const user = await this.findUserByProfile(profile)
 
+    await user.preload('favoriteStreamers')
+
     // Don't roll this user if profile hasn't been customized yet.
     if (user.favoriteStreamers.length === 0 && profile.bio === 'Hello!' && profile.favoriteEmotes.length === 0) {
       rolls.shift()
