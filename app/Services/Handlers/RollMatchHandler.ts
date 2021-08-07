@@ -25,8 +25,11 @@ export default class RollMatchHandler extends DefaultHandler {
       rm.more = More.FAVORITESTREAMERS
     }
 
-    if (rm.more === More.FAVORITESTREAMERS && user.favoriteStreamers.length === 0) {
-      rm.more = More.BIO
+    if (rm.more === More.FAVORITESTREAMERS) {
+      if (user.favoriteStreamers.length === 0) {
+        await user.preload('favoriteStreamers')
+        rm.more = More.BIO
+      }
     }
 
     switch (rm.more) {
