@@ -448,27 +448,27 @@ class Handler {
   }
 
   private error (type: MessageType, user: User | NameAndId, channel: User | NameAndId, message?: string): Error {
-    const error = new Error(type)
+    const error = new Error(type) as any
 
-    ;(error as any).data = {}
+    error.data = {}
 
     if (user instanceof User) {
-      (error as any).data.userTwitch = { id: user.twitchID, name: user.name }
+      error.data.userTwitch = { id: user.twitchID, name: user.name }
     } else {
-      (error as any).data.userTwitch = { id: user.id, name: user.name }
+      error.data.userTwitch = { id: user.id, name: user.name }
     }
 
     if (channel instanceof User) {
-      (error as any).data.channelTwitch = { id: channel.twitchID, name: channel.name }
+      error.data.channelTwitch = { id: channel.twitchID, name: channel.name }
     } else {
-      (error as any).data.channelTwitch = { id: channel.id, name: channel.name }
+      error.data.channelTwitch = { id: channel.id, name: channel.name }
     }
 
     if (message !== undefined) {
-      (error as any).data.result = { value: message }
+      error.data.result = { value: message }
     }
 
-    return error
+    return error as Error
   }
 
   // https://stackoverflow.com/a/12646864 CC BY-SA 4.0
