@@ -12,7 +12,22 @@ export default class RollMatchHandler extends DefaultHandler {
     const rm: ROLLMATCH = JSON.parse(res.data)
     const { user, profile } = await Handler.rollMatch(rm)
 
-    const bio = profile.bio.split(' ').map(word => `${word.substr(0, 1)}\u{E0000}${word.substr(1)}`).join(' ')
+    const noPingsStr = (str: string) => str.substr(0, 1) + '\u{E0000}' + str.substr(1)
+
+    const bio = profile.bio.split(' ').map(word => noPingsStr(word)).join(' ')
+
+    // Skip some stuff if user doesn't define anything.
+    if (rm.more === More.NONE && profile.bio === 'Hello!') {
+      rm.more = More.FAVORITEEMOTES
+    }
+
+    if (rm.more === More.FAVORITEEMOTES && profile.favoriteEmotes.length === 0) {
+      rm.more = More.FAVORITESTREAMERS
+    }
+
+    if (rm.more === More.FAVORITESTREAMERS && user.favoriteStreamers.length === 0) {
+      rm.more = More.BIO
+    }
 
     switch (rm.more) {
       case More.NONE:
@@ -36,7 +51,7 @@ export default class RollMatchHandler extends DefaultHandler {
       case More.FAVORITESTREAMERS: {
         await user.preload('favoriteStreamers')
 
-        const favoriteStreamers = user.favoriteStreamers.map(streamer => `${streamer.name.substr(0, 1)}\u{E0000}${streamer.name.substr(1)}`).join(', ')
+        const favoriteStreamers = user.favoriteStreamers.map(streamer => noPingsStr(streamer.name)).join(', ')
 
         rm.result = {
           value: `${rm.global === true ? 'global ' : ''}match's favorite streamers: ` +
