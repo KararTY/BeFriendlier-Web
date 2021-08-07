@@ -13,7 +13,7 @@ export default class MatchHandler extends DefaultHandler {
 
       const emotes = await this.ws.twitchAPI.getGlobalEmotes(this.ws.token.superSecret)
       if (emotes) {
-        await Handler.rollEmote({ socket, ws: this.ws, emotes }, data)
+        await Handler.rollEmote(data, { socket, ws: this.ws, emotes })
       }
 
       switch (result.attempt) {

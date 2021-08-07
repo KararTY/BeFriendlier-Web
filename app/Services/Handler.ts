@@ -317,8 +317,8 @@ class Handler {
   }
 
   public async rollEmote(
-    { socket, emotes, ws }: { socket: ExtendedWebSocket, emotes: TwitchGlobalEmotes[], ws: typeof WebSocketServer },
-    { userTwitch, channelTwitch, global }: BASE): Promise<Emote | null> {
+    { userTwitch, channelTwitch, global }: BASE,
+    { socket, emotes, ws }: { socket: ExtendedWebSocket, emotes: TwitchGlobalEmotes[], ws: typeof WebSocketServer }): Promise<Emote | null> {
     // Get Twitch's global emotes.
     const { user, profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
