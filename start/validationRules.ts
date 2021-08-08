@@ -9,7 +9,7 @@
 */
 
 import { validator } from '@ioc:Adonis/Core/Validator'
-import PerspectiveAPI from '@ioc:Adonis/Addons/PerspectiveAPI'
+import PerspectiveAPI from '@ioc:Befriendlier-Shared/PerspectiveAPI'
 import PerspectiveAPIConfig from '../config/perspective'
 
 validator.rule('hexColorString', (value, _, { pointer, arrayExpressionPointer, errorReporter }) => {

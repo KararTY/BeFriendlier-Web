@@ -8,39 +8,35 @@ export default class AppProvider {
 
   public register () {
     // Register your own bindings
-    this.container.singleton('Adonis/Addons/Twitch', app => {
+    this.container.singleton('Befriendlier-Shared/Twitch', app => {
       const config = app.use('Adonis/Core/Config')
       const logger = app.use('Adonis/Core/Logger')
 
-      const TwitchInstance = new TwitchAuth({
+      return new TwitchAuth({
         clientToken: config.get('twitch.clientToken'),
         clientSecret: config.get('twitch.clientSecret'),
         redirectURI: config.get('twitch.redirectURI'),
         scope: config.get('twitch.scope'),
         headers: config.get('twitch.headers'),
       }, logger.level)
-
-      return TwitchInstance
     })
 
-    this.container.singleton('Adonis/Addons/PerspectiveAPI', app => {
+    this.container.singleton('Befriendlier-Shared/PerspectiveAPI', app => {
       const config = app.use('Adonis/Core/Config')
       const logger = app.use('Adonis/Core/Logger')
 
-      const PerspectiveAPIInstance = new PerspectiveAPI({
+      return new PerspectiveAPI({
         token: config.get('perspective.token'),
         throttleInMs: config.get('perspective.throttleInMs'),
         headers: config.get('perspective.headers'),
       }, logger.level)
-
-      return PerspectiveAPIInstance
     })
   }
 
   public async boot () {
     // IoC container is ready
     const View = (await import('@ioc:Adonis/Core/View')).default
-    const Twitch = (await import('@ioc:Adonis/Addons/Twitch')).default
+    const Twitch = (await import('@ioc:Befriendlier-Shared/Twitch')).default
 
     View.global('icon', (iconName: string, size?: 'big' | 'small') => {
       let opts: { width: number, height: number }

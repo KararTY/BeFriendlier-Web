@@ -1,5 +1,5 @@
 import { AuthContract } from '@ioc:Adonis/Addons/Auth'
-import Twitch from '@ioc:Adonis/Addons/Twitch'
+import Twitch from '@ioc:Befriendlier-Shared/Twitch'
 import Env from '@ioc:Adonis/Core/Env'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'

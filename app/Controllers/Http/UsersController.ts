@@ -1,4 +1,4 @@
-import Twitch from '@ioc:Adonis/Addons/Twitch'
+import Twitch from '@ioc:Befriendlier-Shared/Twitch'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
