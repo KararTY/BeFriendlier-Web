@@ -17,7 +17,7 @@
         <div class="field-body">
           <div class="field">
             <div class="control">
-              <input type="text" class="input" maxlength="128" name="bio" value="{{ profile.bio }}">
+              <input type="text" class="input" maxlength="128" name="bio" value="{{ flashMessages.get('bio') || profile.bio }}">
             </div>
             @if(flashMessages.has('errors.bio'))
               <p class="help has-text-weight-bold is-danger">{{ flashMessages.get('errors.bio').join(' ') }}</p>
@@ -34,7 +34,7 @@
         <div class="field-body">
           <div class="field">
             <div class="control">
-              <input type="color" class="input" name="color" value="{{ profile.color }}">
+              <input type="color" class="input" name="color" value="{{ flashMessages.get('color') || profile.color }}">
             </div>
             @if(flashMessages.has('errors.color'))
               <p class="help has-text-weight-bold is-danger">{{ flashMessages.get('errors.color').join(' ') }}</p>
