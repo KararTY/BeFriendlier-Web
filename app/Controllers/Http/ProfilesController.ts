@@ -229,7 +229,7 @@ export default class ProfilesController {
     }
 
     const { id } = params
-    const { pagination } = request.get()
+    const { pagination } = request.qs()
 
     const idNumber = Number(id)
     if (Number.isNaN(idNumber)) {

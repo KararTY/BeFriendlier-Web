@@ -14,7 +14,7 @@ export default class AuthController {
       return response.redirect('/')
     }
 
-    const { code } = request.get()
+    const { code } = request.qs()
 
     const token = await Twitch.requestToken(code)
     if (token === null) {

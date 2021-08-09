@@ -5,7 +5,7 @@ export default class HealthChecksController {
   public async ping ({ request, response }: HttpContextContract) {
     const isLive = await HealthCheck.isLive()
 
-    const { info } = request.get()
+    const { info } = request.qs()
 
     if (info === undefined) {
       return isLive

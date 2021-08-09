@@ -21,7 +21,7 @@ export default class BotLoginController {
       return response.redirect('/')
     }
 
-    const { code } = request.get()
+    const { code } = request.qs()
 
     const token = await this.twitchAPI.requestToken(code)
     if (token === null) {
