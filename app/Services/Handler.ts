@@ -53,7 +53,7 @@ class Handler {
       throw this.error(MessageType.ERROR, userTwitch, channelTwitch, `you are on a cooldown. Please try again ${String(profile.nextRolls.toRelative())}.`)
     }
 
-    await profile.preload('matches')
+    await profile.load('matches')
 
     /**
      * Find matches in the same chat,
@@ -438,7 +438,7 @@ class Handler {
 
     const user = await this.findUserByProfile(profile)
 
-    await user.preload('favoriteStreamers')
+    await user.load('favoriteStreamers')
 
     // Don't roll this user if profile hasn't been customized yet.
     if (user.favoriteStreamers.length === 0 && profile.bio === 'Hello!' && profile.favoriteEmotes.length === 0) {

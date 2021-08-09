@@ -29,6 +29,7 @@ export default class User extends BaseModel {
   public twitchID: string
 
   @manyToMany(() => User, {
+    pivotTimestamps: true,
     localKey: 'id',
     pivotForeignKey: 'user_id',
     relatedKey: 'id',

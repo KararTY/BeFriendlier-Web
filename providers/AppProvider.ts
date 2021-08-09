@@ -1,35 +1,33 @@
-import { IocContract } from '@adonisjs/fold'
+import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import feather from 'feather-icons'
 import { TwitchAuth, PerspectiveAPI } from 'befriendlier-shared'
 
 export default class AppProvider {
-  constructor (protected container: IocContract) {
-  }
+	public static needsApplication = true
+
+  constructor (protected app: ApplicationContract) {}
 
   public register () {
     // Register your own bindings
-    this.container.singleton('Befriendlier-Shared/Twitch', app => {
-      const config = app.use('Adonis/Core/Config')
-      const logger = app.use('Adonis/Core/Logger')
+    const config = this.app.container.resolveBinding('Adonis/Core/Config')
+    const Logger = this.app.container.resolveBinding('Adonis/Core/Logger')
 
+    this.app.container.singleton('Befriendlier-Shared/Twitch', () => {
       return new TwitchAuth({
         clientToken: config.get('twitch.clientToken'),
         clientSecret: config.get('twitch.clientSecret'),
         redirectURI: config.get('twitch.redirectURI'),
         scope: config.get('twitch.scope'),
         headers: config.get('twitch.headers'),
-      }, logger.level)
+      }, Logger.level)
     })
 
-    this.container.singleton('Befriendlier-Shared/PerspectiveAPI', app => {
-      const config = app.use('Adonis/Core/Config')
-      const logger = app.use('Adonis/Core/Logger')
-
+    this.app.container.singleton('Befriendlier-Shared/PerspectiveAPI', () => {
       return new PerspectiveAPI({
         token: config.get('perspective.token'),
         throttleInMs: config.get('perspective.throttleInMs'),
         headers: config.get('perspective.headers'),
-      }, logger.level)
+      }, Logger.level)
     })
   }
 
@@ -57,10 +55,6 @@ export default class AppProvider {
     })
   }
 
-  public shutdown () {
-    // Cleanup, since app is going down
-  }
-
   public async ready () {
     // App is ready
     const App = await import('@ioc:Adonis/Core/Application')
@@ -72,5 +66,9 @@ export default class AppProvider {
     if (App.default.environment === 'web') {
       await import('../start/socket')
     }
+  }
+
+  public shutdown () {
+    // Cleanup, since app is going down
   }
 }

@@ -58,7 +58,7 @@ export default class AuthController {
         let flashMessage = 'Welcome back!'
 
         // Check if not actually registered, and only just cached. For "favorite streamers" purposes.
-        await userExists.preload('profile')
+        await userExists.load('profile')
         if (userExists.profile.length === 0) {
           await userExists.related('profile').create({
             enabled: false,

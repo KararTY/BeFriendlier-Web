@@ -8,7 +8,7 @@ export default class EmotesController {
 
     const totalEmotes = auth.user.emotes.reduce((acc, cur) => acc + (cur.amount || 0), 0)
 
-    return view.render('core', {
+    return await view.render('core', {
       user: auth.user.toJSON(),
       totalEmotes,
       web: {

@@ -22,7 +22,7 @@ export default class SplashController {
     }
     await this.refreshStatistics()
 
-    return view.render('core', {
+    return await view.render('core', {
       user: auth.user?.toJSON(),
       web: {
         template: 'splash',
@@ -39,43 +39,48 @@ export default class SplashController {
 
     const countTotalUsers = User.query()
       .where('createdAt', '>', String(DateTime.fromJSDate(new Date('1971')).toSQL()))
-      .count('*', 'total')
+      .pojo<{ total: number }>()
+      .count('id as total')
       .first()
     const countNewUsers = User.query()
       .whereBetween('createdAt', [dateMidnight, new Date()])
-      .count('*', 'total')
+      .pojo<{ total: number }>()
+      .count('id as total')
       .first()
 
     // const countTotalMatches = Database.query()
     //   .from('matches_lists')
+    //   .pojo<{ total: number }>()
     //   .countDistinct(['user_id', '' ])
     // const countNewMatches = Database.query()
     //   .from('matches_lists')
 
     const countTotalChannels = User.query()
       .where({ host: true })
-      .count('*', 'total')
+      .pojo<{ total: number }>()
+      .count('id as total')
       .first()
     const countNewChannels = User.query()
       .where({ host: true })
+      .pojo<{ total: number }>()
       .whereBetween('createdAt', [dateMidnight, new Date()])
-      .count('*', 'total')
+      .count('id as total')
       .first()
 
     const [
-      { total: totalUsers }, { total: totalChannels }, { total: totalNewUsers }, { total: totalNewChannels },
+      users, channels , newUsers, newChannels,
     ] = await Promise.all([
       countTotalUsers, countTotalChannels, countNewUsers, countNewChannels,
     ])
 
     statistics = {
       users: {
-        total: totalUsers,
-        new: totalNewUsers,
+        total: users?.total || 0,
+        new: newUsers?.total || 0,
       },
       channels: {
-        total: totalChannels,
-        new: totalNewChannels,
+        total: channels?.total || 0,
+        new: newChannels?.total || 0,
       },
     }
   }

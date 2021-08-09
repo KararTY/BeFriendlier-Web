@@ -17,7 +17,7 @@ export default class ProfilesController {
       // Show all user's profiles.
       const profiles = await this.getAllProfilesForUser(auth.user)
 
-      return view.render('core', {
+      return await view.render('core', {
         user: auth.user.toJSON(),
         profiles,
         web: {
@@ -55,7 +55,7 @@ export default class ProfilesController {
         }
       }
 
-      await auth.user.preload('favoriteStreamers')
+      await auth.user.load('favoriteStreamers')
 
       const userJSON = auth.user.toJSON()
       const profileJSON = profile.toJSON()
@@ -64,7 +64,7 @@ export default class ProfilesController {
 
       if (ownProfile) {
         // If own, allow access.
-        return view.render('core', {
+        return await view.render('core', {
           user: userJSON,
           profile: profileJSON,
           profileUser: userJSON,
@@ -107,9 +107,9 @@ export default class ProfilesController {
           return response.redirect('/profile')
         }
 
-        await userOfProfile.preload('favoriteStreamers')
+        await userOfProfile.load('favoriteStreamers')
 
-        return view.render('core', {
+        return await view.render('core', {
           user: userJSON,
           profile: profileJSON,
           profileUser: userOfProfile.toJSON(),
@@ -192,7 +192,7 @@ export default class ProfilesController {
       return response.redirect('/profile/')
     }
 
-    await auth.user.preload('profile')
+    await auth.user.load('profile')
 
     const profile = auth.user.profile.find(profile => profile.id === idNumber)
     if (profile !== undefined) {
@@ -317,7 +317,7 @@ export default class ProfilesController {
   private async getAllProfilesForUser (user: User) {
     const profiles: any[] = []
 
-    await user.preload('profile')
+    await user.load('profile')
 
     for (let index = 0; index < user.profile.length; index++) {
       const profile = user.profile[index]

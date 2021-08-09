@@ -123,12 +123,12 @@ export const http: HttpConfig = {
   | However, it is a very common these days that API servers always wants to
   | make response in JSON regardless of the existence of the `Accept` header.
   |
-  | By setting `forceContentNegotiationToJSON = true`, you negotiate with the
+  | By setting `forceContentNegotiationTo: 'application/json'`, you negotiate with the
   | server in advance to always return JSON without relying on the client
   | to set the header explicitly.
   |
   */
-  forceContentNegotiationToJSON: false,
+  // forceContentNegotiationTo: 'application/json',
 }
 
 /*

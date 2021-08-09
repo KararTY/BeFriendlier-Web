@@ -27,7 +27,7 @@ export default class RollMatchHandler extends DefaultHandler {
 
     if (rm.more === More.FAVORITESTREAMERS) {
       if (user.favoriteStreamers.length === 0) {
-        await user.preload('favoriteStreamers')
+        await user.load('favoriteStreamers')
         rm.more = More.BIO
       }
     }
@@ -52,7 +52,7 @@ export default class RollMatchHandler extends DefaultHandler {
         }
         break
       case More.FAVORITESTREAMERS: {
-        await user.preload('favoriteStreamers')
+        await user.load('favoriteStreamers')
 
         const favoriteStreamers = user.favoriteStreamers.map(streamer => noPingsStr(streamer.name)).join(', ')
 

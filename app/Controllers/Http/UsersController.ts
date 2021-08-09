@@ -25,10 +25,10 @@ export default class UsersController {
       return
     }
 
-    await auth.user.preload('profile')
-    await auth.user.preload('favoriteStreamers')
+    await auth.user.load('profile')
+    await auth.user.load('favoriteStreamers')
 
-    return view.render('core', {
+    return await view.render('core', {
       user: auth.user.toJSON(),
       web: {
         template: 'user',
@@ -108,7 +108,7 @@ export default class UsersController {
       }
     }
 
-    await auth.user.preload('profile')
+    await auth.user.load('profile')
 
     const globalProfile = auth.user.profile.find(profile => profile.chatUserId === 0)
 
@@ -154,7 +154,7 @@ export default class UsersController {
     let accountDeleted = false
 
     if (auth.user !== null) {
-      await auth.user.preload('profile')
+      await auth.user.load('profile')
 
       for (let i = 0; i < auth.user.profile.length; i++) {
         const profile = auth.user.profile[i]
@@ -175,7 +175,7 @@ export default class UsersController {
         await profile.save()
       }
 
-      // await user.preload('favoriteStreamers')
+      // await user.load('favoriteStreamers')
       await auth.user.related('favoriteStreamers').detach()
 
       // ANONYMIZE USER ON DELETE
@@ -267,7 +267,7 @@ export default class UsersController {
       updated_at: auth.user.updatedAt.toUTC(),
     }
 
-    await auth.user.preload('profile')
+    await auth.user.load('profile')
 
     for (let index = 0; index < auth.user.profile.length; index++) {
       const profile = auth.user.profile[index]
@@ -278,7 +278,7 @@ export default class UsersController {
         matches: [],
       }
 
-      await profile.preload('matches')
+      await profile.load('matches')
 
       for (let index = 0; index < profile.matches.length; index++) {
         const match = profile.matches[index]
@@ -312,7 +312,7 @@ export default class UsersController {
       userData.favorite_streamers.push(profileJSON)
     }
 
-    await auth.user.preload('favoriteStreamers')
+    await auth.user.load('favoriteStreamers')
 
     for (let index = 0; index < auth.user.favoriteStreamers.length; index++) {
       const favoriteStreamer = auth.user.favoriteStreamers[index]

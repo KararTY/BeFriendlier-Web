@@ -21,8 +21,8 @@ import Server from '@ioc:Adonis/Core/Server'
 |
 */
 Server.middleware.register([
-  'Adonis/Core/BodyParserMiddleware',
-  'Adonis/Addons/ShieldMiddleware',
+  () => import('@ioc:Adonis/Core/BodyParser'),
+  () => import('@ioc:Adonis/Addons/Shield'),
 ])
 
 /*
@@ -32,9 +32,7 @@ Server.middleware.register([
 |
 | Named middleware are defined a key-value pair. The value is the namespace
 | or middleware function and key is the alias. Later you can use these
-| alias on individual routes. For example:
-|
-| { auth: 'Adonis/Auth/Middleware' }
+| alias on individual routes.
 |
 | and then use it as follows
 |
@@ -42,9 +40,9 @@ Server.middleware.register([
 |
 */
 Server.middleware.registerNamed({
-  auth: 'App/Middleware/Auth',
-  silentAuth: 'App/Middleware/SilentAuth',
-  redirect: 'App/Middleware/Redirect',
-  refreshTwitchToken: 'App/Middleware/RefreshTwitchToken',
-  validateTwitchToken: 'App/Middleware/ValidateTwitchToken',
+  auth: () => import('App/Middleware/Auth'),
+  silentAuth: () => import('App/Middleware/SilentAuth'),
+  redirect: () => import('App/Middleware/Redirect'),
+  refreshTwitchToken: () => import('App/Middleware/RefreshTwitchToken'),
+  validateTwitchToken: () => import('App/Middleware/ValidateTwitchToken'),
 })
