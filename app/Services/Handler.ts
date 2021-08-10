@@ -23,8 +23,16 @@ class Handler {
   /**
    * MAKE SURE TO CATCH ERRORS.
    */
-  public async rollMatch ({ userTwitch, channelTwitch, global }: ROLLMATCH): Promise<{ user: User, profile: Profile}> {
-    const { chatOwnerUser, profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
+  public async rollMatch ({ userTwitch, channelTwitch, global }: ROLLMATCH, fpoc?: { chatOwnerUser: User, profile: Profile }): Promise<{ user: User, profile: Profile}> {
+    let chatOwnerUser: User
+    let profile: Profile
+
+    if (!fpoc) {
+      fpoc = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
+    }
+
+    chatOwnerUser = fpoc.chatOwnerUser
+    profile = fpoc.profile
 
     if (profile.rolls.length > 0) {
       // Return match
@@ -368,8 +376,8 @@ class Handler {
       MessageType.WHISPER,
       JSON.stringify({
         channelTwitch, userTwitch, result: {
-          value: `rubber ducky 🦆 here, you've received an emote: ${emote.name} (On ${global ? 'GLOBAL' : channelTwitch.name}) `
-            + 'You can check your emote inventory at the website.'
+          value: `rubber ducky 🦆 here, you've received an emote: ${emote.name} (On ${global ? 'GLOBAL' : channelTwitch.name})`
+            + ' You can check your emote inventory at the website.'
         }
       })
     ))
@@ -427,7 +435,7 @@ class Handler {
     return user
   }
 
-  private async findProfileOrCreateByChatOwner (user: User | NameAndId, channel: User | NameAndId, global = false):
+  public async findProfileOrCreateByChatOwner (user: User | NameAndId, channel: User | NameAndId, global = false):
   Promise<{ user: User, chatOwnerUser: User, profile: Profile }> {
     const userModel = user instanceof User ? user : await User.findBy('twitchID', user.id)
     const chatOwnerUserModel = channel instanceof User ? channel
@@ -451,6 +459,8 @@ class Handler {
     if (profileModel === null) {
       // Register this profile for the user & continue.
       profileModel = await userModel.related('profile').create({
+        bio: 'Hello!',
+        favoriteEmotes: [],
         chatUserId: chatOwnerUserModel.id,
         rolls: [],
         mismatches: [],
