@@ -81,15 +81,6 @@ class Handler {
     // Ratelimit user's rolls to every 5 hours.
     profile.nextRolls = DateTime.fromJSDate(new Date()).plus({ hours: 5 })
 
-    if (profiles.length === 0) {
-      await profile.save()
-      throw this.error(MessageType.TAKEABREAK, userTwitch, channelTwitch,
-        `looks like you're not lucky today, rubber ducky 🦆 Try rolling a match again ${String(profile.nextRolls.toRelative())}.`)
-    }
-
-    // Shuffle the array!
-    this.durstenfeldShuffle(profiles)
-
     // TODO: Double check implementation.
     let filteredProfiles: Array<Profile | null> = [...profiles]
     for (let index = 0; index < filteredProfiles.length; index++) {
@@ -104,6 +95,16 @@ class Handler {
         filteredProfiles[index] = null
       }
     }
+
+    if (filteredProfiles.length === 0) {
+      profile.rolls = []
+      await profile.save()
+      throw this.error(MessageType.TAKEABREAK, userTwitch, channelTwitch,
+        `looks like you're not lucky today, rubber ducky 🦆 Try rolling a match again ${String(profile.nextRolls.toRelative())}.`)
+    }
+
+    // Shuffle the array!
+    this.durstenfeldShuffle(filteredProfiles)
 
     profile.rolls = filteredProfiles.filter(p => p !== null).map((profile: Profile) => profile.id).slice(0, 10)
 
