@@ -10,6 +10,7 @@ import {
   GIVEEMOTES,
   MessageType,
   NameAndId,
+  REGISTER,
   ROLLMATCH,
   TwitchGlobalEmotes,
   UNMATCH
@@ -377,6 +378,32 @@ class Handler {
       id: emote.id,
       name: emote.name
     }
+  }
+
+  public async register ({ userTwitch }: REGISTER): Promise<Boolean> {
+    const userExists = await User.findBy('twitchID', userTwitch.id)
+
+    if (userExists === null) {
+      // Register account
+      const user = await User.create({
+        twitchID: userTwitch.id,
+        name: userTwitch.name,
+        displayName: userTwitch.displayName,
+        avatar: userTwitch.avatar,
+      })
+
+      // Create default global profile, but not enabled.
+      await user.related('profile').create({
+        enabled: false,
+        chatUserId: 0,
+      })
+
+      await user.save()
+
+      return true
+    }
+
+    else return false
   }
 
   public async findAllHostedChannels (): Promise<User[]> {
