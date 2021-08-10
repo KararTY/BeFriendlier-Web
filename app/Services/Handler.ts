@@ -81,7 +81,22 @@ class Handler {
     // Shuffle the array!
     this.durstenfeldShuffle(profiles)
 
-    profile.rolls = profiles.map(profile => profile.id).slice(0, 10)
+    // TODO: Double check implementation.
+    let filteredProfiles: Array<Profile | null> = [...profiles]
+    for (let index = 0; index < filteredProfiles.length; index++) {
+      const profile = filteredProfiles[index]
+      if (profile === null) continue
+
+      const user = await this.findUserByProfile(profile)
+      await user.load('favoriteStreamers')
+
+      // Don't roll this user if profile hasn't been customized yet.
+      if (user.favoriteStreamers.length === 0 && profile.bio === 'Hello!' && profile.favoriteEmotes.length === 0) {
+        filteredProfiles[index] = null
+      }
+    }
+
+    profile.rolls = filteredProfiles.filter(p => p !== null).map((profile: Profile) => profile.id).slice(0, 10)
 
     await profile.save()
 
@@ -430,6 +445,7 @@ class Handler {
     }
 
     const profile = await Profile.find(rolls[0])
+
     if (profile === null) {
       // User probably deleted, reroll again.
       rolls.shift()
@@ -437,14 +453,6 @@ class Handler {
     }
 
     const user = await this.findUserByProfile(profile)
-
-    await user.load('favoriteStreamers')
-
-    // Don't roll this user if profile hasn't been customized yet.
-    if (user.favoriteStreamers.length === 0 && profile.bio === 'Hello!' && profile.favoriteEmotes.length === 0) {
-      rolls.shift()
-      return this.rollUntilAvailableUser(rolls)
-    }
 
     return { rolls, user, profile }
   }
