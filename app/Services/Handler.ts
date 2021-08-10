@@ -96,6 +96,9 @@ class Handler {
       }
     }
 
+    // Yeet them.
+    filteredProfiles = filteredProfiles.filter(p => p !== null)
+
     if (filteredProfiles.length === 0) {
       profile.rolls = []
       await profile.save()
@@ -106,7 +109,7 @@ class Handler {
     // Shuffle the array!
     this.durstenfeldShuffle(filteredProfiles)
 
-    profile.rolls = filteredProfiles.filter(p => p !== null).map((profile: Profile) => profile.id).slice(0, 10)
+    profile.rolls = filteredProfiles.map((profile: Profile) => profile.id).slice(0, 10)
 
     await profile.save()
 
