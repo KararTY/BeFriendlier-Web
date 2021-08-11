@@ -64,6 +64,8 @@ class Handler {
     }
 
     if (profile.nextRolls.diffNow('hours').hours >= 0) {
+      await this.rollEmote({ userTwitch, channelTwitch, global }, { socket, ws })
+
       throw this.error(MessageType.ERROR, userTwitch, channelTwitch, `you are on a cooldown. Please try again ${String(profile.nextRolls.toRelative())}.`)
     }
 
@@ -366,8 +368,8 @@ class Handler {
     // Get Twitch's global emotes.
     const { user, profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
-    let emotes: Emote[] = []
-    if (profile.nextEmote.diffNow('hours').hours >= 0) {
+    let emotes: Emote[] = this.cachedTwitch.emotes
+    if (this.cachedTwitch.nextUpdate.diffNow('hours').hours <= 0) {
       const resEmotes = await ws.twitchAPI.getGlobalEmotes(ws.token.superSecret)
       if (resEmotes !== null) this.cachedTwitch.emotes = resEmotes
       emotes = this.cachedTwitch.emotes
