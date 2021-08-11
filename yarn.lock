@@ -3896,6 +3896,7 @@ __metadata:
     uhtml: ^2.7.6
     utf-8-validate: ^5.0.5
     ws: ^7.5.3
+    yeast: ^0.1.2
     youch: ^2.2.2
     youch-terminal: ^1.1.1
   dependenciesMeta:
@@ -15180,6 +15181,13 @@ typescript@^4.3.5:
     y18n: ^5.0.5
     yargs-parser: ^20.2.2
   checksum: b14afbb51e3251a204d81937c86a7e9d4bdbf9a2bcee38226c900d00f522969ab675703bee2a6f99f8e20103f608382936034e64d921b74df82b63c07c5e8f59
+  languageName: node
+  linkType: hard
+
+"yeast@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "yeast@npm:0.1.2"
+  checksum: 81a250b69f601fed541e9518eb2972e75631dd81231689503d7f288612d4eec793b29c208d6807fd6bfc4c2a43614d0c6db233739a4ae6223e244aaed6a885c0
   languageName: node
   linkType: hard
 

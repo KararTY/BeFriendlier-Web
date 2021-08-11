@@ -54,6 +54,7 @@ export default class SplashController {
 
     const countTotalUsers = User.query()
       .where('createdAt', '>', String(DateTime.fromJSDate(new Date('1971')).toSQL()))
+      .whereNot('name', '$deleted')
       .pojo<{ total: number }>()
       .count('id as total')
       .first()
