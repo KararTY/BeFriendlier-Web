@@ -17,9 +17,13 @@ export default class MatchHandler extends DefaultHandler {
         case MessageType.MATCH: {
           // Attempted to match. Must wait for receiving end.
           data.result = {
-            value: `you are attempting to match with a ${data.global === true ? 'global ' : ''}user. Good luck! ` +
-            'You will receive a notification on a successful match!',
+            value: `you are attempting to match with a ${data.global === true ? 'global ' : ''}user.`
           }
+          socket.send(this.ws.socketMessage(MessageType.WHISPER, JSON.stringify({
+            ...data, result: {
+              value: 'Good luck! You will receive a notification on a successful match!'
+            }
+          })))
           socket.send(this.ws.socketMessage(MessageType.MATCH, JSON.stringify(data)))
           break
         }

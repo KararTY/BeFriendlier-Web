@@ -17,14 +17,24 @@ export default class RollMatchHandler extends DefaultHandler {
 
     if (thisProfile.bio === 'Hello!' && thisProfile.favoriteEmotes.length === 0) {
       rm.result = {
-        value: `you\'ve not customized your profile! Please set a profile bio & emotes using the @@bio ${globalStr}& @@emotes ${globalStr}command.`
-          + ' Use @@help bio, @@help emotes for more information.'
+        value: 'you\'ve not customized your profile!'
       }
+
+      socket.send(this.ws.socketMessage(MessageType.WHISPER, JSON.stringify({
+        ...rm, result: {
+        value:  `Please set a profile bio & emotes using the @@bio ${globalStr}& @@emotes ${globalStr}command.`
+          + ' Use @@help bio, @@help emotes for more information.'
+        }
+      })))
+
       socket.send(this.ws.socketMessage(MessageType.ERROR, JSON.stringify(rm)))
       return
     }
 
-    const { user, profile } = await Handler.rollMatch(rm, { profile: thisProfile, chatOwnerUser: thisChatOwnerUser })
+    const { user, profile } = await Handler.rollMatch(rm,
+      { profile: thisProfile, chatOwnerUser: thisChatOwnerUser },
+      { socket, ws: this.ws },
+    )
 
     const noPingsStr = (str: string) => str.substr(0, 1) + '\u{E0000}' + str.substr(1)
 
