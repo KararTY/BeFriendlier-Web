@@ -22,7 +22,7 @@ export default class ProfilesController {
         profiles,
         web: {
           template: 'profiles',
-          title: 'Profiles',
+          title: `User profiles - ${auth.user.displayName}`,
         },
       })
     } else {
@@ -151,9 +151,12 @@ export default class ProfilesController {
     }
 
     if (profile.updatedAt.diffNow('seconds').seconds > -60) {
+      const { bio, color } = request.body()
       session.flash('message', {
         error: 'Error: Profile has recently been changed. ' +
         'Please wait at least 1 minute before updating your profile.',
+        bio,
+        color
       })
 
       return response.redirect(`/profile/${id}`)

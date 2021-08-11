@@ -38,7 +38,7 @@ typings/
 # Output of 'npm pack'
 *.tgz
 
-# Yarn Integrity file
+# Yarn files
 .yarn-integrity
 .yarn/*
 !.yarn/patches
