@@ -51,7 +51,7 @@
     "@adonisjs/view": "^6.0.8",
     "@hapi/bourne": "^2.0.0",
     "@types/ws": "^7.4.7",
-    "befriendlier-shared": "kararty/Befriendlier-Shared#4d09eedb630e036630c2861f612fd41a580a6a70",
+    "befriendlier-shared": "kararty/Befriendlier-Shared#ff78362075b977f92957a63b73d8e690883b34a4",
     "bulma": "^0.9.3",
     "feather-icons": "^4.28.0",
     "kontra": "^7.1.3",

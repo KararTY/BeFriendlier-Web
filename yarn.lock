@@ -3839,13 +3839,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"befriendlier-shared@kararty/Befriendlier-Shared#4d09eedb630e036630c2861f612fd41a580a6a70":
+"befriendlier-shared@kararty/Befriendlier-Shared#ff78362075b977f92957a63b73d8e690883b34a4":
   version: 6.4.0
-  resolution: "befriendlier-shared@https://github.com/kararty/Befriendlier-Shared.git#commit=4d09eedb630e036630c2861f612fd41a580a6a70"
+  resolution: "befriendlier-shared@https://github.com/kararty/Befriendlier-Shared.git#commit=ff78362075b977f92957a63b73d8e690883b34a4"
   dependencies:
     "@adonisjs/logger": ^2.1.0
     got: ^11.8.2
-  checksum: 8d41b9d2d723b8d75790164bdc1505323a31a8c8e2992bcf1dd4b055191fc13163ab74efd5c966dc3637b99f6d4d1ce4b5ff30e0274c8a8306c8dee7574f38c3
+  checksum: ba7eae962ddcaf7d092f54bf00771543672f3623354c811a8b906d1d266f28644d018b6246012c0b14fbd52ce7a3f089ce7229e806bde2959b176505874d871a
   languageName: node
   linkType: hard
 
@@ -3866,7 +3866,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^4.28.5
     "@typescript-eslint/parser": ^4.28.5
     adonis-preset-ts: ^2.1.0
-    befriendlier-shared: "kararty/Befriendlier-Shared#4d09eedb630e036630c2861f612fd41a580a6a70"
+    befriendlier-shared: "kararty/Befriendlier-Shared#ff78362075b977f92957a63b73d8e690883b34a4"
     bufferutil: ^4.0.3
     bulma: ^0.9.3
     eslint: ^7.31.0
