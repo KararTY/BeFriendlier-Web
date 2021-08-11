@@ -27,17 +27,8 @@ class Handler {
    * MAKE SURE TO CATCH ERRORS.
    */
   public async rollMatch ({ userTwitch, channelTwitch, global }: ROLLMATCH,
-    fpoc?: { chatOwnerUser: User, profile: Profile },
-    socket?: { socket: ExtendedWebSocket, ws: typeof WebSocketServer }): Promise<{ user: User, profile: Profile}> {
-    let chatOwnerUser: User
-    let profile: Profile
-
-    if (!fpoc) {
-      fpoc = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
-    }
-
-    chatOwnerUser = fpoc.chatOwnerUser
-    profile = fpoc.profile
+    { chatOwnerUser, profile }: { chatOwnerUser: User, profile: Profile },
+    { socket, ws }: { socket: ExtendedWebSocket, ws: typeof WebSocketServer }): Promise<{ user: User, profile: Profile}> {
 
     if (profile.rolls.length > 0) {
       // Return match
@@ -108,7 +99,7 @@ class Handler {
       profile.rolls = []
       await profile.save()
 
-      await this.rollEmote({ userTwitch, channelTwitch, global }, { socket: socket.socket, ws: socket.ws })
+      await this.rollEmote({ userTwitch, channelTwitch, global }, { socket, ws })
 
       throw this.error(MessageType.TAKEABREAK, userTwitch, channelTwitch,
         `looks like you're not lucky today, rubber ducky 🦆 Try rolling a match again ${String(profile.nextRolls.toRelative())}.`)
