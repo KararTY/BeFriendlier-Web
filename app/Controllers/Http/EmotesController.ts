@@ -10,10 +10,10 @@ export default class EmotesController {
 
     return await view.render('core', {
       user: auth.user.toJSON(),
-      totalEmotes,
       web: {
         template: 'emotes',
         title: `User emotes - ${auth.user.displayName}`,
+        totalEmotes,
       },
     })
   }
