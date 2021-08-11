@@ -32,6 +32,21 @@ export default class SplashController {
     })
   }
 
+  public async channels ({ auth, view }: HttpContextContract) {
+    const channels = await User.query()
+      .where({ host: true })
+      .pojo() as User[]
+
+    return await view.render('core', {
+      user: auth.user?.toJSON(),
+      web: {
+        template: 'channels',
+        title: 'BeFriendlier\'s joined channels.',
+        channels: channels.sort((a, b) => b.emotes.length - a.emotes.length),
+      },
+    })
+  }
+
   private async refreshStatistics () {
     const dateMidnight = DateTime
       .fromJSDate(new Date())
