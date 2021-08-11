@@ -11,10 +11,7 @@ export default class MatchHandler extends DefaultHandler {
       const data: BASE = JSON.parse(res.data)
       const result = await Handler.match(data)
 
-      const emotes = await this.ws.twitchAPI.getGlobalEmotes(this.ws.token.superSecret)
-      if (emotes) {
-        await Handler.rollEmote(data, { socket, ws: this.ws, emotes })
-      }
+      await Handler.rollEmote(data, { socket, ws: this.ws })
 
       switch (result.attempt) {
         case MessageType.MATCH: {

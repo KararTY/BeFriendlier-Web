@@ -12,7 +12,6 @@ import {
   NameAndId,
   REGISTER,
   ROLLMATCH,
-  TwitchGlobalEmotes,
   UNMATCH
 } from 'befriendlier-shared'
 import { DateTime } from 'luxon'
@@ -20,10 +19,16 @@ import TwitchConfig from '../../config/twitch'
 import WebSocketServer, { ExtendedWebSocket } from './Ws'
 
 class Handler {
+  public cachedTwitch = {
+    nextUpdate: DateTime.now(),
+    emotes: [] as Emote[]
+  }
   /**
    * MAKE SURE TO CATCH ERRORS.
    */
-  public async rollMatch ({ userTwitch, channelTwitch, global }: ROLLMATCH, fpoc?: { chatOwnerUser: User, profile: Profile }): Promise<{ user: User, profile: Profile}> {
+  public async rollMatch ({ userTwitch, channelTwitch, global }: ROLLMATCH,
+    fpoc?: { chatOwnerUser: User, profile: Profile },
+    socket?: { socket: ExtendedWebSocket, ws: typeof WebSocketServer }): Promise<{ user: User, profile: Profile}> {
     let chatOwnerUser: User
     let profile: Profile
 
@@ -102,6 +107,9 @@ class Handler {
     if (filteredProfiles.length === 0) {
       profile.rolls = []
       await profile.save()
+
+      await this.rollEmote({ userTwitch, channelTwitch, global }, { socket: socket.socket, ws: socket.ws })
+
       throw this.error(MessageType.TAKEABREAK, userTwitch, channelTwitch,
         `looks like you're not lucky today, rubber ducky 🦆 Try rolling a match again ${String(profile.nextRolls.toRelative())}.`)
     }
@@ -346,11 +354,19 @@ class Handler {
 
   public async rollEmote(
     { userTwitch, channelTwitch, global }: BASE,
-    { socket, emotes, ws }: { socket: ExtendedWebSocket, emotes: TwitchGlobalEmotes[], ws: typeof WebSocketServer }): Promise<Emote | null> {
+    { socket, ws }: { socket: ExtendedWebSocket, ws: typeof WebSocketServer }): Promise<Emote | null> {
     // Get Twitch's global emotes.
     const { user, profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
-    if (!(user && emotes)) {
+    let emotes: Emote[] = []
+    if (profile.nextEmote.diffNow('hours').hours >= 0) {
+      const resEmotes = await ws.twitchAPI.getGlobalEmotes(ws.token.superSecret)
+      if (resEmotes !== null) this.cachedTwitch.emotes = resEmotes
+      emotes = this.cachedTwitch.emotes
+      this.cachedTwitch.nextUpdate = DateTime.fromJSDate(new Date()).plus({ hours: 24 })
+    }
+
+    if (!(user && emotes.length > 0)) {
       return null
     }
 
