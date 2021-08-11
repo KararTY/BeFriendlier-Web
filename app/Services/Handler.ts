@@ -35,8 +35,17 @@ class Handler {
       const rau = await this.rollUntilAvailableUser(profile.rolls)
 
       if (rau instanceof Error) {
+        socket.send(ws.socketMessage(
+          MessageType.WHISPER,
+          JSON.stringify({
+            channelTwitch, userTwitch, result: {
+              value: `Try rolling a match again in a bit.`
+            }
+          })
+        ))
+
         throw this.error(MessageType.ERROR, userTwitch, channelTwitch,
-          'looks like it\'s not your lucky day today, rubber ducky 🦆 Try rolling a match again in a bit.')
+          'looks like it\'s not your lucky day today, rubber ducky 🦆')
       }
 
       const {
@@ -101,8 +110,16 @@ class Handler {
 
       await this.rollEmote({ userTwitch, channelTwitch, global }, { socket, ws })
 
-      throw this.error(MessageType.TAKEABREAK, userTwitch, channelTwitch,
-        `looks like you're not lucky today, rubber ducky 🦆 Try rolling a match again ${String(profile.nextRolls.toRelative())}.`)
+      socket.send(ws.socketMessage(
+        MessageType.WHISPER,
+        JSON.stringify({
+          channelTwitch, userTwitch, result: {
+            value: `Try rolling a match again ${String(profile.nextRolls.toRelative())}.`
+          }
+        })
+      ))
+
+      throw this.error(MessageType.TAKEABREAK, userTwitch, channelTwitch, 'looks like you\'re not lucky today, rubber ducky 🦆')
     }
 
     // Shuffle the array!
@@ -479,7 +496,8 @@ class Handler {
       })
     } else {
       if (!profileModel.enabled) {
-        throw this.error(MessageType.ERROR, user, channel, `this profile is disabled.${global ? ' The global profile has to be enabled via the BeFriendlier website.' : ''}`)
+        throw this.error(MessageType.ERROR, user, channel,
+          `this profile is disabled.${(global || channel.name === 'befriendlier') ? ' The global profile has to be enabled via the BeFriendlier website.' : ''}`)
       }
     }
 
