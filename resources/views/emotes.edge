@@ -9,11 +9,16 @@
           <h4 class="card-header-title is-size-4">Your emotes - x{{ web.totalEmotes }} total</h4>
         </div>
         <div class="card-content">
-          <div class="columns is-multiline is-variable is-1">
+          <div class="columns is-multiline is-mobile is-variable is-1">
             @each(emote in user.emotes)
               <div class="column is-narrow">
-                <div class="box">
-                  <small><span>x{{ emote.amount }}</span> <span>{{ emote.name }}</span></small>
+                <div class="box has-text-centered">
+                  <figure class="image is-32x32 m-auto">
+                    <img src="https://static-cdn.jtvnw.net/emoticons/v2/{{ emote.id }}/default/dark/3.0" alt="{{ emote.name }} image" class="is-unselectable">
+                  </figure>
+                  <small>
+                    <span><strong>x{{ emote.amount }}</strong></span> <span>{{ emote.name }}</span>
+                  </small>
                 </div>
               </div>
             @endeach
@@ -26,7 +31,7 @@
           <div class="card-header-title is-size-4">Getting emotes</div>
         </div>
         <div class="card-content">
-          <p>Every 5 hours, you can match or skip/decline a roll/swipe and earn a random global Twitch emote. You can then trade these emotes with other people by using the <code>@@giveemotes</code> command.</p>
+          <p>Every 5 hours, you can match or skip/decline a roll/swipe and earn a random global Twitch emote. You can then trade these emotes with other people by using the <code>giveemotes</code> command.</p>
         </div>
       </div>
     </div>
