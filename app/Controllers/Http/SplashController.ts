@@ -18,9 +18,9 @@ let statistics = {
 export default class SplashController {
   public async index ({ auth, view }: HttpContextContract) {
     if (splashLastUpdate.diffNow('minutes').minutes <= 0) {
-      splashLastUpdate = splashLastUpdate.plus({ minutes: 30 })
+      splashLastUpdate = splashLastUpdate.plus({ minutes: 5 })
+      await this.refreshStatistics()
     }
-    await this.refreshStatistics()
 
     return await view.render('core', {
       user: auth.user?.toJSON(),
