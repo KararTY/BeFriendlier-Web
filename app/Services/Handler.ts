@@ -40,7 +40,7 @@ class Handler {
           MessageType.WHISPER,
           JSON.stringify({
             channelTwitch, userTwitch, result: {
-              value: `Try rolling a match again in a bit.`
+              value: `You're out of profiles! Try rolling a match again in a bit.`
             }
           })
         ))
@@ -67,7 +67,7 @@ class Handler {
     if (profile.nextRolls.diffNow('hours').hours >= 0) {
       await this.rollEmote({ userTwitch, channelTwitch, global }, { socket, ws })
 
-      throw this.error(MessageType.ERROR, userTwitch, channelTwitch, `you are on a cooldown. Please try again ${String(profile.nextRolls.toRelative())}.`)
+      throw this.error(MessageType.ERROR, userTwitch, channelTwitch, `you are on a cooldown. Please try again ${this.diffDate(profile.nextRolls)}.`)
     }
 
     await profile.load('matches')
@@ -117,7 +117,7 @@ class Handler {
         MessageType.WHISPER,
         JSON.stringify({
           channelTwitch, userTwitch, result: {
-            value: `Try rolling a match again ${String(profile.nextRolls.toRelative())}.`
+            value: `Try rolling a match again ${this.diffDate(profile.nextRolls)}.`
           }
         })
       ))
@@ -128,7 +128,7 @@ class Handler {
     // Shuffle the array!
     this.durstenfeldShuffle(filteredProfiles)
 
-    profile.rolls = filteredProfiles.map((profile: Profile) => profile.id).slice(0, 10)
+    profile.rolls = filteredProfiles.map((profile: Profile) => profile.id).slice(0, 5)
 
     await profile.save()
 
@@ -144,6 +144,8 @@ class Handler {
     const { user, profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
     const profileId = profile.rolls.shift()
+
+    // TODO: Error handling if profileId === undefined
 
     const matchProfile = await Profile.find(profileId)
 
@@ -329,10 +331,11 @@ class Handler {
       throw this.error(MessageType.ERROR, userTwitch, channelTwitch, "No I don't think so, you're attempting to trade with yourself.")
     }
 
+    // TODO: Allow this behaviour for now.
     // Recipient user isn't registered.
-    if (recipientUserModel.createdAt.year === 1970) {
-      throw this.error(MessageType.ERROR, userTwitch, channelTwitch, "you can't send to that user.")
-    }
+    // if (recipientUserModel.createdAt.year === 1970) {
+    //   throw this.error(MessageType.ERROR, userTwitch, channelTwitch, "you can't send to that user.")
+    // }
 
     for (let index = 0; index < emotes.length; index++) {
       const emote = emotes[index]
@@ -564,6 +567,20 @@ class Handler {
     }
 
     return error as Error
+  }
+
+  public diffDate(fromDate: DateTime, toDate = DateTime.now() ) {
+    let text = ''
+    const date1 = fromDate.diff(toDate, 'milliseconds').toObject().milliseconds as number
+    const diff = fromDate.diff(toDate, ['hours', 'minutes'])
+
+    if ((date1) > 0) {
+      text = `in ${diff.hours} hours, ${Math.round(diff.minutes)} minutes`
+    } else {
+      text = `${-diff.hours} hours, ${Math.round(-diff.minutes)} minutes ago`
+    }
+
+    return text
   }
 
   // https://stackoverflow.com/a/12646864 CC BY-SA 4.0
