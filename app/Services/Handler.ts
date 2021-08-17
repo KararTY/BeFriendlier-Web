@@ -527,15 +527,19 @@ class Handler {
 
     const profile = await Profile.find(rolls[0])
 
-    if (profile === null) {
-      // User probably deleted, reroll again.
+    if (profile === null || !profile.enabled) {
+      // Profile probably deleted, reroll again.
       rolls.shift()
       return this.rollUntilAvailableUser(rolls)
     }
 
-    const user = await this.findUserByProfile(profile)
-
-    return { rolls, user, profile }
+    try {
+      const user = await this.findUserByProfile(profile)
+      return { rolls, user, profile }
+    } catch (error) {
+      rolls.shift()
+      return this.rollUntilAvailableUser(rolls)
+    }
   }
 
   private error (type: MessageType, user: User | NameAndId, channel: User | NameAndId, message?: string): Error {
