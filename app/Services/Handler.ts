@@ -485,7 +485,7 @@ class Handler {
   Promise<{ user: User, chatOwnerUser: User, profile: Profile }> {
     const userModel = user instanceof User ? user : await User.query().where({ twitch_id: user.id }).first()
     const chatOwnerUserModel = channel instanceof User ? channel
-      : await User.query().where({ twitch_id: global ? TwitchConfig.user.id : user.id }).first()
+      : await User.query().where({ twitch_id: global ? TwitchConfig.user.id : channel.id }).first()
 
     let profileModel: Profile | null
 
@@ -512,11 +512,9 @@ class Handler {
         mismatches: [],
         nextRolls: DateTime.fromJSDate(new Date()),
       })
-    } else {
-      if (!profileModel.enabled) {
-        throw this.error(MessageType.ERROR, user, channel,
-          `this profile is disabled.${(global || channel.name === 'befriendlier') ? ' The global profile has to be enabled via the BeFriendlier website.' : ''}`)
-      }
+    } else if (!profileModel.enabled) {
+      throw this.error(MessageType.ERROR, user, channel,
+        `this profile is disabled.${(global || channel.name === 'befriendlier') ? ' The global profile has to be enabled via the BeFriendlier website.' : ''}`)
     }
 
     return { user: userModel, chatOwnerUser: chatOwnerUserModel, profile: profileModel }
