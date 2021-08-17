@@ -99,7 +99,7 @@ class Handler {
       await user.load('favoriteStreamers')
 
       // Don't roll this user if profile hasn't been customized yet.
-      if (user.favoriteStreamers.length === 0 && profile.bio === 'Hello!' && profile.favoriteEmotes.length === 0) {
+      if (profile.bio === 'Hello!' || profile.favoriteEmotes.length === 0) {
         filteredProfiles[index] = null
       }
     }
