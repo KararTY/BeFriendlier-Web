@@ -1,6 +1,7 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
+import PajbotAPI from '@ioc:Befriendlier-Shared/PajbotAPI'
 import Profile from 'App/Models/Profile'
 import User from 'App/Models/User'
 import { DateTime } from 'luxon'
@@ -174,8 +175,25 @@ export default class ProfilesController {
     profile.color = validated.color
     await profile.save()
 
-    // Sometimes PerspectiveAPI is unavailable, so that's why we have multiple saving. At least color can be set.
     profile.bio = validated.bio
+
+    const chatOwnerUser = await User.find(profile.chatUserId) as User
+    const pajbotCheck = await PajbotAPI.check(chatOwnerUser.name, profile.bio)
+    if (pajbotCheck && pajbotCheck.banned) {
+      // banphrase_data appears on banned === true
+      const banphraseData = pajbotCheck.banphrase_data as { phrase: string }
+      session.flash('message', {
+        error: 'Error: There are banned phrases in your bio!',
+
+      })
+      session.flash('errors', {
+        bio: [`🦆 Please remove: ${banphraseData.phrase}`]
+      })
+      session.flash('bio', profile.bio)
+      return response.redirect(`/profile/${id}`)
+    }
+
+    // Sometimes PerspectiveAPI or Pajbot is unavailable, so that's why we have multiple saving. At least color can be set.
     await profile.save()
 
     session.flash('message', { message: 'Successfully updated your profile.' })

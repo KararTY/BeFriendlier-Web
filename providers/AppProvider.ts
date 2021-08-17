@@ -1,6 +1,6 @@
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import feather from 'feather-icons'
-import { TwitchAuth, PerspectiveAPI } from 'befriendlier-shared'
+import { TwitchAuth, PerspectiveAPI, PajbotAPI } from 'befriendlier-shared'
 
 export default class AppProvider {
 	public static needsApplication = true
@@ -27,6 +27,14 @@ export default class AppProvider {
         token: config.get('perspective.token'),
         throttleInMs: config.get('perspective.throttleInMs'),
         headers: config.get('perspective.headers'),
+      }, Logger.level)
+    })
+
+    this.app.container.singleton('Befriendlier-Shared/PajbotAPI', () => {
+      return new PajbotAPI({
+        enabled: config.get('pajbot.enabled'),
+        channels: config.get('pajbot.channels'),
+        headers: config.get('pajbot.headers'),
       }, Logger.level)
     })
   }
