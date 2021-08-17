@@ -147,7 +147,7 @@ class Handler {
 
     // TODO: Error handling if profileId === undefined
 
-    const matchProfile = await Profile.find(profileId)
+    const matchProfile = await Profile.query().where({ id: profileId }).first()
 
     if (matchProfile === null) {
       // Shouldn't hit here, maybe user deleted as soon as they tried to match.
@@ -194,7 +194,7 @@ class Handler {
   public async unmatch ({ userTwitch, matchUserTwitch, channelTwitch }: UNMATCH): Promise<boolean> {
     const { profile, chatOwnerUser } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch)
 
-    const matchUser = await User.findBy('name', matchUserTwitch.name)
+    const matchUser = await User.query().where({ name: matchUserTwitch.name }).first()
 
     if (matchUser === null) {
       // Shouldn't hit here, maybe user deleted as soon as they tried to unmatch or they simply do not exist.
@@ -423,7 +423,7 @@ class Handler {
   }
 
   public async register ({ channelTwitch, userTwitch }: REGISTER, { socket, ws }: { socket: ExtendedWebSocket, ws: typeof WebSocketServer }): Promise<Boolean | null> {
-    const bannedUser = await BannedUser.findBy('twitchID', userTwitch.id)
+    const bannedUser = await BannedUser.query().where({ twitch_id: userTwitch.id }).first()
     if (bannedUser) {
       socket.send(ws.socketMessage(
         MessageType.WHISPER,
@@ -436,7 +436,7 @@ class Handler {
       return null
     }
 
-    const userExists = await User.findBy('twitchID', userTwitch.id)
+    const userExists = await User.query().where({ twitch_id: userTwitch.id }).first()
     if (userExists === null) {
       // Register account
       const user = await User.create({
@@ -465,11 +465,11 @@ class Handler {
   }
 
   public async findUserByTwitchID (twitchID: string): Promise<User | null> {
-    return await User.findBy('twitchID', twitchID)
+    return await User.query().where({ twitch_id: twitchID }).first()
   }
 
   private async findUserByProfile (profile: Profile): Promise<User> {
-    const user = await User.find(profile.userId)
+    const user = await User.query().where({ id: profile.userId }).first()
 
     if (user === null) {
       // Shouldn't hit this at all.
@@ -483,9 +483,9 @@ class Handler {
 
   public async findProfileOrCreateByChatOwner (user: User | NameAndId, channel: User | NameAndId, global = false):
   Promise<{ user: User, chatOwnerUser: User, profile: Profile }> {
-    const userModel = user instanceof User ? user : await User.findBy('twitchID', user.id)
+    const userModel = user instanceof User ? user : await User.query().where({ twitch_id: user.id }).first()
     const chatOwnerUserModel = channel instanceof User ? channel
-      : await User.findBy('twitchID', global ? TwitchConfig.user.id : channel.id)
+      : await User.query().where({ twitch_id: global ? TwitchConfig.user.id : user.id }).first()
 
     let profileModel: Profile | null
 
@@ -528,7 +528,7 @@ class Handler {
       return new Error()
     }
 
-    const profile = await Profile.find(rolls[0])
+    const profile = await Profile.query().where({ id: rolls[0] }).first()
 
     if (profile === null || !profile.enabled) {
       // Profile probably deleted, reroll again.

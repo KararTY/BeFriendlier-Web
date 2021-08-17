@@ -85,6 +85,7 @@ const databaseConfig: DatabaseConfig = {
     */
     pg: {
       client: 'pg',
+      version: '12',
       connection: {
         host: Env.get('DB_HOST', '127.0.0.1'),
         port: Env.get('DB_PORT', 5432),
