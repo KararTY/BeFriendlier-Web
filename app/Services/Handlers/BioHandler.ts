@@ -12,19 +12,18 @@ export default class BioHandler extends DefaultHandler {
 
       if (data.bio.length > 0) {
         const bioRes = await Handler.setBio(data)
-        const bio = bioRes.split(' ').map(word => `${word.substr(0, 1)}\u{E0000}${word.substr(1)}`).join(' ')
 
-        data.result = { value: `Successfully set your ${data.global === true ? 'global' : 'profile'} bio.` }
         socket.send(this.ws.socketMessage(MessageType.WHISPER, JSON.stringify({
           ...data, result: {
-            value: `Here's a part of it: ${bio.length > 32 ? `${bio.substr(0, 32)}...` : bio}`
+            value: `Here's a part of it: ${bioRes.length > 32 ? `${bioRes.substr(0, 32)}...` : bioRes}`
           }
         })))
+
+        data.result = { value: `Successfully set your ${data.global === true ? 'global' : 'profile'} bio.` }
       } else {
         const bioRes = await Handler.getBio(data)
-        const bio = bioRes.split(' ').map(word => `${word.substr(0, 1)}\u{E0000}${word.substr(1)}`).join(' ')
 
-        data.result = { value: `your ${data.global === true ? 'global' : 'profile'} bio: ${bio}` }
+        data.result = { value: bioRes }
       }
 
       socket.send(this.ws.socketMessage(MessageType.BIO, JSON.stringify(data)))
