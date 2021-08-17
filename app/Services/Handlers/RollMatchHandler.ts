@@ -1,6 +1,6 @@
 import { ExtendedWebSocket, ResSchema } from '../Ws'
 import DefaultHandler from './DefaultHandler'
-import { MessageType, More, ROLLMATCH } from 'befriendlier-shared'
+import { MessageType, ROLLMATCH } from 'befriendlier-shared'
 import Handler from '../Handler'
 
 export default class RollMatchHandler extends DefaultHandler {
@@ -16,16 +16,16 @@ export default class RollMatchHandler extends DefaultHandler {
     const { profile: thisProfile, chatOwnerUser: thisChatOwnerUser } = await Handler.findProfileOrCreateByChatOwner(rm.userTwitch, rm.channelTwitch, rm.global)
 
     if (thisProfile.bio === 'Hello!' && thisProfile.favoriteEmotes.length === 0) {
+      socket.send(this.ws.socketMessage(MessageType.WHISPER, JSON.stringify({
+        ...rm, result: {
+        value:  `Please set a profile bio & emotes using the %prefix%bio ${globalStr}& %prefix%emotes ${globalStr}command.`
+          + ' Use %prefix%help bio, %prefix%help emotes for more information.'
+        }
+      })))
+
       rm.result = {
         value: 'you\'ve not customized your profile!'
       }
-
-      socket.send(this.ws.socketMessage(MessageType.WHISPER, JSON.stringify({
-        ...rm, result: {
-        value:  `Please set a profile bio & emotes using the @@bio ${globalStr}& @@emotes ${globalStr}command.`
-          + ' Use @@help bio, @@help emotes for more information.'
-        }
-      })))
 
       socket.send(this.ws.socketMessage(MessageType.ERROR, JSON.stringify(rm)))
       return
@@ -36,60 +36,13 @@ export default class RollMatchHandler extends DefaultHandler {
       { socket, ws: this.ws },
     )
 
-    const noPingsStr = (str: string) => str.substr(0, 1) + '\u{E0000}' + str.substr(1)
+    await user.load('favoriteStreamers')
+    const favoriteStreamers = user.favoriteStreamers.map(user => user.serialize({ fields: ['name'] }))
 
-    const bio = profile.bio.split(' ').map(word => noPingsStr(word)).join(' ')
-
-    // Skip some stuff if user doesn't define anything.
-    if (rm.more === More.NONE && profile.bio === 'Hello!') {
-      rm.more = More.FAVORITEEMOTES
-    }
-
-    if (rm.more === More.BIO && profile.bio.length < 33) {
-      rm.more = More.FAVORITEEMOTES
-    }
-
-    if (rm.more === More.FAVORITEEMOTES && profile.favoriteEmotes.length === 0) {
-      rm.more = More.FAVORITESTREAMERS
-    }
-
-    if (rm.more === More.FAVORITESTREAMERS) {
-      await user.load('favoriteStreamers')
-
-      if (user.favoriteStreamers.length === 0) {
-        rm.more = More.NONE
-      }
-    }
-
-    switch (rm.more) {
-      case More.NONE:
-        rm.result = {
-          value: `new ${globalStr}match's bio: ` +
-            `${profile.bio.length > 32 ? `${bio.substr(0, 32)}...` : bio}, reply with %prefix%more, %prefix%match or %prefix%no`,
-        }
-        break
-      case More.BIO:
-        rm.result = {
-          value: `${rm.global === true ? 'global\'s ' : ''}full bio: ` +
-            `${bio}`,
-        }
-        break
-      case More.FAVORITEEMOTES:
-        rm.result = {
-          value: `${globalStr}match's favorite emotes: ` +
-            `${profile.favoriteEmotes.length > 0 ? profile.favoriteEmotes.map(emote => emote.name).join(' ') : 'None.'}`,
-        }
-        break
-      case More.FAVORITESTREAMERS: {
-        await user.load('favoriteStreamers')
-
-        const favoriteStreamers = user.favoriteStreamers.map(streamer => noPingsStr(streamer.name)).join(', ')
-
-        rm.result = {
-          value: `${globalStr}match's favorite streamers: ` +
-            `${user.favoriteStreamers.length > 0 ? favoriteStreamers : 'None'}.`,
-        }
-        break
+    rm.result = {
+      value: {
+        profile: profile.serialize({ fields: ['bio', 'favorite_emotes'] }),
+        user: { favorite_streamers: favoriteStreamers }
       }
     }
 
