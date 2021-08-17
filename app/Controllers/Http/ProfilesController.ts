@@ -368,7 +368,7 @@ export default class ProfilesController {
   }
 
   private async getMatchesList (user: User, profile: Profile, pagination = 0): Promise<any[] | undefined> {
-    const matches = await profile.related('matches').query().offset(pagination).limit(10)
+    const matches = await profile.related('matches').query()
     const matchesJSON: any[] = []
 
     if (matches !== null) {
@@ -401,7 +401,7 @@ export default class ProfilesController {
         })
       }
 
-      return matchesJSON
+      return matchesJSON.slice(pagination).slice(0, 10)
     }
   }
 
