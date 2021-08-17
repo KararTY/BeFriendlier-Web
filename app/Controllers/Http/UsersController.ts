@@ -58,7 +58,7 @@ export default class UsersController {
     // TODO: OPTIMIZE CALLS BY FILTERING OUT EXISTING FIELDS & ONLY DETACHING NON-EXISTING FIELDS.
     let newFavoriteStreamers: User[] = []
     if (validated.favoriteStreamers !== undefined && validated.favoriteStreamers.length > 0) {
-      const existingUsers = await User.query().whereIn('name', validated.favoriteStreamers)
+      const existingUsers = await User.query().whereIn('name', validated.favoriteStreamers.map(fs => fs.normalize().toLowerCase()))
       newFavoriteStreamers.push(...existingUsers)
 
       // Check if user is requesting streamers that currently do not exist in the database.
