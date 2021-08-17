@@ -15,16 +15,30 @@ export default class RollMatchHandler extends DefaultHandler {
 
     const { profile: thisProfile, chatOwnerUser: thisChatOwnerUser } = await Handler.findProfileOrCreateByChatOwner(rm.userTwitch, rm.channelTwitch, rm.global)
 
-    if (thisProfile.bio === 'Hello!' && thisProfile.favoriteEmotes.length === 0) {
+    let messages: { long: string, short: string }[] = []
+    if (thisProfile.bio === 'Hello!' || thisProfile.bio.length < 3) {
+      messages.push(
+        { long: `Your bio is not customized! Set it using "%prefix%bio ${globalStr}<bio goes here>".`,
+        short: 'bio is not customized' }
+      )
+    }
+
+    if (thisProfile.favoriteEmotes.length === 0) {
+      messages.push(
+        { long: `You haven't defined any favorite emotes! Set some using "%prefix%emotes ${globalStr}<twitch emotes go here>".`,
+        short: 'favorite emotes not set'}
+      )
+    }
+
+    if (messages.length > 0) {
       socket.send(this.ws.socketMessage(MessageType.WHISPER, JSON.stringify({
         ...rm, result: {
-        value:  `Please set a profile bio & emotes using the %prefix%bio ${globalStr}& %prefix%emotes ${globalStr}command.`
-          + ' Use %prefix%help bio, %prefix%help emotes for more information.'
+        value: messages.map(m => m.long).join(' ') + ' Use %prefix%help bio, %prefix%help emotes for more information.'
         }
       })))
 
       rm.result = {
-        value: 'you\'ve not customized your profile!'
+        value: `you\'ve not customized your profile! Your ${messages.map(m => m.short).join(', ')}.`
       }
 
       socket.send(this.ws.socketMessage(MessageType.ERROR, JSON.stringify(rm)))
