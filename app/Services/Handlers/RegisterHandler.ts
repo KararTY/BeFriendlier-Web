@@ -10,7 +10,11 @@ export default class RegisterHandler extends DefaultHandler {
     if (res.data !== undefined) {
       const data: REGISTER = JSON.parse(res.data)
 
-      const registrationSuccess = await Handler.register(data)
+      const registrationSuccess = await Handler.register(data, { socket, ws: this.ws })
+
+      if ((typeof registrationSuccess !== 'boolean') && registrationSuccess === null) {
+        return
+      }
 
       data.result = {
         value: registrationSuccess

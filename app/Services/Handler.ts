@@ -1,5 +1,6 @@
 import Logger from '@ioc:Adonis/Core/Logger'
 import Database from '@ioc:Adonis/Lucid/Database'
+import BannedUser from 'App/Models/BannedUser'
 import Profile from 'App/Models/Profile'
 import User from 'App/Models/User'
 import {
@@ -418,9 +419,21 @@ class Handler {
     }
   }
 
-  public async register ({ userTwitch }: REGISTER): Promise<Boolean> {
-    const userExists = await User.findBy('twitchID', userTwitch.id)
+  public async register ({ channelTwitch, userTwitch }: REGISTER, { socket, ws }: { socket: ExtendedWebSocket, ws: typeof WebSocketServer }): Promise<Boolean | null> {
+    const bannedUser = await BannedUser.findBy('twitchID', userTwitch.id)
+    if (bannedUser) {
+      socket.send(ws.socketMessage(
+        MessageType.WHISPER,
+        JSON.stringify({
+          channelTwitch, userTwitch, result: {
+            value: 'you are banned from this service.'
+          }
+        })
+      ))
+      return null
+    }
 
+    const userExists = await User.findBy('twitchID', userTwitch.id)
     if (userExists === null) {
       // Register account
       const user = await User.create({

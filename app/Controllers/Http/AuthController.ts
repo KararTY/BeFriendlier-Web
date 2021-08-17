@@ -4,6 +4,7 @@ import Env from '@ioc:Adonis/Core/Env'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
 import { DateTime } from 'luxon'
+import BannedUser from 'App/Models/BannedUser'
 
 export default class AuthController {
   private readonly devError = new Error('Using NODE_ENV=development without existing TestUser. ' +
@@ -24,6 +25,13 @@ export default class AuthController {
 
     const twitchUser = await Twitch.getUser(token.access_token)
     if (twitchUser !== null) {
+
+      const bannedUser = await BannedUser.findBy('twitchID', twitchUser.id)
+      if (bannedUser) {
+        session.flash('message', { error: 'Error: You are banned, rubber ducky 🦆' })
+        return response.redirect('/')
+      }
+
       const userExists = await User.findBy('twitchID', twitchUser.id)
 
       if (userExists === null) {
