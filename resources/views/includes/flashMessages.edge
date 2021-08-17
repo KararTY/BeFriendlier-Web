@@ -1,8 +1,8 @@
-@if(flashMessages.get('message'))
+@if(flashMessages.get('message') || flashMessages.get('errors'))
   <div class="toast animated fadeIn">
-    <div class="notification {{ flashMessages.get('message').error ? 'is-danger' : 'is-success' }}">
+    <div class="notification {{ (flashMessages.get('message.error') || flashMessages.get('errors')) ? 'is-danger' : 'is-success' }}">
       <button class="delete"></button>
-      <span>{{ flashMessages.get('message').error || flashMessages.get('message').message }}</span>
+      <span>{{ flashMessages.get('message.error') || flashMessages.get('message.message') || readableErrors(flashMessages.get('errors')) }}</span>
     </div>
   </div>
 @endif

@@ -50,6 +50,19 @@ export default class AppProvider {
       return feather.icons[iconName].toSvg(opts)
     })
 
+    // For flashMessage.get('errors')
+    View.global('readableErrors', (error: any) => {
+      const errorObject = Object.entries(error)
+
+      let message = 'Error:'
+      for (let index = 0; index < errorObject.length; index++) {
+        const [key, value] = errorObject[index]
+        message += ` (${key}) ${value}`
+      }
+
+      return message
+    })
+
     View.global('twitchAuthURL', (csrfToken: string) => {
       return Twitch.authorizationURL(csrfToken)
     })
