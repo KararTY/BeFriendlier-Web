@@ -151,14 +151,20 @@ export default class ProfilesController {
       return response.redirect('/profile/')
     }
 
+    // Remove some characters.
+    request.updateBody({
+      color: request.input('color', '#ffffff'),
+      bio: request.input('bio', 'Hello!').normalize().replace(/[\uE000-\uF8FF]+/gu, '').replace(/[\u{000e0000}]/gu, '').trim()
+    })
+
     if (profile.updatedAt.diffNow('seconds').seconds > -60) {
       const { bio, color } = request.body()
       session.flash('message', {
         error: 'Error: Profile has recently been changed. ' +
-        'Please wait at least 1 minute before updating your profile.',
-        bio,
-        color
+        'Please wait at least 1 minute before updating your profile.'
       })
+      session.flash('bio', bio)
+      session.flash('color', color)
 
       return response.redirect(`/profile/${id}`)
     }
