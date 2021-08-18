@@ -51,11 +51,11 @@ export default class RollMatchHandler extends DefaultHandler {
     )
 
     await user.load('favoriteStreamers')
-    const favoriteStreamers = user.favoriteStreamers.map(user => user.serialize({ fields: ['name'] }))
+    const favoriteStreamers = user.favoriteStreamers.map(user => { return { name: user.name } })
 
     rm.result = {
       value: {
-        profile: profile.serialize({ fields: ['bio', 'favorite_emotes'] }),
+        profile: { bio: profile.bio, favorite_emotes: profile.favoriteEmotes },
         user: { favorite_streamers: favoriteStreamers }
       }
     }

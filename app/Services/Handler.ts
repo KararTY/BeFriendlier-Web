@@ -90,24 +90,29 @@ class Handler {
     profile.nextRolls = DateTime.fromJSDate(new Date()).plus({ hours: 5 })
 
     // TODO: Double check implementation.
-    let filteredProfiles: Array<Profile | null> = [...profiles]
-    for (let index = 0; index < filteredProfiles.length; index++) {
-      const profile = filteredProfiles[index]
-      if (profile === null) continue
+    let matches: Array<{ profile: Profile, user?: User } | null> = [ ...profiles.map(profile => { return { profile } }) ]
+    for (let index = 0; index < matches.length; index++) {
+      const match = matches[index]
+      if (match === null) continue
 
-      const user = await this.findUserByProfile(profile)
-      await user.load('favoriteStreamers')
-
-      // Don't roll this user if profile hasn't been customized yet.
-      if (profile.bio === 'Hello!' || profile.favoriteEmotes.length === 0) {
-        filteredProfiles[index] = null
+      try {
+        const user = await this.findUserByProfile(match.profile)
+        await user.load('favoriteStreamers')
+        // Don't roll this user if profile hasn't been customized yet.
+        if (profile.bio === 'Hello!' || profile.bio.length < 3 || profile.favoriteEmotes.length === 0) {
+          matches[index] = null
+        } else {
+          match.user = user
+        }
+      } catch (error) {
+        matches[index] = null
       }
     }
 
     // Yeet them.
-    filteredProfiles = filteredProfiles.filter(p => p !== null)
+    const filteredMatches = matches.filter(m => m !== null) as Array<{ profile: Profile, user: User }>
 
-    if (filteredProfiles.length === 0) {
+    if (filteredMatches.length === 0) {
       profile.rolls = []
       await profile.save()
 
@@ -126,15 +131,13 @@ class Handler {
     }
 
     // Shuffle the array!
-    this.durstenfeldShuffle(filteredProfiles)
+    this.durstenfeldShuffle(filteredMatches)
 
-    profile.rolls = filteredProfiles.map((profile: Profile) => profile.id).slice(0, 5)
+    profile.rolls = filteredMatches.map((m) => m.profile.id).slice(0, 5)
 
     await profile.save()
 
-    const matchedUser = await this.findUserByProfile(profiles[0])
-
-    return { user: matchedUser, profile: profiles[0] }
+    return { user: filteredMatches[0].user, profile: filteredMatches[0].profile }
   }
 
   /**
