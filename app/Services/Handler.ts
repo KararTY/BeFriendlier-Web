@@ -99,7 +99,7 @@ class Handler {
         const user = await this.findUserByProfile(match.profile)
         await user.load('favoriteStreamers')
         // Don't roll this user if profile hasn't been customized yet.
-        if (profile.bio === 'Hello!' || profile.bio.length < 3 || profile.favoriteEmotes.length === 0) {
+        if (match.profile.bio === 'Hello!' || match.profile.bio.length < 3 || match.profile.favoriteEmotes.length === 0) {
           matches[index] = null
         } else {
           match.user = user
