@@ -22,7 +22,7 @@
                     <div class="level is-mobile">
                       <div class="level-left">
                         <figure class="level-item image is-32x32 is-clipped">
-                          <img {{{ user.streamer_mode ? 'class="blur is-rounded" data-blur-vanish="true" data-blur="channel-' + channel.name + '"' : '' }}} src="{{ channel.avatar.replace('300x300', '70x70') }}" alt="{{ channel.avatar }}'s avatar">
+                          <img {{{ user.streamer_mode ? 'class="blur is-rounded" data-blur-vanish="true" data-blur="channel-' + channel.name + '"' : 'class="is-rounded"' }}} src="{{ channel.avatar.replace('300x300', '70x70') }}" alt="{{ channel.avatar }}'s avatar">
                         </figure>
                         <strong class="level-item">{{ channel.display_name }}{{ channel.name !== channel.display_name.toLowerCase() ? ' (' + channel.name + ')': '' }}</strong>
                       </div>
