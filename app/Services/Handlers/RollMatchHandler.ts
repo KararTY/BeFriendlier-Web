@@ -2,6 +2,7 @@ import { ExtendedWebSocket, ResSchema } from '../Ws'
 import DefaultHandler from './DefaultHandler'
 import { MessageType, ROLLMATCH } from 'befriendlier-shared'
 import Handler from '../Handler'
+import Emote from 'App/Models/Emote'
 
 export default class RollMatchHandler extends DefaultHandler {
   public messageType = MessageType.ROLLMATCH
@@ -53,9 +54,11 @@ export default class RollMatchHandler extends DefaultHandler {
     await user.load('favoriteStreamers')
     const favoriteStreamers = user.favoriteStreamers.map(user => { return { name: user.name } })
 
+    const profileFavoriteEmotes = await Emote.findMany(profile.favoriteEmotes)
+
     rm.result = {
       value: {
-        profile: { bio: profile.bio, favorite_emotes: profile.favoriteEmotes },
+        profile: { bio: profile.bio, favorite_emotes: profileFavoriteEmotes.map(e => e.serialize()) },
         user: { favorite_streamers: favoriteStreamers }
       }
     }

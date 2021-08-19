@@ -16,11 +16,20 @@
           <hr>
           <div class="menu">
             <ul class="menu-list">
-              @each(user in web.channels)
+              @each(channel in web.channels)
                 <li>
-                  <a href="{{'https://www.twitch.tv/' + user.name}}" target="_blank"><strong>{{user.display_name}}{{user.name !== user.display_name.toLowerCase() ? ' (' + user.name + ')': ''}}</strong></a>
+                  <a href="{{ 'https://www.twitch.tv/' + channel.name }}" target="_blank">
+                    <div class="level is-mobile">
+                      <div class="level-left">
+                        <figure class="level-item image is-32x32 is-clipped">
+                          <img {{{ user.streamer_mode ? 'class="blur is-rounded" data-blur-vanish="true" data-blur="channel-' + channel.name + '"' : '' }}} src="{{ channel.avatar.replace('300x300', '70x70') }}" alt="{{ channel.avatar }}'s avatar">
+                        </figure>
+                        <strong class="level-item">{{ channel.display_name }}{{ channel.name !== channel.display_name.toLowerCase() ? ' (' + channel.name + ')': '' }}</strong>
+                      </div>
+                    </div>
+                  </a>
                   <ul>
-                    <li title="This is the user's total emotes, not the channel's total emotes."><small>Total streamer emotes: x{{user.emotes.reduce((acc, cur) => acc + (cur.amount || 0), 0)}}</small></li>
+                    <li title="This is the user's total emotes, not the channel's total emotes."><small>Total streamer emotes: x{{ channel.emotesCount }}</small></li>
                   </ul>
                 </li>
               @endeach

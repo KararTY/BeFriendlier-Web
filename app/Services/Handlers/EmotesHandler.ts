@@ -11,7 +11,6 @@ export default class EmotesHandler extends DefaultHandler {
       const data: EMOTES = JSON.parse(res.data)
 
       if (data.emotes.length > 0) {
-        // static-cdn.jtvnw.net/emoticons/v1/${matchesTwitch.id}/3.0
         await Handler.setEmotes(data)
 
         data.result = { value: `Successfully set following ${data.global === true ? 'global' : 'channel'} profile emotes: ${String(data.emotes.map(emote => emote.name).join(' '))}` }

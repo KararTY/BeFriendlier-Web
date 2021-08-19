@@ -1,6 +1,5 @@
 import { BaseModel, column, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
 import { DateTime } from 'luxon'
-import { Emote } from 'befriendlier-shared'
 
 export default class Profile extends BaseModel {
   @column({ isPrimary: true })
@@ -23,7 +22,7 @@ export default class Profile extends BaseModel {
   public color: string
 
   @column({
-    prepare: (value: Emote[]) => JSON.stringify(value),
+    prepare: (value: string[]) => JSON.stringify(value),
     consume: (value: string | any) => {
       if (typeof value === 'string') {
         return JSON.parse(value)
@@ -32,7 +31,7 @@ export default class Profile extends BaseModel {
       }
     },
   })
-  public favoriteEmotes: Emote[]
+  public favoriteEmotes: string[]
 
   @manyToMany(() => Profile, {
     localKey: 'id',

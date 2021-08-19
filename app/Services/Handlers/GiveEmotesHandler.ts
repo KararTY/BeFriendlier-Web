@@ -15,7 +15,7 @@ export default class GiveEmotesHandler extends DefaultHandler {
     data.emotes = sentEmotes
 
     data.result = {
-      value: `you gave: ${sentEmotes.map(e => `${(e.amount || 1) > 1 ? `x${e.amount} ` : ''}${e.name}`).join(' ')}` +
+      value: `you gave: ${data.emotes.map(e => `${(e.amount || 1) > 1 ? `x${e.amount} ` : ''}${e.name}`).join(' ')}` +
         ` to ${data.recipientUserTwitch.name}!`,
     }
 

@@ -1,7 +1,7 @@
 import { BaseModel, column, hasMany, HasMany, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
 import Profile from 'App/Models/Profile'
+import EmoteEntry from './EmoteEntry'
 import { DateTime } from 'luxon'
-import { Emote } from 'befriendlier-shared'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -45,17 +45,8 @@ export default class User extends BaseModel {
   @column()
   public host: boolean
 
-  @column({
-    prepare: (value: Emote[]) => JSON.stringify(value),
-    consume: (value: string | any) => {
-      if (typeof value === 'string') {
-        return JSON.parse(value)
-      } else {
-        return value
-      }
-    },
-  })
-  public emotes: Emote[]
+  @hasMany(() => EmoteEntry)
+  public emotes: HasMany<typeof EmoteEntry>
 
   @column()
   public currency: number

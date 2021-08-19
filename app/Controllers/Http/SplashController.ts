@@ -27,7 +27,7 @@ export default class SplashController {
       web: {
         template: 'splash',
         title: 'Find Twitch people!',
-        statistics: statistics,
+        statistics,
       },
     })
   }
@@ -35,14 +35,22 @@ export default class SplashController {
   public async channels ({ auth, view }: HttpContextContract) {
     const channels = await User.query()
       .where({ host: true })
-      .pojo() as User[]
+
+    let channelsJSON: any[] = []
+    for (let index = 0; index < channels.length; index++) {
+      const channel = channels[index]
+      await channel.load('emotes')
+
+      const emotesCount = channel.emotes.map(e => e.serialize()).reduce((acc, cur) => acc + (cur.amount || 0), 0)
+      channelsJSON.push({ avatar: channel.avatar, display_name: channel.displayName, name: channel.name, emotesCount })
+    }
 
     return await view.render('core', {
       user: auth.user?.toJSON(),
       web: {
         template: 'channels',
         title: 'BeFriendlier\'s joined channels.',
-        channels: channels.sort((a, b) => b.emotes.length - a.emotes.length),
+        channels: channelsJSON.sort((a, b) => b.emotesCount - a.emotesCount),
       },
     })
   }

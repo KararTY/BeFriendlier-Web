@@ -2,6 +2,7 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
 import PajbotAPI from '@ioc:Befriendlier-Shared/PajbotAPI'
+import Emote from 'App/Models/Emote'
 import Profile from 'App/Models/Profile'
 import User from 'App/Models/User'
 import { DateTime } from 'luxon'
@@ -62,6 +63,7 @@ export default class ProfilesController {
       const profileJSON = profile.toJSON()
 
       profileJSON.matches = await this.getMatchesList(auth.user, profile, 0)
+      profileJSON.favorite_emotes = await Emote.findMany(profile.favoriteEmotes)
 
       if (ownProfile) {
         // If own, allow access.

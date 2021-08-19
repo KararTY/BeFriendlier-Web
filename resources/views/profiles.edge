@@ -21,8 +21,8 @@
                           @endif
                         @else
                           <div class="icon level-item">
-                            <figure class="image">
-                              <img src="{{ profile.chat.avatar.replace('300x300', '70x70') }}" alt="{{ profile.chat.name }}'s avatar">
+                            <figure class="image is-32x32 is-clipped">
+                              <img class="is-rounded" src="{{ profile.chat.avatar.replace('300x300', '70x70') }}" alt="{{ profile.chat.name }}'s avatar">
                             </figure>
                           </div>
                           <p class="level-item">Your profile in {{ profile.chat.display_name }}'s {{profile.chat.display_name.toLowerCase() === profile.chat.name ? '' : profile.chat.name}} chat</p>
