@@ -1,5 +1,17 @@
 {
   "commands": {
+    "update:leaderboards": {
+      "settings": {
+        "loadApp": true,
+        "stayAlive": false
+      },
+      "commandPath": "./commands/UpdateLeaderboards",
+      "commandName": "update:leaderboards",
+      "description": "Updates the leaderboards.",
+      "args": [],
+      "aliases": [],
+      "flags": []
+    },
     "dump:rcfile": {
       "settings": {},
       "commandPath": "@adonisjs/core/commands/DumpRc",
