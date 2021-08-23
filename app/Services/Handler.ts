@@ -423,7 +423,8 @@ class Handler {
         amount: 1
       })
     } else {
-      existingUserEmote.amount += emote.amount as number
+      // Add one emote.
+      existingUserEmote.amount += 1
       await user.related('emotes').save(existingUserEmote)
     }
 
