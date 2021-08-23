@@ -42,7 +42,7 @@ class Handler {
           MessageType.WHISPER,
           JSON.stringify({
             channelTwitch, userTwitch, result: {
-              value: `(#${channelTwitch.name}${global ? `| Global - #${TwitchConfig.user.name}` : ''}) You're out of profiles! Try rolling a match again in a bit.`
+              value: `(#${channelTwitch.name}${global ? ' | Global' : ''}) You're out of profiles! Try rolling a match again in a bit.`
             }
           })
         ))
@@ -124,7 +124,7 @@ class Handler {
         MessageType.WHISPER,
         JSON.stringify({
           channelTwitch, userTwitch, result: {
-            value: `(#${channelTwitch.name}${global ? `| Global - #${TwitchConfig.user.name}` : ''}) Try rolling a match again ${this.diffDate(profile.nextRolls)}.`
+            value: `(#${channelTwitch.name}${global ? ' | Global' : ''}) Try rolling a match again ${this.diffDate(profile.nextRolls)}.`
           }
         })
       ))
@@ -438,7 +438,7 @@ class Handler {
       MessageType.WHISPER,
       JSON.stringify({
         channelTwitch, userTwitch, result: {
-          value: `(#${channelTwitch.name}${global ? `| Global - #${TwitchConfig.user.name}` : ''}) 🦆 Rubber ducky here, you've received an emote: ${emote.name}`
+          value: `(#${channelTwitch.name}${global ? ' | Global' : ''}) 🦆 Rubber ducky here, you've received an emote: ${emote.name}`
             + ' You can check your emote inventory at the website.'
         }
       })
