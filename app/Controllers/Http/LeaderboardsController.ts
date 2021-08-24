@@ -23,7 +23,7 @@ export interface LeaderboardEntry {
 export default class LeaderboardsController {
   public async index ({ auth, view }: HttpContextContract) {
     if (leaderboardsLastUpdate.diffNow('minutes').minutes <= 0) {
-      leaderboardsLastUpdate = leaderboardsLastUpdate.plus({ hours: 4 })
+      leaderboardsLastUpdate = leaderboardsLastUpdate.plus({ hours: 1 })
       await this.refreshStatistics()
     }
 
@@ -32,7 +32,7 @@ export default class LeaderboardsController {
       // https://stackoverflow.com/a/55334692
       userPosition = await Database.rawQuery(`
         with temp_table as (
-          select *, 
+          select *,
                 count(*) as cnt,
                 row_number() over (order by total_emotes desc) as rn
           from _leaderboards
