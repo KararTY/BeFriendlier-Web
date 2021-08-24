@@ -186,22 +186,49 @@ export default class ProfilesController {
     profile.bio = validated.bio
 
     const chatOwnerUser = await User.find(profile.chatUserId) as User
+
+    let checkMessages: { error: string, message: string }[] = []
+
     const pajbotCheck = await PajbotAPI.check(chatOwnerUser.name, profile.bio)
-    if (pajbotCheck && pajbotCheck.banned) {
+    if (pajbotCheck?.banned) {
       // banphrase_data appears on banned === true
       const banphraseData = pajbotCheck.banphrase_data as { phrase: string }
-      session.flash('message', {
-        error: 'Error: There are banned phrases in your bio!',
+      checkMessages.push({
+        error: `🦆 Please remove: ${banphraseData.phrase}`,
+        message: 'Error: There are banned phrases in your bio!'
+      })
+    } else if (pajbotCheck === null) {
+      checkMessages.push({
+        error: 'Please try setting this later when the Banphrase API is online.',
+        message: 'Banphrase API is offline.'
+      })
+    }
 
+    const heightCheck = await PajbotAPI.checkVersion2(chatOwnerUser.name, profile.bio)
+    if (heightCheck?.banned) {
+      const filterData = heightCheck.filter_data as { mute_type: number, reason: string }[]
+      checkMessages.push({
+        error: filterData.map(data => data.reason).join('\n '),
+        message: 'Error: There are banned v2 phrases in your bio!'
       })
-      session.flash('errors', {
-        bio: [`🦆 Please remove: ${banphraseData.phrase}`]
+    } else if (heightCheck === null) {
+      checkMessages.push({
+        error: 'Please try setting this later when the Banphrase v2 API is online.',
+        message: 'Banphrase v2 API is offline.'
       })
+    }
+
+    if (checkMessages.length > 0) {
+      session.flash('message', { error: checkMessages.map(cm => cm.message).join('\r\n') })
+      session.flash('errors', { bio: checkMessages.map(cm => cm.error) })
       session.flash('bio', profile.bio)
       return response.redirect(`/profile/${id}`)
     }
 
-    // Sometimes PerspectiveAPI or Pajbot is unavailable, so that's why we have multiple saving. At least color can be set.
+    /**
+     * Sometimes PerspectiveAPI or Pajbot v1/v2 is unavailable, that's why we save at multiple stages.
+     * (At this point, at least color was set.)
+     */
     await profile.save()
 
     session.flash('message', { message: 'Successfully updated your profile.' })
