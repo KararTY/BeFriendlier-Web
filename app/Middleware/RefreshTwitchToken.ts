@@ -13,7 +13,7 @@ export default class RefreshTwitchToken {
 
       const twitchBody = await Twitch.refreshToken(session.get('refresh'))
 
-      session.put('nextRefresh', DateTime.fromJSDate(new Date()).plus({ hour: 1 }).toJSDate())
+      session.put('nextRefresh', DateTime.fromJSDate(new Date()).plus({ hours: 1 }).toJSDate())
 
       if (twitchBody !== null) {
         session.put('token', twitchBody.access_token)

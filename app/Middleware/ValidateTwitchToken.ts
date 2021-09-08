@@ -13,7 +13,7 @@ export default class ValidateTwitchToken {
 
       const validatedToken = await Twitch.validateToken(session.get('token'))
 
-      session.put('nextValidate', DateTime.fromJSDate(new Date()).plus({ hour: 1 }).toJSDate())
+      session.put('nextValidate', DateTime.fromJSDate(new Date()).plus({ hours: 1 }).toJSDate())
 
       if (validatedToken === null) {
         session.flash('message', {
