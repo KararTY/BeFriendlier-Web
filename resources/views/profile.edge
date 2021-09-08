@@ -6,7 +6,7 @@
     <div class="container">
       <div class="columns is-centered">
         <div class="column is-narrow">
-          <div class="box has-text-centered">
+          <div class="box has-text-centered themed-background">
             <div class="level is-mobile">
               <div class="level-item is-unselectable">
                 <figure class="image is-300x300">
@@ -15,16 +15,16 @@
               </div>
             </div>
             <hr>
-            <h4 class="is-size-4">{{ profileUser.display_name }} {{{ profileUser.display_name.toLowerCase() === profileUser.name ? '' : ('<small class="is-size-7">(' + profileUser.name + ')</small>') }}}</h4>
+            <h4 class="is-size-4 themed-text">{{ profileUser.display_name }} {{{ profileUser.display_name.toLowerCase() === profileUser.name ? '' : ('<small class="is-size-7">(' + profileUser.name + ')</small>') }}}</h4>
           </div>
         </div>
       </div>
       <div class="columns is-centered">
         @if(profile.favorite_emotes.length > 0)
         <div class="column is-one-third">
-          <div class="card">
+          <div class="card themed-background">
             <div class="card-header">
-              <h4 class="card-header-title is-size-4">Favorite emotes</h4>
+              <h4 class="card-header-title is-size-4 themed-text">Favorite emotes</h4>
             </div>
             <div {{{ user.streamer_mode ? 'class="blur card-content" data-blur="favoriteEmotes" data-blur-text="true"' : 'class="card-content"' }}}>
               @each(emote in profile.favorite_emotes)
@@ -35,7 +35,7 @@
                         <img src="https://static-cdn.jtvnw.net/emoticons/v2/{{ emote.id }}/default/light/3.0" alt="{{ emote.name }} emote image">
                       </figure>
                     </div>
-                    <p class="level-item is-size-5"> {{ emote.name }} </p>
+                    <p class="level-item is-size-5 themed-text"> {{ emote.name }} </p>
                   </div>
                 </div>
               @endeach
@@ -44,31 +44,31 @@
         </div>
         @endif
         <div class="column is-one-third">
-          <div class="card">
+          <div class="card themed-background">
             <div class="card-header">
-              <h4 class="card-header-title is-size-4">Bio</h4>
+              <h4 class="card-header-title is-size-4 themed-text">Bio</h4>
             </div>
-            <div class="card-content">
+            <div class="card-content themed-text">
               <p>{{ profile.bio }}</p>
             </div>
           </div>
         </div>
         @if(profileUser.favorite_streamers.length > 0)
           <div class="column is-one-third">
-            <div class="card">
+            <div class="card themed-background">
               <div class="card-header">
-                <h4 class="card-header-title is-size-4">Favorite streamers</h4>
+                <h4 class="card-header-title is-size-4 themed-text">Favorite streamers</h4>
               </div>
               <div {{{ user.streamer_mode ? 'class="card-content blur" data-blur="favoriteStreamers" data-blur-text="true" data-blur-vanish="true"' : 'class="card-content"' }}}>
                 @each(streamer in profileUser.favorite_streamers)
                   <div class="level is-mobile">
-                    <a class="level-left has-text-dark" href="https://www.twitch.tv/{{streamer.name}}" target="_blank">
+                    <a class="level-left themed-text" href="https://www.twitch.tv/{{streamer.name}}" target="_blank">
                       <div class="level-item is-unselectable">
                         <figure class="image is-32x32 is-clipped">
                           <img class="is-rounded" src="{{ streamer.avatar.replace('300x300', '70x70') }}" alt="{{ streamer.name }}'s avatar">
                         </figure>
                       </div>
-                      <p class="level-item is-size-5"> {{ streamer.display_name }} {{{ streamer.display_name.toLowerCase() === streamer.name ? '' : ('<small class="is-size-7">(' + streamer.name + ')</small>') }}}</p>
+                      <p class="level-item is-size-5 themed-text"> {{ streamer.display_name }} {{{ streamer.display_name.toLowerCase() === streamer.name ? '' : ('<small class="is-size-7">(' + streamer.name + ')</small>') }}}</p>
                     </a>
                   </div>
                 @endeach
@@ -84,7 +84,8 @@
       @endif
     </div>
   </div>
-  <style id="color">.hero-body{background-color:{{ flashMessages.get('color') || profile.color }}}</style>
+  <style id="color">.hero-body{background-color: {{ flashMessages.get('color') || profile.color }}; }</style>
+  <style id="theme">.themed-background{background-color: {{ getThemeColor(flashMessages.get('theme') || profile.theme).background }}; }.themed-text{ color: {{ getThemeColor(flashMessages.get('theme') || profile.theme).text }}; }</style>
   <div class="hero-foot">
     @include('includes/footer')
   </div>

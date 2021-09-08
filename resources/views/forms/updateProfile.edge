@@ -46,6 +46,25 @@
 
       <div class="field is-horizontal">
         <div class="field-label is-normal">
+          <label class="label">Theme</label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <div class="select">
+                <select name="theme">
+                  @each(item in web.profileThemes)
+                    <option value="{{item}}"{{ item === profile.theme ? ' selected' :''}}>{{item.substr(0, 1).toUpperCase() + item.substr(1)}}</option>
+                  @endeach
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field is-horizontal">
+        <div class="field-label is-normal">
           <label class="label">Favorite emotes</label>
         </div>
         <div class="field-body">

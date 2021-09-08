@@ -1,11 +1,13 @@
 import { html } from 'uhtml'
 import { displayToast, ensureIsOfType } from './App'
+import Theme from '../../providers/Theme/Index'
 
 class UpdateProfileForm {
   private readonly elements: HTMLFormControlsCollection
   private readonly named: {
     bioInput: HTMLInputElement
     colorInput: HTMLInputElement
+    themeSelect: HTMLSelectElement
     csrfToken: HTMLInputElement
     submitBtn: HTMLButtonElement
     matches: NodeListOf<Element>
@@ -18,6 +20,7 @@ class UpdateProfileForm {
       this.named = {
         bioInput: ensureIsOfType(this.elements.namedItem('bio'), HTMLInputElement),
         colorInput: ensureIsOfType(this.elements.namedItem('color'), HTMLInputElement),
+        themeSelect: ensureIsOfType(this.elements.namedItem('theme'), HTMLSelectElement),
         csrfToken: ensureIsOfType(this.elements.namedItem('_csrf'), HTMLInputElement),
         submitBtn: form.querySelector('[data-name="submitBtn"]'),
         matches: document.body.querySelectorAll('[data-unmatch]'),
@@ -30,6 +33,20 @@ class UpdateProfileForm {
         styleEl.innerHTML = `.hero-body{background-color:${String(targetEl.value)}}`
       })
 
+      this.named.themeSelect.addEventListener('change', (ev: Event) => {
+        const themeEl: HTMLStyleElement = ensureIsOfType(document.getElementById('theme'), HTMLStyleElement)
+        const targetEl: HTMLSelectElement = ensureIsOfType(ev.currentTarget, HTMLSelectElement)
+        const selectedElement: HTMLOptionElement = ensureIsOfType(targetEl.selectedOptions[0], HTMLOptionElement)
+
+        const options = targetEl.querySelectorAll('option')
+        for (let index = 0; index < options.length; index++) {
+          const element = options[index]
+          element.selected = element.value === selectedElement.value
+        }
+
+        themeEl.innerHTML = `.themed-background{background:${Theme.getThemeColor(selectedElement.value).background};}.themed-text{color:${Theme.getThemeColor(selectedElement.value).text};}`
+      })
+
       this.named.matches.forEach(el => {
         el.addEventListener('click', (ev) => this.removeMatch(ev))
       })
@@ -38,7 +55,7 @@ class UpdateProfileForm {
     }
   }
 
-  private readonly removeMatch = (ev: Event) => {
+  private removeMatch = (ev: Event) => {
     ev.preventDefault()
 
     const mouseEvent: MouseEvent = ensureIsOfType(ev, MouseEvent)

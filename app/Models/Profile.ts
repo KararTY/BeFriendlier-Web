@@ -67,15 +67,19 @@ export default class Profile extends BaseModel {
   })
   public rolls: number[]
 
+  @column.dateTime({ autoCreate: true })
+  public createdAt: DateTime
+
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  public updatedAt: DateTime
+
+  
   @column.dateTime()
   public nextRolls: DateTime
 
   @column.dateTime()
   public nextEmote: DateTime
 
-  @column.dateTime({ autoCreate: true })
-  public createdAt: DateTime
-
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public updatedAt: DateTime
+  @column()
+  public theme: string
 }

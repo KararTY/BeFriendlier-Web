@@ -7,6 +7,8 @@ import Profile from 'App/Models/Profile'
 import User from 'App/Models/User'
 import { DateTime } from 'luxon'
 
+const profileThemes = ['white', 'black', 'orange', 'yellow', 'cyan', 'purple']
+
 export default class ProfilesController {
   public async read ({ params, auth, view, session, response }: HttpContextContract) {
     if (auth.user === undefined) {
@@ -27,104 +29,105 @@ export default class ProfilesController {
           title: `User profiles - ${auth.user.displayName}`,
         },
       })
-    } else {
-      // Request has an id in parameter (url): We're looking for a profile...
-      const authID = auth.user.id
+    }
 
-      const idNumber = Number(id)
-      if (Number.isNaN(idNumber)) {
-        session.flash('message', { error: this.Error.parameterBadRequest })
-        return response.redirect('/')
-      }
+    // Request has an id in parameter (url): We're looking for a profile...
+    const authID = auth.user.id
 
-      const profile = await Profile.find(Number(id))
+    const idNumber = Number(id)
+    if (Number.isNaN(idNumber)) {
+      session.flash('message', { error: this.Error.parameterBadRequest })
+      return response.redirect('/')
+    }
 
-      if (profile === null) {
-        session.flash('message', { error: this.Error.notFound })
-        return response.redirect('/')
-      }
+    const profile = await Profile.find(Number(id))
 
-      const ownProfile = profile.userId === authID
+    if (profile === null) {
+      session.flash('message', { error: this.Error.notFound })
+      return response.redirect('/')
+    }
 
-      let chat: User | null = null
-      // "chatUserId === 0" notates a global profile. It doesn't exist by design, so don't check for it.
-      if (profile.chatUserId !== 0) {
-        chat = await User.find(profile.chatUserId)
-        // Should not happen, ever.
-        if (chat === null) {
-          session.flash('message', { error: this.Error.noOwner })
-          return response.redirect('/profile/')
-        }
-      }
+    const ownProfile = profile.userId === authID
 
-      await auth.user.load('favoriteStreamers')
-
-      const userJSON = auth.user.toJSON()
-      const profileJSON = profile.toJSON()
-
-      profileJSON.matches = await this.getMatchesList(auth.user, profile, 0)
-      profileJSON.favorite_emotes = await Emote.findMany(profile.favoriteEmotes)
-
-      if (ownProfile) {
-        // If own, allow access.
-        return await view.render('core', {
-          user: userJSON,
-          profile: profileJSON,
-          profileUser: userJSON,
-          profileChatUser: chat ? chat.name : 'befriendlier',
-          web: {
-            template: 'profile',
-            title: chat !== null ? `Your profile in ${chat.name}'s chat` : 'Your global profile',
-          },
-        })
-      } else {
-        // If someone else's, check if the requested profile has matched this requesting user.
-        const match = await Database.query().from('matches_lists').where({
-          profile_id: profile.id,
-          match_user_id: authID,
-        }).first()
-
-        if (match === null) {
-          // The requested profile hasn't matched with this requesting user.
-          session.flash('message', { error: this.Error.forbidden })
-          return response.redirect('/')
-        }
-
-        // And check if the requesting user has matched for that specific profile.
-        const hasMatched = await Database.query().from('matches_lists').where({
-          user_id: auth.user.id,
-          match_profile_id: profile.id,
-        }).first()
-
-        if (hasMatched === null) {
-          // This requesting user hasn't matched with the requested profile.
-          session.flash('message', { error: this.Error.forbidden })
-          return response.redirect('/')
-        }
-
-        const userOfProfile = await User.find(profile.userId)
-
-        if (userOfProfile === null) {
-          // The requested profile doesn't have an existing owner? This shouldn't happen.
-          session.flash('message', { error: this.Error.noOwner })
-          return response.redirect('/profile')
-        }
-
-        await userOfProfile.load('favoriteStreamers')
-
-        return await view.render('core', {
-          user: userJSON,
-          profile: profileJSON,
-          profileUser: userOfProfile.toJSON(),
-          web: {
-            template: 'profile',
-            title: chat !== null
-              ? `${userOfProfile.name}'s profile in ${chat.name}'s chat`
-              : `${userOfProfile.name}'s global profile`,
-          },
-        })
+    let chat: User | null = null
+    // "chatUserId === 0" notates a global profile. It doesn't exist by design, so don't check for it.
+    if (profile.chatUserId !== 0) {
+      chat = await User.find(profile.chatUserId)
+      // Should not happen, ever.
+      if (chat === null) {
+        session.flash('message', { error: this.Error.noOwner })
+        return response.redirect('/profile/')
       }
     }
+
+    await auth.user.load('favoriteStreamers')
+
+    const userJSON = auth.user.toJSON()
+    const profileJSON = profile.toJSON()
+
+    profileJSON.matches = await this.getMatchesList(auth.user, profile, 0)
+    profileJSON.favorite_emotes = await Emote.findMany(profile.favoriteEmotes)
+
+    if (ownProfile) {
+      // If own, allow access.
+      return await view.render('core', {
+        user: userJSON,
+        profile: profileJSON,
+        profileUser: userJSON,
+        profileChatUser: chat ? chat.name : 'befriendlier',
+        web: {
+          template: 'profile',
+          title: chat !== null ? `Your profile in ${chat.name}'s chat` : 'Your global profile',
+          profileThemes
+        },
+      })
+    }
+
+    // If someone else's, check if the requested profile has matched this requesting user.
+    const match = await Database.query().from('matches_lists').where({
+      profile_id: profile.id,
+      match_user_id: authID,
+    }).first()
+
+    if (match === null) {
+      // The requested profile hasn't matched with this requesting user.
+      session.flash('message', { error: this.Error.forbidden })
+      return response.redirect('/')
+    }
+
+    // And check if the requesting user has matched for that specific profile.
+    const hasMatched = await Database.query().from('matches_lists').where({
+      user_id: auth.user.id,
+      match_profile_id: profile.id,
+    }).first()
+
+    if (hasMatched === null) {
+      // This requesting user hasn't matched with the requested profile.
+      session.flash('message', { error: this.Error.forbidden })
+      return response.redirect('/')
+    }
+
+    const userOfProfile = await User.find(profile.userId)
+
+    if (userOfProfile === null) {
+      // The requested profile doesn't have an existing owner? This shouldn't happen.
+      session.flash('message', { error: this.Error.noOwner })
+      return response.redirect('/profile')
+    }
+
+    await userOfProfile.load('favoriteStreamers')
+
+    return await view.render('core', {
+      user: userJSON,
+      profile: profileJSON,
+      profileUser: userOfProfile.toJSON(),
+      web: {
+        template: 'profile',
+        title: chat !== null
+          ? `${userOfProfile.name}'s profile in ${chat.name}'s chat`
+          : `${userOfProfile.name}'s global profile`,
+      },
+    })
   }
 
   public async update ({ params, request, session, auth, response }: HttpContextContract) {
@@ -156,17 +159,19 @@ export default class ProfilesController {
     // Remove some characters.
     request.updateBody({
       color: request.input('color', '#ffffff'),
-      bio: request.input('bio', 'Hello!').normalize().replace(/[\uE000-\uF8FF]+/gu, '').replace(/[\u{000e0000}]/gu, '').trim()
+      theme: request.input('theme', 'white'),
+      bio: request.input('bio', 'Hello!').normalize().replace(/[\uE000-\uF8FF]+/gu, '').replace(/[\u{000e0000}]/gu, '').trim(),
     })
 
     if (profile.updatedAt.diffNow('seconds').seconds > -60) {
-      const { bio, color } = request.body()
+      const { bio, color, theme } = request.body()
       session.flash('message', {
         error: 'Error: Profile has recently been changed. ' +
-        'Please wait at least 1 minute before updating your profile.'
+          'Please wait at least 1 minute before updating your profile.'
       })
       session.flash('bio', bio)
       session.flash('color', color)
+      session.flash('theme', theme)
 
       return response.redirect(`/profile/${id}`)
     }
@@ -181,6 +186,7 @@ export default class ProfilesController {
     }) // Request may fail here if values do not pass validation.
 
     profile.color = validated.color
+    profile.theme = validated.theme
     await profile.save()
 
     profile.bio = validated.bio
@@ -443,6 +449,7 @@ export default class ProfilesController {
     color: schema.string({}, [
       rules.hexColorString(),
     ]),
+    theme: schema.enum([...profileThemes] as const)
   })
 
   private readonly Error = {

@@ -1,6 +1,7 @@
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 import feather from 'feather-icons'
 import { TwitchAuth, PerspectiveAPI, PajbotAPI } from 'befriendlier-shared'
+import Theme from './Theme/Index'
 
 export default class AppProvider {
 	public static needsApplication = true
@@ -37,12 +38,17 @@ export default class AppProvider {
         headers: config.get('pajbot.headers'),
       }, Logger.level)
     })
+
+    this.app.container.singleton('Befriendlier-Theme', () => {
+      return Theme
+    })
   }
 
   public async boot () {
     // IoC container is ready
     const View = (await import('@ioc:Adonis/Core/View')).default
     const Twitch = (await import('@ioc:Befriendlier-Shared/Twitch')).default
+    const BeFriendlierTheme = (await import('@ioc:Befriendlier-Theme')).default
 
     View.global('icon', (iconName: string, size?: 'big' | 'small') => {
       let opts: { width: number, height: number }
@@ -58,6 +64,10 @@ export default class AppProvider {
       return feather.icons[iconName].toSvg(opts)
     })
 
+    View.global('twitchAuthURL', (csrfToken: string) => {
+      return Twitch.authorizationURL(csrfToken)
+    })
+
     // For flashMessage.get('errors')
     View.global('readableErrors', (error: any) => {
       const errorObject = Object.entries(error)
@@ -71,8 +81,9 @@ export default class AppProvider {
       return message
     })
 
-    View.global('twitchAuthURL', (csrfToken: string) => {
-      return Twitch.authorizationURL(csrfToken)
+
+    View.global('getThemeColor', (theme: string) => {
+      return BeFriendlierTheme.getThemeColor(theme)
     })
   }
 
