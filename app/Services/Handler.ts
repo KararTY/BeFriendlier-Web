@@ -258,6 +258,9 @@ class Handler {
   public async setEmotes ({ userTwitch, channelTwitch, emotes, global }: EMOTES): Promise<void> {
     const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
+    // Reset emotes.
+    profile.favoriteEmotes = []
+
     for (let index = 0; index < emotes.length; index++) {
       const { id, name } = emotes[index]
       const foundEmote = await Emote.firstOrCreate({ id }, { id, name })
