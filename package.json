@@ -50,7 +50,6 @@
     "@adonisjs/shield": "^7.0.6",
     "@adonisjs/view": "^6.1.0",
     "@types/ws": "^7.4.7",
-    "@hapi/bourne": "^2.0.0",
     "befriendlier-shared": "kararty/Befriendlier-Shared#208abd914572a6f0a8621c4c4d2b4969f2801760",
     "bulma": "^0.9.3",
     "feather-icons": "^4.28.0",

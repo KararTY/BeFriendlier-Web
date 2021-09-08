@@ -1,4 +1,4 @@
-import bourne from '@hapi/bourne'
+import sjp from 'secure-json-parse'
 import Env from '@ioc:Adonis/Core/Env'
 import Logger from '@ioc:Adonis/Core/Logger'
 import Server from '@ioc:Adonis/Core/Server'
@@ -158,7 +158,7 @@ class WebSocketServer {
       let json
 
       try {
-        json = bourne.parse(msg, null, { protoAction: 'remove' })
+        json = sjp.parse(msg as string, null, { protoAction: 'remove' })
       } catch (error) {
         // Data's not JSON.
         Logger.error({ err: error }, 'Ws.onMessage(): Error with parsing websocket data.')
