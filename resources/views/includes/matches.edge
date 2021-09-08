@@ -5,7 +5,7 @@
   <div {{{ user.streamer_mode ? 'class="card-content blur" data-blur="matches" data-blur-text="true" data-blur-vanish="true"' : 'class="card-content"' }}}>
     @each(match in profile.matches)
       <div class="level is-mobile">
-        <a class="level-left has-text-dark themed-dark" href="{{ route('ProfilesController.read', { id: match.profile.id }) }}">
+        <a class="level-left has-text-dark themed-text" href="{{ route('ProfilesController.read', { id: match.profile.id }) }}">
           <div class="level-item is-unselectable">
             <figure class="image is-32x32">
               <img class="is-rounded" src="{{ match.user.avatar.replace('300x300', '70x70') }}" alt="{{ match.user.name }}'s avatar">
