@@ -55,13 +55,13 @@ class UpdateUserForm {
     }
   }
 
-  private readonly addStreamer = (ev: Event) => {
+  private addStreamer = (ev: Event) => {
     ev.preventDefault()
 
     // Make sure ev is a MousEvent before proceeding.
     ensureIsOfType(ev, MouseEvent)
 
-    const value = this.named.streamerNameInput.value
+    const value = this.named.streamerNameInput.value.toLowerCase()
 
     if (value.length === 0 ?? value.match(/[^\w]/) ?? value.length >= 32) {
       return
@@ -94,7 +94,7 @@ class UpdateUserForm {
     this.named.streamers = this.form.querySelectorAll('[name="favoriteStreamers[]"]')
   }
 
-  private readonly removeStreamer = (ev: Event) => {
+  private removeStreamer = (ev: Event) => {
     ev.preventDefault()
 
     const mouseEvent: MouseEvent = ensureIsOfType(ev, MouseEvent)
