@@ -1,13 +1,13 @@
 import Logger from '@ioc:Adonis/Core/Logger'
 import Database from '@ioc:Adonis/Lucid/Database'
 import BannedUser from 'App/Models/BannedUser'
-import Emote from 'App/Models/Emote'
+import EmoteModel from 'App/Models/Emote'
 import Profile from 'App/Models/Profile'
 import User from 'App/Models/User'
 import {
   BASE,
   BIO,
-  Emote as BotEmote,
+  Emote,
   EMOTES,
   GIVEEMOTES,
   MessageType,
@@ -23,7 +23,7 @@ import WebSocketServer, { ExtendedWebSocket } from './Ws'
 class Handler {
   public cachedTwitch = {
     nextUpdate: DateTime.now(),
-    emotes: [] as BotEmote[]
+    emotes: [] as Emote[]
   }
 
   /**
@@ -263,7 +263,7 @@ class Handler {
 
     for (let index = 0; index < emotes.length; index++) {
       const { id, name } = emotes[index]
-      const foundEmote = await Emote.firstOrCreate({ id }, { id, name })
+      const foundEmote = await EmoteModel.firstOrCreate({ id }, { id, name })
 
       profile.favoriteEmotes.push(foundEmote.id)
     }
@@ -274,10 +274,10 @@ class Handler {
   /**
    * MAKE SURE TO CATCH ERRORS.
    */
-  public async getEmotes ({ userTwitch, channelTwitch, global }: EMOTES): Promise<BotEmote[]> {
+  public async getEmotes ({ userTwitch, channelTwitch, global }: EMOTES): Promise<Emote[]> {
     const { profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
-    return await Emote.findMany(profile.favoriteEmotes)
+    return await EmoteModel.findMany(profile.favoriteEmotes)
   }
 
   /**
@@ -303,7 +303,7 @@ class Handler {
   }
 
   // Deals with global profiles only.
-  public async giveEmotes ({ userTwitch, channelTwitch, recipientUserTwitch, emotes }: GIVEEMOTES): Promise<BotEmote[]> {
+  public async giveEmotes ({ userTwitch, channelTwitch, recipientUserTwitch, emotes }: GIVEEMOTES): Promise<Emote[]> {
     const { user } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, true)
 
     await user.load('emotes')
@@ -389,11 +389,11 @@ class Handler {
 
   public async rollEmote(
     { userTwitch, channelTwitch, global }: BASE,
-    { socket, ws }: { socket: ExtendedWebSocket, ws: typeof WebSocketServer }): Promise<BotEmote | null> {
+    { socket, ws }: { socket: ExtendedWebSocket, ws: typeof WebSocketServer }): Promise<Emote | null> {
     // Get Twitch's global emotes.
     const { user, profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
 
-    let emotes: BotEmote[] = this.cachedTwitch.emotes
+    let emotes: Emote[] = this.cachedTwitch.emotes
     if (this.cachedTwitch.nextUpdate.diffNow('hours').hours <= 0) {
       const resEmotes = await ws.twitchAPI.getGlobalEmotes(ws.token.superSecret)
       if (resEmotes !== null) this.cachedTwitch.emotes = resEmotes
@@ -418,7 +418,7 @@ class Handler {
     const existingUserEmote = user.emotes.find(ee => ee.emoteId === emote.id)
 
     // Emote might not yet exist, so upload it to database.
-    const foundEmote = await Emote.firstOrCreate({ id: emote.id }, { id: emote.id, name: emote.name })
+    const foundEmote = await EmoteModel.firstOrCreate({ id: emote.id }, { id: emote.id, name: emote.name })
 
     if (!existingUserEmote) {
       await user.related('emotes').create({
