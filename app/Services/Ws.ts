@@ -94,7 +94,7 @@ class WebSocketServer {
 
       try {
         // Define the file.
-        const dir = path.join(__dirname, '../../../.supersecret.json')
+        const dir = path.join(__dirname, '../../.supersecret.json')
         const token = JSON.parse(readFileSync(dir.toString(), 'utf-8'))
 
         // Set the environment variables.
