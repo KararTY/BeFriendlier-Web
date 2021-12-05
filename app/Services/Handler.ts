@@ -133,7 +133,7 @@ class Handler {
     }
 
     // Shuffle the array!
-    this.durstenfeldShuffle(filteredMatches)
+    durstenfeldShuffle(filteredMatches)
 
     profile.rolls = filteredMatches.map((m) => m.profile.id).slice(0, 5)
 
@@ -411,7 +411,7 @@ class Handler {
 
     await user.load('emotes')
 
-    this.durstenfeldShuffle(emotes)
+    durstenfeldShuffle(emotes)
 
     const emote = emotes[0]
 
@@ -611,14 +611,14 @@ class Handler {
 
     return text
   }
+}
 
-  // https://stackoverflow.com/a/12646864 CC BY-SA 4.0
-  // Mutates the array.
-  private durstenfeldShuffle (array: any[]): void {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]]
-    }
+// https://stackoverflow.com/a/12646864 CC BY-SA 4.0
+// Mutates the array.
+export function durstenfeldShuffle (array: any[]): void {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]]
   }
 }
 
