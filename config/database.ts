@@ -70,6 +70,9 @@ const databaseConfig: DatabaseConfig = {
       },
       healthCheck: connection === 'mysql' ? healthCheck : false,
       debug: false,
+      migrations: {
+        naturalSort: true,
+      },
     },
 
     /*
@@ -95,6 +98,9 @@ const databaseConfig: DatabaseConfig = {
       },
       healthCheck: connection === 'pg' ? healthCheck : false,
       debug: false,
+      migrations: {
+        naturalSort: true,
+      },
     },
 
     /*
