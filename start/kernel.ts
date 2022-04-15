@@ -21,8 +21,8 @@ import Server from '@ioc:Adonis/Core/Server'
 |
 */
 Server.middleware.register([
-  () => import('@ioc:Adonis/Core/BodyParser'),
-  () => import('@ioc:Adonis/Addons/Shield'),
+  async () => await import('@ioc:Adonis/Core/BodyParser'),
+  async () => await import('@ioc:Adonis/Addons/Shield')
 ])
 
 /*
@@ -40,9 +40,9 @@ Server.middleware.register([
 |
 */
 Server.middleware.registerNamed({
-  auth: () => import('App/Middleware/Auth'),
-  silentAuth: () => import('App/Middleware/SilentAuth'),
-  redirect: () => import('App/Middleware/Redirect'),
-  refreshTwitchToken: () => import('App/Middleware/RefreshTwitchToken'),
-  validateTwitchToken: () => import('App/Middleware/ValidateTwitchToken'),
+  auth: async () => await import('App/Middleware/Auth'),
+  silentAuth: async () => await import('App/Middleware/SilentAuth'),
+  redirect: async () => await import('App/Middleware/Redirect'),
+  refreshTwitchToken: async () => await import('App/Middleware/RefreshTwitchToken'),
+  validateTwitchToken: async () => await import('App/Middleware/ValidateTwitchToken')
 })

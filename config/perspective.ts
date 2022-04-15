@@ -20,8 +20,8 @@ const PerspectiveAPIConfig = {
    * HTTP request headers.
    */
   headers: {
-    'user-agent': 'befriendlierapp (https://github.com/kararty/befriendlier-web)',
-  },
+    'user-agent': 'befriendlierapp (https://github.com/kararty/befriendlier-web)'
+  }
 }
 
 export default PerspectiveAPIConfig

@@ -4,7 +4,7 @@ import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 export default class _LeaderboardsSchema extends BaseSchema {
   protected tableName = '_leaderboards'
 
-  public async up () {
+  public async up (): Promise<void> {
     this.schema.createTable(this.tableName, table => {
       table.timestamps(true, true)
       table.integer('user_id').primary().references('users.id').onDelete('CASCADE')
@@ -12,7 +12,7 @@ export default class _LeaderboardsSchema extends BaseSchema {
     })
   }
 
-  public async down () {
+  public async down (): Promise<void> {
     this.schema.dropTable(this.tableName)
   }
 }

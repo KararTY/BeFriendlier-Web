@@ -5,7 +5,7 @@ import { DateTime } from 'luxon'
 export default class Profiles extends BaseSchema {
   protected tableName = 'profiles'
 
-  public async up () {
+  public async up (): Promise<void> {
     this.schema.alterTable(this.tableName, table => {
       table.json('mismatches').defaultTo(JSON.stringify([])).notNullable()
       table.json('rolls').defaultTo(JSON.stringify([])).notNullable()
@@ -13,7 +13,7 @@ export default class Profiles extends BaseSchema {
     })
   }
 
-  public async down () {
+  public async down (): Promise<void> {
     this.schema.alterTable(this.tableName, table => {
       table.dropColumn('mismatches')
       table.dropColumn('rolls')

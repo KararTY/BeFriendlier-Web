@@ -36,8 +36,8 @@ const bodyParserConfig: BodyParserConfig = {
       'application/json',
       'application/json-patch+json',
       'application/vnd.api+json',
-      'application/csp-report',
-    ],
+      'application/csp-report'
+    ]
   },
 
   /*
@@ -67,8 +67,8 @@ const bodyParserConfig: BodyParserConfig = {
     convertEmptyStringsToNull: true,
 
     types: [
-      'application/x-www-form-urlencoded',
-    ],
+      'application/x-www-form-urlencoded'
+    ]
   },
 
   /*
@@ -86,8 +86,8 @@ const bodyParserConfig: BodyParserConfig = {
     limit: '1mb',
     queryString: {},
     types: [
-      'text/*',
-    ],
+      'text/*'
+    ]
   },
 
   /*
@@ -203,9 +203,9 @@ const bodyParserConfig: BodyParserConfig = {
     |
     */
     types: [
-      'multipart/form-data',
-    ],
-  },
+      'multipart/form-data'
+    ]
+  }
 }
 
 export default bodyParserConfig

@@ -12,7 +12,6 @@ import { DatabaseConfig } from '@ioc:Adonis/Lucid/Database'
 const healthCheck = Env.get('DB_HEALTHCHECK', false)
 const connection = Env.get('DB_CONNECTION', 'sqlite')
 
-
 const databaseConfig: DatabaseConfig = {
   /*
   |--------------------------------------------------------------------------
@@ -41,11 +40,11 @@ const databaseConfig: DatabaseConfig = {
     sqlite: {
       client: 'sqlite',
       connection: {
-        filename: Application.tmpPath('db.sqlite3'),
+        filename: Application.tmpPath('db.sqlite3')
       },
       useNullAsDefault: true,
       healthCheck: connection === 'sqlite' ? healthCheck : false,
-      debug: false,
+      debug: false
     },
 
     /*
@@ -66,13 +65,13 @@ const databaseConfig: DatabaseConfig = {
         port: Number(Env.get('DB_PORT', 3306)),
         user: Env.get('DB_USER', 'lucid'),
         password: Env.get('DB_PASSWORD', 'lucid'),
-        database: Env.get('DB_NAME', 'lucid'),
+        database: Env.get('DB_NAME', 'lucid')
       },
       healthCheck: connection === 'mysql' ? healthCheck : false,
       debug: false,
       migrations: {
-        naturalSort: true,
-      },
+        naturalSort: true
+      }
     },
 
     /*
@@ -94,13 +93,13 @@ const databaseConfig: DatabaseConfig = {
         port: Env.get('DB_PORT', 5432),
         user: Env.get('DB_USER', 'lucid'),
         password: Env.get('DB_PASSWORD', 'lucid'),
-        database: Env.get('DB_NAME', 'lucid'),
+        database: Env.get('DB_NAME', 'lucid')
       },
       healthCheck: connection === 'pg' ? healthCheck : false,
       debug: false,
       migrations: {
-        naturalSort: true,
-      },
+        naturalSort: true
+      }
     },
 
     /*
@@ -121,10 +120,10 @@ const databaseConfig: DatabaseConfig = {
         port: Env.get('ORACLE_PORT'),
         user: Env.get('ORACLE_USER'),
         password: Env.get('ORACLE_PASSWORD', ''),
-        database: Env.get('ORACLE_DB_NAME'),
+        database: Env.get('ORACLE_DB_NAME')
       },
       healthCheck: connection === 'oracle' ? healthCheck : false,
-      debug: false,
+      debug: false
     },
 
     /*
@@ -145,11 +144,11 @@ const databaseConfig: DatabaseConfig = {
         port: Env.get('MSSQL_PORT'),
         server: Env.get('MSSQL_SERVER'),
         password: Env.get('MSSQL_PASSWORD', ''),
-        database: Env.get('MSSQL_DB_NAME'),
+        database: Env.get('MSSQL_DB_NAME')
       },
       healthCheck: connection === 'mssql' ? healthCheck : false,
-      debug: false,
-    },
+      debug: false
+    }
   }
 }
 

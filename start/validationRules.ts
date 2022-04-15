@@ -21,7 +21,7 @@ validator.rule('hexColorString', (value, _, { pointer, arrayExpressionPointer, e
     return
   }
 
-  const hexColorStringValidator = new RegExp(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
+  const hexColorStringValidator = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
 
   if (value.match(hexColorStringValidator) === null) {
     errorReporter.report(pointer, 'hexColorString', 'Invalid hex color string.', arrayExpressionPointer)
@@ -37,7 +37,7 @@ validator.rule('validTwitchName', (value, _, { pointer, arrayExpressionPointer, 
     return
   }
 
-  const validTwitchName = new RegExp(/^[\w]+$/)
+  const validTwitchName = /^[\w]+$/
 
   if (value.match(validTwitchName) === null) {
     errorReporter.report(pointer, 'validTwitchName', 'Invalid Twitch name.', arrayExpressionPointer)
@@ -63,6 +63,6 @@ validator.rule('nonToxicBio', async (value, _, { pointer, arrayExpressionPointer
   }
 }, () => { // Per: https://github.com/adonisjs/core/discussions/1333#discussioncomment-42239
   return {
-    async: true,
+    async: true
   }
 })

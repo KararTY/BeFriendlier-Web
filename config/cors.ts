@@ -103,7 +103,7 @@ const corsConfig: CorsConfig = {
     'content-type',
     'expires',
     'last-modified',
-    'pragma',
+    'pragma'
   ],
 
   /*
@@ -128,7 +128,7 @@ const corsConfig: CorsConfig = {
   | https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Max-Age
   |
   */
-  maxAge: 90,
+  maxAge: 90
 }
 
 export default corsConfig

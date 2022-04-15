@@ -35,7 +35,7 @@ export default class User extends BaseModel {
     relatedKey: 'id',
     pivotRelatedForeignKey: 'streamer_id',
     pivotTable: 'favorite_streamer_lists',
-    serializeAs: 'favorite_streamers',
+    serializeAs: 'favorite_streamers'
   })
   public favoriteStreamers: ManyToMany<typeof User>
 

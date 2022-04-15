@@ -15,7 +15,7 @@ const PajbotConfig = {
    */
   headers: {
     'content-type': 'application/json',
-    'user-agent': 'befriendlierapp (https://github.com/kararty/befriendlier-web)',
+    'user-agent': 'befriendlierapp (https://github.com/kararty/befriendlier-web)'
   }
 }
 

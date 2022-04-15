@@ -29,7 +29,7 @@ export default class Profile extends BaseModel {
       } else {
         return value
       }
-    },
+    }
   })
   public favoriteEmotes: string[]
 
@@ -39,7 +39,7 @@ export default class Profile extends BaseModel {
     relatedKey: 'id',
     pivotRelatedForeignKey: 'match_profile_id',
     pivotTable: 'matches_lists',
-    pivotColumns: ['user_id', 'match_user_id'],
+    pivotColumns: ['user_id', 'match_user_id']
   })
   public matches: ManyToMany<typeof Profile>
 
@@ -51,7 +51,7 @@ export default class Profile extends BaseModel {
       } else {
         return value
       }
-    },
+    }
   })
   public mismatches: number[]
 
@@ -63,7 +63,7 @@ export default class Profile extends BaseModel {
       } else {
         return value
       }
-    },
+    }
   })
   public rolls: number[]
 
@@ -73,7 +73,6 @@ export default class Profile extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
-  
   @column.dateTime()
   public nextRolls: DateTime
 

@@ -5,12 +5,12 @@
  * file.
  */
 
- import Env from '@ioc:Adonis/Core/Env'
- import Application from '@ioc:Adonis/Core/Application'
- import { SessionConfig } from '@ioc:Adonis/Addons/Session'
+import Env from '@ioc:Adonis/Core/Env'
+import Application from '@ioc:Adonis/Core/Application'
+import { SessionConfig } from '@ioc:Adonis/Addons/Session'
 
- const sessionConfig: SessionConfig = {
-   /*
+const sessionConfig: SessionConfig = {
+  /*
    |--------------------------------------------------------------------------
    | Enable/Disable sessions
    |--------------------------------------------------------------------------
@@ -19,9 +19,9 @@
    | entire application
    |
    */
-   enabled: true,
+  enabled: true,
 
-   /*
+  /*
    |--------------------------------------------------------------------------
    | Driver
    |--------------------------------------------------------------------------
@@ -36,9 +36,9 @@
    | Note: Switching drivers will make existing sessions invalid.
    |
    */
-   driver: Env.get('SESSION_DRIVER', 'cookie'),
+  driver: Env.get('SESSION_DRIVER', 'cookie'),
 
-   /*
+  /*
    |--------------------------------------------------------------------------
    | Cookie name
    |--------------------------------------------------------------------------
@@ -46,9 +46,9 @@
    | The name of the cookie that will hold the session id.
    |
    */
-   cookieName: 'session',
+  cookieName: 'session',
 
-   /*
+  /*
    |--------------------------------------------------------------------------
    | Clear session when browser closes
    |--------------------------------------------------------------------------
@@ -57,9 +57,9 @@
    | this value to `true` will ignore the `age`.
    |
    */
-   clearWithBrowser: false,
+  clearWithBrowser: false,
 
-   /*
+  /*
    |--------------------------------------------------------------------------
    | Session age
    |--------------------------------------------------------------------------
@@ -73,9 +73,9 @@
    | Example: `2 days`, `2.5 hrs`, `1y`, `5s` and so on.
    |
    */
-   age: '1d',
+  age: '1d',
 
-   /*
+  /*
    |--------------------------------------------------------------------------
    | Cookie values
    |--------------------------------------------------------------------------
@@ -84,13 +84,13 @@
    | driver will use the same values.
    |
    */
-   cookie: {
-     path: '/',
-     httpOnly: true,
-     sameSite: false,
-   },
+  cookie: {
+    path: '/',
+    httpOnly: true,
+    sameSite: false
+  },
 
-   /*
+  /*
    |--------------------------------------------------------------------------
    | Configuration for the file driver
    |--------------------------------------------------------------------------
@@ -99,11 +99,11 @@
    | must be stored.
    |
    */
-   file: {
-     location: Application.tmpPath('sessions'),
-   },
+  file: {
+    location: Application.tmpPath('sessions')
+  },
 
-   /*
+  /*
    |--------------------------------------------------------------------------
    | Redis driver
    |--------------------------------------------------------------------------
@@ -112,7 +112,7 @@
    | must be defined inside `config/redis.ts` file as well.
    |
    */
-   redisConnection: 'local',
- }
+  redisConnection: 'local'
+}
 
- export default sessionConfig
+export default sessionConfig

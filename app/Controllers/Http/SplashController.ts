@@ -1,4 +1,5 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import EmoteEntry from 'App/Models/EmoteEntry'
 // import Database from '@ioc:Adonis/Lucid/Database'
 import User from 'App/Models/User'
 import { DateTime } from 'luxon'
@@ -7,55 +8,59 @@ let splashLastUpdate = DateTime.fromJSDate(new Date())
 let statistics = {
   users: {
     total: 0,
-    new: 0,
+    new: 0
   },
   channels: {
     total: 0,
-    new: 0,
-  },
+    new: 0
+  }
 }
 
 export default class SplashController {
-  public async index ({ auth, view }: HttpContextContract) {
+  public async index ({ auth, view }: HttpContextContract): Promise<string> {
     if (splashLastUpdate.diffNow('minutes').minutes <= 0) {
       splashLastUpdate = splashLastUpdate.plus({ minutes: 5 })
       await this.refreshStatistics()
     }
 
+    if (auth.user !== undefined) {
+      await auth.user.load('emotes')
+    }
+
     return await view.render('core', {
-      user: auth.user?.toJSON(),
+      user: auth.user,
       web: {
         template: 'splash',
         title: 'Find Twitch people!',
-        statistics,
-      },
+        statistics
+      }
     })
   }
 
-  public async channels ({ auth, view }: HttpContextContract) {
+  public async channels ({ auth, view }: HttpContextContract): Promise<string> {
     const channels = await User.query()
       .where({ host: true })
 
-    let channelsJSON: any[] = []
+    const channelsJSON: any[] = []
     for (let index = 0; index < channels.length; index++) {
       const channel = channels[index]
       await channel.load('emotes')
 
-      const emotesCount = channel.emotes.map(e => e.serialize()).reduce((acc, cur) => acc + (cur.amount || 0), 0)
+      const emotesCount = channel.emotes.map(e => e.serialize()).reduce((acc, cur) => acc + ((cur as EmoteEntry).amount ?? 0), 0)
       channelsJSON.push({ avatar: channel.avatar, display_name: channel.displayName, name: channel.name, emotesCount })
     }
 
     return await view.render('core', {
-      user: auth.user?.toJSON(),
+      user: auth.user,
       web: {
         template: 'channels',
         title: 'BeFriendlier\'s joined channels.',
-        channels: channelsJSON.sort((a, b) => b.emotesCount - a.emotesCount),
-      },
+        channels: channelsJSON.sort((a, b) => b.emotesCount - a.emotesCount)
+      }
     })
   }
 
-  private async refreshStatistics () {
+  private async refreshStatistics (): Promise<void> {
     const dateMidnight = DateTime
       .fromJSDate(new Date())
       .set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).toJSDate()
@@ -92,20 +97,20 @@ export default class SplashController {
       .first()
 
     const [
-      users, channels , newUsers, newChannels,
+      users, channels, newUsers, newChannels
     ] = await Promise.all([
-      countTotalUsers, countTotalChannels, countNewUsers, countNewChannels,
+      countTotalUsers, countTotalChannels, countNewUsers, countNewChannels
     ])
 
     statistics = {
       users: {
-        total: users?.total || 0,
-        new: newUsers?.total || 0,
+        total: users?.total ?? 0,
+        new: newUsers?.total ?? 0
       },
       channels: {
-        total: channels?.total || 0,
-        new: newChannels?.total || 0,
-      },
+        total: channels?.total ?? 0,
+        new: newChannels?.total ?? 0
+      }
     }
   }
 }

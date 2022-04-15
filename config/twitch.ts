@@ -26,7 +26,7 @@ const TwitchConfig = {
    */
   user: {
     name: Env.get('TWITCH_BOT_NAME'),
-    id: Env.get('TWITCH_BOT_ID'),
+    id: Env.get('TWITCH_BOT_ID')
   },
 
   /**
@@ -38,8 +38,8 @@ const TwitchConfig = {
    * HTTP request headers.
    */
   headers: {
-    'user-agent': 'befriendlierapp (https://github.com/kararty/befriendlier-web)',
-  },
+    'user-agent': 'befriendlierapp (https://github.com/kararty/befriendlier-web)'
+  }
 }
 
 export default TwitchConfig

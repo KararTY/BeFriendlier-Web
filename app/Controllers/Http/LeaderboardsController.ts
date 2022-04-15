@@ -11,24 +11,24 @@ interface UserLeaderboard {
 }
 
 let leaderboardsLastUpdate = DateTime.fromJSDate(new Date())
-let leaderboards: { topTenEmotesUsers: UserLeaderboard[] } = {
+const leaderboards: { topTenEmotesUsers: UserLeaderboard[] } = {
   topTenEmotesUsers: []
 }
 
 export interface LeaderboardEntry {
-  user_id:  number
+  user_id: number
   total_emotes: number
 }
 
 export default class LeaderboardsController {
-  public async index ({ auth, view }: HttpContextContract) {
+  public async index ({ auth, view }: HttpContextContract): Promise<string> {
     if (leaderboardsLastUpdate.diffNow('minutes').minutes <= 0) {
       leaderboardsLastUpdate = leaderboardsLastUpdate.plus({ hours: 1 })
       await this.refreshStatistics()
     }
 
     let userPosition
-    if (auth.user) {
+    if (auth.user != null) {
       // https://stackoverflow.com/a/55334692
       userPosition = await Database.rawQuery(`
         with temp_table as (
@@ -46,17 +46,17 @@ export default class LeaderboardsController {
     }
 
     return await view.render('core', {
-      user: auth.user?.toJSON(),
+      user: auth.user,
       web: {
         userPosition,
         template: 'leaderboards',
         title: 'Leaderboards 🦆 - BeFriendlier',
-        leaderboards,
-      },
+        leaderboards
+      }
     })
   }
 
-  private async refreshStatistics () {
+  private async refreshStatistics (): Promise<void> {
     const resTopTen = await Database.from('_leaderboards').orderBy('total_emotes', 'desc').limit(10) as LeaderboardEntry[]
 
     const topTenEmotesUsers: UserLeaderboard[] = []
@@ -65,13 +65,13 @@ export default class LeaderboardsController {
 
       const user = await User.find(leaderboardEntry.user_id)
 
-      if (!user) continue
+      if (user == null) continue
 
       topTenEmotesUsers.push({
         avatar: user.avatar,
         display_name: user.displayName,
         name: user.name,
-        total_emotes: leaderboardEntry.total_emotes,
+        total_emotes: leaderboardEntry.total_emotes
       })
     }
 

@@ -1,7 +1,6 @@
 import { BaseCommand } from '@adonisjs/core/build/standalone'
 
 export default class UpdateLeaderboards extends BaseCommand {
-
   /**
    * Command name is used to run the command
    */
@@ -25,10 +24,10 @@ export default class UpdateLeaderboards extends BaseCommand {
      * Set the following value to true, if you want this command to keep running until
      * you manually decide to exit the process
      */
-    stayAlive: false,
+    stayAlive: false
   }
 
-  public async run () {
+  public async run (): Promise<void> {
     const { default: Database } = await import('@ioc:Adonis/Lucid/Database')
 
     const allUsers = await Database.from('users').select(['id', 'host'])
@@ -36,19 +35,21 @@ export default class UpdateLeaderboards extends BaseCommand {
     for (let index = 0; index < allUsers.length; index++) {
       const { id, host } = allUsers[index]
 
-      if (host) {
+      if (host === true) {
         await Database.from('_leaderboards').where({ user_id: id }).delete().catch()
         continue
       }
 
-      const getAllEmoteEntryAmounts = await Database.from('emote_entries').where({ user_id: id }).select('amount') as { amount: number }[]
+      const getAllEmoteEntryAmounts = (await Database.from('emote_entries')
+        .where({ user_id: id })
+        .select('amount')) as Array<{ amount: number }>
 
-      const total_emotes = getAllEmoteEntryAmounts.reduce((amt, cur) => amt + cur.amount, 0)
+      const totalEmotes = getAllEmoteEntryAmounts.reduce((amt, cur) => amt + cur.amount, 0)
 
       try {
-        await Database.table('_leaderboards').insert({ user_id: id, total_emotes })
+        await Database.table('_leaderboards').insert({ user_id: id, total_emotes: totalEmotes })
       } catch (err) {
-        await Database.from('_leaderboards').where({ user_id: id }).update({ total_emotes })
+        await Database.from('_leaderboards').where({ user_id: id }).update({ total_emotes: totalEmotes })
       }
     }
 

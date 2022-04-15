@@ -14,7 +14,7 @@ WebSocketServer.start((socket, request) => {
   // Kill connections from NON-LOCALHOST sources. TODO: Setup "Trusted Sources" later.
   if (!allow && !allowHost) {
     Logger.warn('WEBSOCKET CONNECTION FROM A NON ALLOWED SOURCE! ' +
-    `X-Forwarded-For:${String(xForwardedFor)}, xRealIp:${String(xRealIp)}, host:${String(request.headers.host)}`)
+      `X-Forwarded-For:${String(xForwardedFor)}, xRealIp:${String(xRealIp)}, host:${String(request.headers.host)}`)
     socket.terminate()
     return
   }
@@ -41,7 +41,7 @@ WebSocketServer.start((socket, request) => {
     // eslint-disable-next-line no-void
     void WebSocketServer.queue.add(async () => await WebSocketServer.onMessage(socket, msg)))
 
-  socket.on('close', (code, reason) => WebSocketServer.onClose(socket, code, reason))
+  socket.on('close', (code, reason) => WebSocketServer.onClose(socket, code, reason.toString('utf-8')))
 
   socket.on('error', (error) => WebSocketServer.onError(socket, error))
 

@@ -5,9 +5,9 @@ import { NameAndId } from 'befriendlier-shared'
 export default class Profiles extends BaseSchema {
   protected tableName = 'profiles'
 
-  public async up () {
+  public async up (): Promise<void> {
     this.defer(async () => {
-      const res = await this.db.from(this.tableName).select(['id','favorite_emotes'])
+      const res = await this.db.from(this.tableName).select(['id', 'favorite_emotes'])
 
       for (let index = 0; index < res.length; index++) {
         const entry = res[index]
@@ -15,9 +15,9 @@ export default class Profiles extends BaseSchema {
         for (let ii = 0; ii < entry.favorite_emotes.length; ii++) {
           const emote = entry.favorite_emotes[ii]
 
-          let existsEmote = await this.db.from('emotes').where({ id: emote.id }).first() as NameAndId
+          let existsEmote = await this.db.from('emotes').where({ id: emote.id }).first() as NameAndId | undefined
 
-          if (!existsEmote) {
+          if (existsEmote == null) {
             existsEmote = {
               id: emote.id,
               name: emote.name
@@ -34,5 +34,5 @@ export default class Profiles extends BaseSchema {
     })
   }
 
-  public down () {}
+  public down (): void {}
 }

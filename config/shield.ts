@@ -5,8 +5,8 @@
  * file.
  */
 
-import Env from '@ioc:Adonis/Core/Env'
 import { ShieldConfig } from '@ioc:Adonis/Addons/Shield'
+import Env from '@ioc:Adonis/Core/Env'
 
 /*
 |--------------------------------------------------------------------------
@@ -56,7 +56,7 @@ export const csp: ShieldConfig['csp'] = {
   | instead report them to a URL.
   |
   */
-  reportOnly: false,
+  reportOnly: false
 }
 
 /*
@@ -74,7 +74,7 @@ export const csrf: ShieldConfig['csrf'] = {
   | Enable/Disable CSRF
   |--------------------------------------------------------------------------
   */
-  enabled: Env.get('NODE_ENV') !== 'testing',
+  enabled: Env.get('NODE_ENV') !== 'test',
 
   /*
   |--------------------------------------------------------------------------
@@ -118,7 +118,7 @@ export const csrf: ShieldConfig['csrf'] = {
   | Define an array of HTTP methods to be validated for a valid CSRF token.
   |
   */
-  methods: ['POST', 'PUT', 'PATCH', 'DELETE'],
+  methods: ['POST', 'PUT', 'PATCH', 'DELETE']
 }
 
 /*
@@ -152,7 +152,7 @@ export const dnsPrefetch: ShieldConfig['dnsPrefetch'] = {
   | - When `allow = false`, then `X-DNS-Prefetch-Control = 'off'`
   |
   */
-  allow: true,
+  allow: true
 }
 
 /*
@@ -171,7 +171,7 @@ export const dnsPrefetch: ShieldConfig['dnsPrefetch'] = {
 */
 export const xFrame: ShieldConfig['xFrame'] = {
   enabled: true,
-  action: 'DENY',
+  action: 'DENY'
 }
 
 /*
@@ -217,7 +217,7 @@ export const hsts: ShieldConfig['hsts'] = {
   | the HSTS policy. Learn more https://hstspreload.org/
   |
   */
-  preload: false,
+  preload: false
 }
 
 /*
@@ -233,5 +233,5 @@ export const hsts: ShieldConfig['hsts'] = {
 |
 */
 export const contentTypeSniffing: ShieldConfig['contentTypeSniffing'] = {
-  enabled: true,
+  enabled: true
 }

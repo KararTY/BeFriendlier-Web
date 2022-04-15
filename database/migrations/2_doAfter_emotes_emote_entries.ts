@@ -4,7 +4,7 @@ import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 export default class EmoteEntry extends BaseSchema {
   protected tableName = 'emote_entries'
 
-  public async up () {
+  public async up (): Promise<void> {
     this.schema.createTable(this.tableName, table => {
       table.increments('id').primary()
       table.integer('user_id').notNullable().references('users.id').onDelete('CASCADE')
@@ -18,7 +18,7 @@ export default class EmoteEntry extends BaseSchema {
     })
   }
 
-  public async down () {
+  public async down (): Promise<void> {
     this.schema.dropTable(this.tableName)
   }
 }

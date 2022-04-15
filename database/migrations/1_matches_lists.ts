@@ -5,7 +5,7 @@ import { DateTime } from 'luxon'
 export default class MatchesLists extends BaseSchema {
   protected tableName = 'matches_lists'
 
-  public async up () {
+  public async up (): Promise<void> {
     this.schema.createTable(this.tableName, table => {
       table.integer('profile_id')
       table.integer('user_id')
@@ -16,7 +16,7 @@ export default class MatchesLists extends BaseSchema {
     })
   }
 
-  public async down () {
+  public async down (): Promise<void> {
     this.schema.dropTable(this.tableName)
   }
 }

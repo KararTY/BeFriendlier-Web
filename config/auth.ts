@@ -77,10 +77,10 @@ const authConfig: AuthConfig = {
         | that time.
         |
         */
-        model: () => import('App/Models/User'),
-      },
-    },
-  },
+        model: async () => await import('App/Models/User')
+      }
+    }
+  }
 }
 
 export default authConfig

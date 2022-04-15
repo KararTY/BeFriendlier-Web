@@ -1,5 +1,5 @@
-export default class Theme {
-  public static getThemeColor(theme: string) {
+const Theme = {
+  getThemeColor (theme: string): { background: string, text: string } {
     let result = {
       background: '',
       text: ''
@@ -46,3 +46,5 @@ export default class Theme {
     return result
   }
 }
+
+export default Theme
