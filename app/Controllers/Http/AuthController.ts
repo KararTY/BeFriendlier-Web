@@ -1,16 +1,11 @@
-import { AuthContract } from '@ioc:Adonis/Addons/Auth'
-import Twitch from '@ioc:Befriendlier-Shared/Twitch'
-import Env from '@ioc:Adonis/Core/Env'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Twitch from '@ioc:Befriendlier-Shared/Twitch'
+import BannedUser from 'App/Models/BannedUser'
 import User from 'App/Models/User'
 import { DateTime } from 'luxon'
-import BannedUser from 'App/Models/BannedUser'
 
 export default class AuthController {
-  private readonly devError = new Error('Using NODE_ENV=development without existing TestUser. ' +
-  'Run `npm run seed` (`node ace db:seed`).')
-
-  public async register ({ request, auth, response, session }: HttpContextContract) {
+  public async register ({ request, auth, response, session }: HttpContextContract): Promise<void> {
     if (auth.user !== undefined) {
       return response.redirect('/')
     }
@@ -25,10 +20,9 @@ export default class AuthController {
 
     const twitchUser = await Twitch.getUser(token.access_token)
     if (twitchUser !== null) {
-
       const bannedUser = await BannedUser.findBy('twitchID', twitchUser.id)
-      if (bannedUser) {
-        session.flash('message', { error: 'Error: You are banned, rubber ducky 🦆' })
+      if (bannedUser !== null) {
+        session.flash('message', { error: 'Error: You are banned, 🦆 rubber ducky.' })
         return response.redirect('/')
       }
 
@@ -40,22 +34,19 @@ export default class AuthController {
           twitchID: twitchUser.id,
           name: twitchUser.login,
           displayName: twitchUser.display_name,
-          avatar: twitchUser.profile_image_url,
+          avatar: twitchUser.profile_image_url
         })
 
         // Create default global profile, but not enabled.
         await user.related('profile').create({
           enabled: false,
-          chatUserId: 0,
+          chatUserId: 0
         })
 
         await user.save()
 
-        if (Env.get('NODE_ENV') === 'development') {
-          await this.developmentLogin(auth)
-        } else {
-          await auth.login(user)
-        }
+        await auth.login(user)
+
         session.put('token', token.access_token)
         session.put('refresh', token.refresh_token)
 
@@ -70,7 +61,7 @@ export default class AuthController {
         if (userExists.profile.length === 0) {
           await userExists.related('profile').create({
             enabled: false,
-            chatUserId: 0,
+            chatUserId: 0
           })
 
           userExists.createdAt = DateTime.fromJSDate(new Date())
@@ -79,11 +70,7 @@ export default class AuthController {
         }
 
         // Login
-        if (Env.get('NODE_ENV') === 'development') {
-          await this.developmentLogin(auth)
-        } else {
-          await auth.login(userExists)
-        }
+        await auth.login(userExists)
 
         session.put('token', token.access_token)
         session.put('refresh', token.refresh_token)
@@ -94,19 +81,10 @@ export default class AuthController {
     }
   }
 
-  public async logout ({ auth, session, response }: HttpContextContract) {
+  public async logout ({ auth, session, response }: HttpContextContract): Promise<void> {
     await auth.logout()
 
     session.flash('message', { message: 'Goodbye. See you later!' })
     return response.redirect('/')
-  }
-
-  private async developmentLogin (auth: AuthContract) {
-    const testUser = await User.findBy('createdAt', '1970-01-01 01:00:00')
-    if (testUser === null) {
-      throw this.devError
-    } else {
-      await auth.login(testUser)
-    }
   }
 }
