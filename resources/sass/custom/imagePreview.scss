@@ -11,5 +11,17 @@
 }
 
 .has-background-slightly-dark {
-  background-color: hsla(0, 0%, 21%, 0.5)
+  background-color: hsla(0, 0%, 21%, 0.5);
+}
+
+.object-contain {
+  object-fit: contain;
+}
+
+canvas {
+  image-rendering: auto;
+}
+
+.max-width-256 {
+  max-width: 256px;
 }

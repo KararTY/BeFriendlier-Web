@@ -81,4 +81,7 @@ export default class Profile extends BaseModel {
 
   @column()
   public theme: string
+
+  @column.dateTime()
+  public nextBattle: DateTime
 }

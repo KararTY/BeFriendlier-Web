@@ -6,14 +6,17 @@ interface ToastMessage {
 }
 
 (function initBlurButtons () {
-  const showImageEl = (dataset: DOMStringMap) => html.node`<a class="${(dataset.blurText === 'true' ? 'is-size-3 ' : '') + 'is-overlay center-text has-text-white has-background-slightly-dark'}" data-blur-button="${dataset.blur}" onclick="${
+  const showImageEl = (dataset: DOMStringMap): HTMLElement => html.node`<a
+    class="${(dataset.blurText === 'true' ? 'is-size-3 ' : '') + 'is-overlay center-text has-text-white has-background-slightly-dark'}"
+    data-blur-button="${dataset.blur}"
+    onclick="${
     (ev: Event) => {
       ev.preventDefault()
 
-      const target: HTMLElement = ensureIsOfType(ev.currentTarget, HTMLElement)
+      const target = ev.currentTarget as HTMLElement
       // We're expecting this function's rendered element to have a "data-blur-button" field with a string.
-      const blurButtonValue: string = target.dataset.blurButton
-      const targetElement = document.querySelector(`[data-blur="${blurButtonValue}"`)
+      const blurButtonValue = target.dataset.blurButton
+      const targetElement = document.querySelector(`[data-blur="${String(blurButtonValue)}"`)
 
       if (!(targetElement instanceof window.HTMLElement)) {
         return
@@ -23,7 +26,7 @@ interface ToastMessage {
       target.classList.toggle('has-background-slightly-dark')
 
       if (dataset.blurText === 'true') {
-        if (targetElement.classList.contains('blur') as boolean) {
+        if (targetElement.classList.contains('blur')) {
           target.innerText = 'Unblur'
         } else {
           target.innerText = ''
@@ -39,7 +42,7 @@ interface ToastMessage {
   const blurToggles = document.querySelectorAll('[data-blur]')
 
   for (let index = 0; index < blurToggles.length; index++) {
-    const element: HTMLElement = ensureIsOfType(blurToggles[index], HTMLElement)
+    const element = blurToggles[index] as HTMLElement
     const parentElement = element.parentElement
 
     if (parentElement !== null) {
@@ -48,7 +51,7 @@ interface ToastMessage {
   }
 })()
 
-function initToastButton () {
+function initToastButton (): void {
   const toast: HTMLElement | null = document.querySelector('.toast')
 
   if (toast instanceof window.HTMLElement) {
@@ -58,7 +61,7 @@ function initToastButton () {
   }
 }
 
-export function displayToast (message: ToastMessage) {
+export function displayToast (message: ToastMessage): void {
   const toastHTML = html.node`
     <div class="toast animated fadeIn">
       <div class="${message.error !== undefined ? 'notification is-danger' : 'notification is-success'}">
@@ -94,7 +97,7 @@ class Cookies {
     return this.cookies.get(cname)
   }
 
-  public setCookie = (cname: string, cvalue: any) => {
+  public setCookie = (cname: string, cvalue: any): void => {
     const today = new Date()
     const nextMonth = today.setMonth(today.getMonth() + 1)
 
@@ -103,7 +106,7 @@ class Cookies {
     this.parseCookies()
   }
 
-  public parseCookies = () => {
+  public parseCookies = (): void => {
     const cookies = this.rawCookies.split('; ').filter(string => string.length)
 
     for (let index = 0; index < cookies.length; index++) {
@@ -123,7 +126,7 @@ class Cookies {
     return
   }
 
-  const firstElementChild: HTMLAnchorElement = ensureIsOfType(login.firstElementChild, HTMLAnchorElement)
+  const firstElementChild = login.firstElementChild as HTMLAnchorElement
   const cookies = new Cookies()
   const path = window.location.pathname
 
@@ -135,7 +138,7 @@ class Cookies {
         firstElementChild.href = '/terms'
       }
 
-      if (!(firstElementChild.href.startsWith('https://id') as boolean)) {
+      if (!(firstElementChild.href.startsWith('https://id'))) {
         const el = firstElementChild.lastElementChild
         if (el !== null) {
           el.textContent = 'Register'
@@ -157,7 +160,7 @@ class Cookies {
 
         displayToast({ message: 'Successfully accepted privacy policy, please wait a second...' })
 
-        document.body.firstElementChild.classList.add('blur')
+        ;(document.body.firstElementChild as HTMLElement).classList.add('blur')
 
         setTimeout(() => {
           window.location.href = firstElementChild.href
@@ -173,7 +176,7 @@ class Cookies {
 
           redirect({
             error: 'Error: You have not accepted Privacy Policy yet.\n' +
-            'Please accept Privacy Policy first. Redirecting you...',
+            'Please accept Privacy Policy first. Redirecting you...'
           }, (ev.currentTarget as HTMLAnchorElement).href)
         })
         return
@@ -191,7 +194,7 @@ class Cookies {
         cookies.setCookie('termsOfServiceAccepted', true)
 
         redirect({
-          message: 'Successfully accepted Terms of Service, please wait a second...',
+          message: 'Successfully accepted Terms of Service, please wait a second...'
         }, (ev.currentTarget as HTMLAnchorElement).href)
       })
       break
@@ -199,10 +202,10 @@ class Cookies {
   }
 })()
 
-function redirect (toastMessage: ToastMessage, url: string) {
+function redirect (toastMessage: ToastMessage, url: string): void {
   displayToast(toastMessage)
 
-  document.body.firstElementChild.classList.add('blur')
+  ;(document.body.firstElementChild as HTMLElement).classList.add('blur')
 
   setTimeout(() => {
     window.location.href = url
@@ -212,24 +215,27 @@ function redirect (toastMessage: ToastMessage, url: string) {
 (function initNavbarToggles () {
   const navbarButtons: NodeListOf<HTMLElement> = document.querySelectorAll('.navbar-brand .navbar-burger')
 
-  if (navbarButtons.length > 0) {
-    for (let index = 0; index < navbarButtons.length; index++) {
-      const navbarButton = navbarButtons[index]
-      navbarButton.addEventListener('click', function onClickNavbar (this: HTMLElement) {
-        this.classList.toggle('is-active')
-        document.querySelector(`[data-menu="${String(this.dataset.target)}"]`).classList.toggle('is-active')
-      })
-    }
+  for (let index = 0; index < navbarButtons.length; index++) {
+    const navbarButton = navbarButtons[index]
+    navbarButton.addEventListener('click', function onClickNavbar (this: HTMLElement) {
+      this.classList.toggle('is-active')
+      const menu = document.querySelector(`[data-menu="${String(this.dataset.target)}"]`)
+      if (menu !== null) menu.classList.toggle('is-active')
+    })
   }
 })()
 
-export function ensureIsOfType (el: any, Type: any) {
-  if (!(el instanceof Type)) {
-    throw new Error(`${String(el)} is not of type ${String(Type)}`)
-  }
+;(function initSwitchingImages () {
+  const images: NodeListOf<HTMLImageElement> = document.querySelectorAll('[data-image-switch]')
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-  return el as typeof Type
-}
+  for (let index = 0; index < images.length; index++) {
+    const imageEl = images[index]
+    const sources = Object.values({ ...imageEl.dataset }) as string[]
+
+    setInterval(() => {
+      imageEl.src = sources[Math.floor(Math.random() * sources.length)]
+    }, 3000)
+  }
+})()
 
 initToastButton()

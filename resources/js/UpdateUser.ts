@@ -1,5 +1,5 @@
 import { html } from 'uhtml'
-import { ensureIsOfType } from './App'
+import { displayToast } from './App'
 
 class UpdateUserForm {
   private readonly form: HTMLFormElement
@@ -17,10 +17,10 @@ class UpdateUserForm {
       this.elements = form.elements
 
       this.named = {
-        addStreamerBtn: ensureIsOfType(this.elements.namedItem('addStreamer'), HTMLButtonElement),
-        streamerNameInput: ensureIsOfType(this.form.querySelector('[data-name="streamerName"]'), HTMLInputElement),
-        submitBtn: ensureIsOfType(this.form.querySelector('[data-name="submitBtn"]'), HTMLButtonElement),
-        streamers: this.form.querySelectorAll('[name="favoriteStreamers[]"]'),
+        addStreamerBtn: this.elements.namedItem('addStreamer') as HTMLButtonElement,
+        streamerNameInput: this.form.querySelector('[data-name="streamerName"]') as HTMLInputElement,
+        submitBtn: this.form.querySelector('[data-name="submitBtn"]') as HTMLButtonElement,
+        streamers: this.form.querySelectorAll('[name="favoriteStreamers[]"]')
       }
 
       this.named.addStreamerBtn.addEventListener('click', (ev) => this.addStreamer(ev))
@@ -55,11 +55,11 @@ class UpdateUserForm {
     }
   }
 
-  private addStreamer = (ev: Event) => {
+  private readonly addStreamer = (ev: Event): void => {
     ev.preventDefault()
 
     // Make sure ev is a MousEvent before proceeding.
-    ensureIsOfType(ev, MouseEvent)
+    if (!(ev instanceof MouseEvent)) return
 
     const value = this.named.streamerNameInput.value.toLowerCase()
 
@@ -88,20 +88,36 @@ class UpdateUserForm {
 
     this.named.streamerNameInput.value = ''
 
-    const tagsElement: HTMLElement = ensureIsOfType(document.getElementById('streamers'), HTMLElement)
+    const tagsElement = document.getElementById('streamers') as HTMLElement
 
     tagsElement.appendChild(node)
     this.named.streamers = this.form.querySelectorAll('[name="favoriteStreamers[]"]')
   }
 
-  private removeStreamer = (ev: Event) => {
+  private readonly removeStreamer = (ev: Event): void => {
     ev.preventDefault()
 
-    const mouseEvent: MouseEvent = ensureIsOfType(ev, MouseEvent)
-    const target: HTMLElement = ensureIsOfType(mouseEvent.currentTarget, HTMLElement)
+    // Make sure ev is a MousEvent before proceeding.
+    if (!(ev instanceof MouseEvent)) return
+
+    const target = ev.currentTarget as HTMLElement
     const parentElement = target.parentElement
 
-    parentElement.parentElement.removeChild(parentElement)
+    if (parentElement === null) {
+      console.error('This element has no parentElement.')
+      displayToast({ error: 'Could not remove streamer. Try reloading the page.' })
+      return
+    }
+
+    const parentParentElement = parentElement.parentElement
+
+    if (parentParentElement === null) {
+      console.error('This element has no parentParentElement.')
+      displayToast({ error: 'Could not remove streamer. Try reloading the page.' })
+      return
+    }
+
+    parentParentElement.removeChild(parentElement)
     this.named.streamers = this.form.querySelectorAll('[name="favoriteStreamers[]"]')
   }
 }

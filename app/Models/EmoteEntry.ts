@@ -1,6 +1,14 @@
-import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { DateTime } from 'luxon'
 
+export interface Data {
+  name: string
+  type: string
+  percentage?: number
+  defValue?: number
+  addValue?: number
+  curValue: number
+}
 export default class EmoteEntry extends BaseModel {
   public static table = 'emote_entries'
 
@@ -22,8 +30,23 @@ export default class EmoteEntry extends BaseModel {
   @column()
   public isCombinable: boolean
 
+  @column({
+    prepare: (value: Data[]) => JSON.stringify(value),
+    consume: (value: any) => {
+      if (typeof value === 'string') {
+        return JSON.parse(value)
+      } else {
+        return value
+      }
+    }
+  })
+  public statistics: Data[]
+
   @column()
-  public statistics: number[]
+  public emoteRecipe: string
+
+  @column()
+  public seed: string
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

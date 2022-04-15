@@ -47,7 +47,7 @@
                       <div class="level is-mobile">
                         <div class="level-left">
                           <figure class="level-item image is-32x32 is-clipped">
-                            <img {{{ user && user.streamer_mode ? 'class="blur is-rounded" data-blur-vanish="true" data-blur="channel-' + entry.name + '"' : 'class="is-rounded"' }}} src="{{ entry.avatar.replace('300x300', '70x70') }}" alt="{{ entry.display_name }}'s avatar">
+                            <img {{{ user && user.streamerMode ? 'class="blur is-rounded" data-blur-vanish="true" data-blur="channel-' + entry.name + '"' : 'class="is-rounded"' }}} src="{{ entry.avatar.replace('300x300', '70x70') }}" alt="{{ entry.display_name }}'s avatar">
                           </figure>
                           <span class="level-item">{{ entry.display_name }}{{ entry.name !== entry.display_name.toLowerCase() ? ' (' + entry.name + ')': '' }}</span>
                           @if (index === 0)

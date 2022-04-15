@@ -1,4 +1,5 @@
-import WebsocketServer, { ExtendedWebSocket, ResSchema } from '../Ws'
+import type WebsocketServer from '../Ws'
+import type { ExtendedWebSocket, ResSchema } from '../Ws'
 
 export default class DefaultHandler {
   public messageType = 'DEFAULT'
