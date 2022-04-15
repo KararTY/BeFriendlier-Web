@@ -1,10 +1,11 @@
-import Twitch from '@ioc:Befriendlier-Shared/Twitch'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
+import Twitch from '@ioc:Befriendlier-Shared/Twitch'
 import BannedUser from 'App/Models/BannedUser'
 import User from 'App/Models/User'
-import { TwitchUsersBody } from 'befriendlier-shared' // For type definitions
+import BattleHandler from 'App/Services/Handlers/Battle'
+import { TwitchUsersBody } from 'befriendlier-shared'
 import { DateTime } from 'luxon'
 import yeast from 'yeast'
 
@@ -12,16 +13,16 @@ export default class UsersController {
   private readonly usersSchema = schema.create({
     favoriteStreamers: schema.array.optional([
       rules.maxLength(5),
-      rules.distinct('*'),
+      rules.distinct('*')
     ]).members(schema.string({}, [
       rules.maxLength(32),
-      rules.validTwitchName(),
+      rules.validTwitchName()
     ])),
     streamerMode: schema.boolean.optional(),
-    globalProfile: schema.boolean.optional(),
+    globalProfile: schema.boolean.optional()
   })
 
-  public async read ({ auth, view }: HttpContextContract) {
+  public async read ({ auth, view }: HttpContextContract): Promise<undefined | string> {
     if (auth.user === undefined) {
       return
     }
@@ -29,16 +30,19 @@ export default class UsersController {
     await auth.user.load('profile')
     await auth.user.load('favoriteStreamers')
 
+    const battleEmotes = await BattleHandler.getBattleEmotes(auth.user)
+
     return await view.render('core', {
-      user: auth.user.toJSON(),
+      user: auth.user,
       web: {
+        battleEmotes,
         template: 'user',
-        title: `User settings - ${auth.user.displayName}`,
-      },
+        title: `User settings - ${auth.user.displayName}`
+      }
     })
   }
 
-  public async update ({ request, session, auth, response }: HttpContextContract) {
+  public async update ({ request, session, auth, response }: HttpContextContract): Promise<undefined | string> {
     if (auth.user === undefined) {
       return
     }
@@ -50,9 +54,9 @@ export default class UsersController {
         'favoriteStreamers.maxLength': 'You can only have a maximum of 5 favorite streamers.',
         'favoriteStreamers.distinct': 'Favorite streamers list must have distinct values. No duplicates.',
         'streamerMode.boolean': 'Streamer mode must be a boolean value.',
-        'globalProfile.boolean': 'Global profile must be a boolean value.',
+        'globalProfile.boolean': 'Global profile must be a boolean value.'
       },
-      cacheKey: 'usersSchema',
+      cacheKey: 'usersSchema'
     }) // Request may fail here, if values do not pass validation.
 
     // TODO: OPTIMIZE CALLS BY FILTERING OUT EXISTING FIELDS & ONLY DETACHING NON-EXISTING FIELDS.
@@ -88,7 +92,7 @@ export default class UsersController {
 
           if (bannedUserSessionMessages.length > 0) {
             session.flash('message', { error: `Error: ${bannedUserSessionMessages.join(' \n')}` })
-            return response.redirect('/user')
+            return response.redirect('/user') as undefined
           }
 
           const d = await User.createMany(safeUsers.map(streamer => {
@@ -97,14 +101,14 @@ export default class UsersController {
               name: streamer.login,
               displayName: streamer.display_name,
               avatar: streamer.profile_image_url,
-              createdAt: DateTime.fromJSDate(new Date('1970-01-01 02:00:00')),
+              createdAt: DateTime.fromJSDate(new Date('1970-01-01 02:00:00'))
             }
           }))
 
           newFavoriteStreamers.push(...d)
         } else {
           session.flash('message', { error: 'Error: Something went wrong with Twitch. Try again later.' })
-          return response.redirect('/user')
+          return response.redirect('/user') as undefined
         }
       }
     }
@@ -144,10 +148,10 @@ export default class UsersController {
 
     session.flash('message', { message: 'Successfully updated user settings.' })
     await auth.user.save()
-    return response.redirect('/user')
+    return response.redirect('/user') as undefined
   }
 
-  public async delete ({ auth, response, session }: HttpContextContract) {
+  public async delete ({ auth, response, session }: HttpContextContract): Promise<undefined | string> {
     if (auth.user === undefined) {
       return
     }
@@ -165,7 +169,7 @@ export default class UsersController {
         // await Database.query().from('matches_lists').where('match_user_id', user.id).delete()
 
         // Anonymize profile
-        profile.bio = 'Hello!'
+        profile.bio = ''
         profile.favoriteEmotes = []
         profile.color = '#ffffff'
         profile.enabled = false
@@ -196,13 +200,13 @@ export default class UsersController {
 
     session.flash('message', accountDeleted
       ? { message: 'Account has been deleted.' }
-      : { error: 'Error: Something went wrong, please try again later! Reference: #USERDELETE1' },
+      : { error: 'Error: Something went wrong, please try again later! Reference: #USERDELETE1' }
     )
 
-    return response.redirect('/')
+    return response.redirect('/') as undefined
   }
 
-  public async refresh ({ auth, response, session }: HttpContextContract) {
+  public async refresh ({ auth, response, session }: HttpContextContract): Promise<undefined | string> {
     if (auth.user === undefined) {
       return
     }
@@ -210,9 +214,9 @@ export default class UsersController {
     if (auth.user.updatedAt.diffNow('minutes').minutes > -5) {
       session.flash('message', {
         error: 'Error: Account has recently been changed. ' +
-        'Please wait at least 5 minutes before refreshing Twitch data.',
+        'Please wait at least 5 minutes before refreshing Twitch data.'
       })
-      return response.redirect('/user')
+      return response.redirect('/user') as undefined
     }
 
     const twitchBody = await Twitch.getUser(session.get('token'))
@@ -220,10 +224,10 @@ export default class UsersController {
     if (twitchBody === null) {
       session.flash('message', {
         error: 'Error: Twitch returned nothing after repeated attempts. ' +
-        'Try again later. Reference: #USERREFRESH1',
+        'Try again later. Reference: #USERREFRESH1'
       })
 
-      return response.redirect('/user')
+      return response.redirect('/user') as undefined
     }
 
     auth.user.displayName = twitchBody.display_name
@@ -235,10 +239,10 @@ export default class UsersController {
 
     session.flash('message', { message: 'Successfully refreshed your Twitch data.' })
 
-    return response.redirect('/user')
+    return response.redirect('/user') as undefined
   }
 
-  public async requestData ({ auth, response, session }: HttpContextContract) {
+  public async requestData ({ auth, response, session }: HttpContextContract): Promise<undefined | string> {
     if (auth.user === undefined) {
       return
     }
@@ -246,10 +250,10 @@ export default class UsersController {
     if (auth.user.updatedAt.diffNow('minutes').minutes > -60) {
       session.flash('message', {
         error: 'Error: Account has recently been changed. ' +
-        'Please wait at least 1 hour before downloading your data.',
+        'Please wait at least 1 hour before downloading your data.'
       })
 
-      return response.redirect('/user')
+      return response.redirect('/user') as undefined
     }
 
     auth.user.updatedAt = DateTime.fromJSDate(new Date())
@@ -265,7 +269,7 @@ export default class UsersController {
       streamer_mode: auth.user.streamerMode,
       favorite_streamers: [],
       created_at: auth.user.createdAt.toUTC(),
-      updated_at: auth.user.updatedAt.toUTC(),
+      updated_at: auth.user.updatedAt.toUTC()
     }
 
     await auth.user.load('profile')
@@ -274,9 +278,9 @@ export default class UsersController {
       const profile = auth.user.profile[index]
       const profileJSON: any = {
         ...profile.serialize({
-          fields: ['created_at', 'updated_at', 'id', 'favorite_emotes', 'color', 'bio', 'enabled', 'chat_user_id'],
+          fields: ['created_at', 'updated_at', 'id', 'favorite_emotes', 'color', 'bio', 'enabled', 'chat_user_id']
         }),
-        matches: [],
+        matches: []
       }
 
       await profile.load('matches')
@@ -292,7 +296,7 @@ export default class UsersController {
 
           const hasMatched = await Database.query().from('matches_lists').where({
             profile_id: match.id,
-            match_user_id: auth.user.id,
+            match_user_id: auth.user.id
           }).first()
 
           if (hasMatched === null) {
@@ -300,12 +304,12 @@ export default class UsersController {
           }
 
           profileJSON.matches.push(user.serialize({
-            fields: ['name', 'display_name', 'avatar', 'id'],
+            fields: ['name', 'display_name', 'avatar', 'id']
           }))
         } else {
           // Deleted match user.
           profileJSON.matches.push({
-            name: 'Deleted User',
+            name: 'Deleted User'
           })
         }
       }
@@ -319,10 +323,10 @@ export default class UsersController {
       const favoriteStreamer = auth.user.favoriteStreamers[index]
 
       userData.favorite_streamers.push(favoriteStreamer.serialize({
-        fields: ['name', 'display_name', 'avatar', 'id'],
+        fields: ['name', 'display_name', 'avatar', 'id']
       }))
     }
 
-    return response.json(userData)
+    return response.json(userData) as undefined
   }
 }

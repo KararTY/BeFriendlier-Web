@@ -1,6 +1,7 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
+import { ModelObject } from '@ioc:Adonis/Lucid/Orm'
 import PajbotAPI from '@ioc:Befriendlier-Shared/PajbotAPI'
 import Emote from 'App/Models/Emote'
 import Profile from 'App/Models/Profile'
@@ -10,7 +11,7 @@ import { DateTime } from 'luxon'
 const profileThemes = ['white', 'black', 'orange', 'yellow', 'cyan', 'purple']
 
 export default class ProfilesController {
-  public async read ({ params, auth, view, session, response }: HttpContextContract) {
+  public async read ({ params, auth, view, session, response }: HttpContextContract): Promise<undefined | string> {
     if (auth.user === undefined) {
       return
     }
@@ -22,12 +23,12 @@ export default class ProfilesController {
       const profiles = await this.getAllProfilesForUser(auth.user)
 
       return await view.render('core', {
-        user: auth.user.toJSON(),
+        user: auth.user,
         profiles,
         web: {
           template: 'profiles',
-          title: `User profiles - ${auth.user.displayName}`,
-        },
+          title: `User profiles - ${auth.user.displayName}`
+        }
       })
     }
 
@@ -37,14 +38,14 @@ export default class ProfilesController {
     const idNumber = Number(id)
     if (Number.isNaN(idNumber)) {
       session.flash('message', { error: this.Error.parameterBadRequest })
-      return response.redirect('/')
+      return response.redirect('/') as undefined
     }
 
     const profile = await Profile.find(Number(id))
 
     if (profile === null) {
       session.flash('message', { error: this.Error.notFound })
-      return response.redirect('/')
+      return response.redirect('/') as undefined
     }
 
     const ownProfile = profile.userId === authID
@@ -56,14 +57,19 @@ export default class ProfilesController {
       // Should not happen, ever.
       if (chat === null) {
         session.flash('message', { error: this.Error.noOwner })
-        return response.redirect('/profile/')
+        return response.redirect('/profile/') as undefined
       }
     }
 
     await auth.user.load('favoriteStreamers')
+    await auth.user.load('emotes')
 
-    const userJSON = auth.user.toJSON()
-    const profileJSON = profile.toJSON()
+    const totalEmotes = auth.user.emotes.reduce((acc, cur) => acc + (cur.amount ?? 0), 0)
+
+    const userJSON = auth.user.serialize()
+    userJSON.totalEmotes = totalEmotes
+
+    const profileJSON = profile.serialize()
 
     profileJSON.matches = await this.getMatchesList(auth.user, profile, 0)
     profileJSON.favorite_emotes = await Emote.findMany(profile.favoriteEmotes)
@@ -71,40 +77,40 @@ export default class ProfilesController {
     if (ownProfile) {
       // If own, allow access.
       return await view.render('core', {
-        user: userJSON,
+        user: auth.user,
         profile: profileJSON,
         profileUser: userJSON,
-        profileChatUser: chat ? chat.name : 'befriendlier',
+        profileChatUser: (chat != null) ? chat.name : 'befriendlier',
         web: {
           template: 'profile',
           title: chat !== null ? `Your profile in ${chat.name}'s chat` : 'Your global profile',
           profileThemes
-        },
+        }
       })
     }
 
     // If someone else's, check if the requested profile has matched this requesting user.
     const match = await Database.query().from('matches_lists').where({
       profile_id: profile.id,
-      match_user_id: authID,
+      match_user_id: authID
     }).first()
 
     if (match === null) {
       // The requested profile hasn't matched with this requesting user.
       session.flash('message', { error: this.Error.forbidden })
-      return response.redirect('/')
+      return response.redirect('/') as undefined
     }
 
     // And check if the requesting user has matched for that specific profile.
     const hasMatched = await Database.query().from('matches_lists').where({
       user_id: auth.user.id,
-      match_profile_id: profile.id,
+      match_profile_id: profile.id
     }).first()
 
     if (hasMatched === null) {
       // This requesting user hasn't matched with the requested profile.
       session.flash('message', { error: this.Error.forbidden })
-      return response.redirect('/')
+      return response.redirect('/') as undefined
     }
 
     const userOfProfile = await User.find(profile.userId)
@@ -112,25 +118,31 @@ export default class ProfilesController {
     if (userOfProfile === null) {
       // The requested profile doesn't have an existing owner? This shouldn't happen.
       session.flash('message', { error: this.Error.noOwner })
-      return response.redirect('/profile')
+      return response.redirect('/profile') as undefined
     }
 
     await userOfProfile.load('favoriteStreamers')
+    await userOfProfile.load('emotes')
+
+    const userOfProfileTotalEmotes = userOfProfile.emotes.reduce((acc, cur) => acc + (cur.amount ?? 0), 0)
+
+    const userOfProfileJSON = userOfProfile.serialize()
+    userOfProfileJSON.totalEmotes = userOfProfileTotalEmotes
 
     return await view.render('core', {
-      user: userJSON,
+      user: auth.user,
       profile: profileJSON,
-      profileUser: userOfProfile.toJSON(),
+      profileUser: userOfProfileJSON,
       web: {
         template: 'profile',
         title: chat !== null
           ? `${userOfProfile.name}'s profile in ${chat.name}'s chat`
-          : `${userOfProfile.name}'s global profile`,
-      },
+          : `${userOfProfile.name}'s global profile`
+      }
     })
   }
 
-  public async update ({ params, request, session, auth, response }: HttpContextContract) {
+  public async update ({ params, request, session, auth, response }: HttpContextContract): Promise<void> {
     if (auth.user === undefined) {
       return
     }
@@ -160,7 +172,7 @@ export default class ProfilesController {
     request.updateBody({
       color: request.input('color', '#ffffff'),
       theme: request.input('theme', 'white'),
-      bio: request.input('bio', 'Hello!').normalize().replace(/[\uE000-\uF8FF]+/gu, '').replace(/[\u{000e0000}]/gu, '').trim(),
+      bio: request.input('bio', '').normalize().replace(/[\uE000-\uF8FF]+/gu, '').replace(/[\u{000e0000}]/gu, '').trim()
     })
 
     if (profile.updatedAt.diffNow('seconds').seconds > -60) {
@@ -182,7 +194,7 @@ export default class ProfilesController {
     // Validate input
     const validated = await request.validate({
       schema: this.profilesSchema,
-      cacheKey: 'profilesSchema',
+      cacheKey: 'profilesSchema'
     }) // Request may fail here if values do not pass validation.
 
     profile.color = validated.color
@@ -193,10 +205,10 @@ export default class ProfilesController {
 
     const chatOwnerUser = await User.find(profile.chatUserId) as User
 
-    let checkMessages: { error: string, message: string }[] = []
+    const checkMessages: Array<{ error: string, message: string }> = []
 
     const pajbotCheck = await PajbotAPI.check(chatOwnerUser.name, profile.bio)
-    if (pajbotCheck?.banned) {
+    if (pajbotCheck?.banned !== undefined) {
       // banphrase_data appears on banned === true
       const banphraseData = pajbotCheck.banphrase_data as { phrase: string }
       checkMessages.push({
@@ -211,8 +223,8 @@ export default class ProfilesController {
     }
 
     const heightCheck = await PajbotAPI.checkVersion2(chatOwnerUser.name, profile.bio)
-    if (heightCheck?.banned) {
-      const filterData = heightCheck.filter_data as { mute_type: number, reason: string }[]
+    if (heightCheck?.banned !== undefined) {
+      const filterData = heightCheck.filter_data as Array<{ mute_type: number, reason: string }>
       checkMessages.push({
         error: filterData.map(data => data.reason).join('\n '),
         message: 'Error: There are banned v2 phrases in your bio!'
@@ -241,7 +253,7 @@ export default class ProfilesController {
     return response.redirect(`/profile/${id}`)
   }
 
-  public async delete ({ params, auth, response, session }: HttpContextContract) {
+  public async delete ({ params, auth, response, session }: HttpContextContract): Promise<void> {
     if (auth.user === undefined) {
       return
     }
@@ -264,7 +276,7 @@ export default class ProfilesController {
       await Database.query().from('matches_lists').where('match_profile_id', profile.id).delete()
 
       // Anonymize profile
-      profile.bio = 'Hello!'
+      profile.bio = ''
       profile.favoriteEmotes = []
       profile.color = '#ffffff'
       profile.enabled = false
@@ -280,7 +292,7 @@ export default class ProfilesController {
     return response.redirect('/profile/')
   }
 
-  public async matchesJSONPagination ({ params, request, auth, response }: HttpContextContract) {
+  public async matchesJSONPagination ({ params, request, auth, response }: HttpContextContract): Promise<void> {
     if (auth.user === undefined) {
       return
     }
@@ -320,7 +332,7 @@ export default class ProfilesController {
     }
   }
 
-  public async unmatch ({ params, request, auth, response }: HttpContextContract) {
+  public async unmatch ({ params, request, auth, response }: HttpContextContract): Promise<void> {
     if (auth.user === undefined) {
       return
     }
@@ -376,19 +388,19 @@ export default class ProfilesController {
     }
   }
 
-  private async getAllProfilesForUser (user: User) {
-    const profiles: any[] = []
+  private async getAllProfilesForUser (user: User): Promise<ModelObject[]> {
+    const profiles: ModelObject[] = []
 
     await user.load('profile')
 
     for (let index = 0; index < user.profile.length; index++) {
       const profile = user.profile[index]
-      const profileJSON = profile.toJSON()
+      const profileJSON = profile.serialize()
 
       if (profile.chatUserId !== 0) {
         const matchedProfileUser = await User.find(profile.chatUserId)
         if (matchedProfileUser !== null) {
-          profileJSON.chat = matchedProfileUser.toJSON()
+          profileJSON.chat = matchedProfileUser.serialize()
           profiles.push(profileJSON)
         }
       } else {
@@ -423,7 +435,7 @@ export default class ProfilesController {
         // Someone else's, check if the requested profile has matched this requesting user.
         const hasMatched = await Database.query().from('matches_lists').where({
           profile_id: profileMatched.id,
-          match_user_id: user.id,
+          match_user_id: user.id
         }).first()
 
         if (hasMatched === null) {
@@ -431,8 +443,8 @@ export default class ProfilesController {
         }
 
         matchesJSON.push({
-          profile: profileMatched.toJSON(),
-          user: userMatched.toJSON(),
+          profile: profileMatched.serialize(),
+          user: userMatched.serialize()
         })
       }
 
@@ -443,11 +455,11 @@ export default class ProfilesController {
   private readonly profilesSchema = schema.create({
     bio: schema.string({}, [
       rules.maxLength(128),
-      rules.minLength(1),
-      rules.nonToxicBio(),
+      rules.minLength(3),
+      rules.nonToxicBio()
     ]),
     color: schema.string({}, [
-      rules.hexColorString(),
+      rules.hexColorString()
     ]),
     theme: schema.enum([...profileThemes] as const)
   })
@@ -459,6 +471,6 @@ export default class ProfilesController {
     noOwner: 'Error: Chat owner is missing. Report this error on github.',
     bodyBadRequest: 'Error: Body must contain { profileID: number }.',
     idBadRequest: 'Error: profileID is not a number.',
-    paginationGetBadRequest: 'Error: Pagination GET query is not a number.',
+    paginationGetBadRequest: 'Error: Pagination GET query is not a number.'
   }
 }
