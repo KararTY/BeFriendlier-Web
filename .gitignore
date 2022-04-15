@@ -69,3 +69,6 @@ package-lock.json
 
 # Supersecret.
 .supersecret.json
+
+# Battle emotes
+/public/img/battle_emotes/

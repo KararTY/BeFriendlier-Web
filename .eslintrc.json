@@ -1,38 +1,17 @@
 {
-  "env": {
-    "es2020": true,
-    "node": true
-  },
   "extends": [
-    "plugin:adonis/typescriptApp",
-    "prettier",
-    "prettier/@typescript-eslint",
-    "standard",
-    "standard-with-typescript"
+    "plugin:adonis/typescriptPackage",
+    "prettier"
   ],
-  "globals": {
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
-  },
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "project": ["tsconfig.eslint.json"],
-    "ecmaVersion": 11,
-    "sourceType": "module"
-  },
   "plugins": [
     "prettier"
   ],
   "rules": {
-    "@typescript-eslint/class-name-casing": "off",
-    "@typescript-eslint/interface-name-prefix": "off",
-    "comma-dangle": "off",
-    "@typescript-eslint/comma-dangle": ["error", {
-      "arrays": "always-multiline",
-      "objects": "always-multiline",
-      "imports": "never",
-      "exports": "never",
-      "functions": "never"
-    }]
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ]
   }
 }

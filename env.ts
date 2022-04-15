@@ -19,7 +19,7 @@ export default Env.rules({
   PORT: Env.schema.number(),
   APP_KEY: Env.schema.string(),
 
-  NODE_ENV: Env.schema.enum(['production', 'development', 'testing'] as const),
+  NODE_ENV: Env.schema.enum(['production', 'development', 'test'] as const),
   LOG_LEVEL: Env.schema.enum(['info', 'debug', 'warning', 'error'] as const),
 
   SESSION_DRIVER: Env.schema.enum(['cookie', 'file', 'redis'] as const),
@@ -41,5 +41,5 @@ export default Env.rules({
 
   PERSPECTIVE_API_TOKEN: Env.schema.string.optional(),
   PERSPECTIVE_API_THROTTLE: Env.schema.number(),
-  PERSPECTIVE_API_THRESHOLD_TOXICITY: Env.schema.number(),
+  PERSPECTIVE_API_THRESHOLD_TOXICITY: Env.schema.number()
 })
