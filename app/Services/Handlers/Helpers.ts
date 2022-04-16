@@ -409,7 +409,9 @@ export class Helper {
         chatUserId: chatOwnerUserModel.id,
         rolls: [],
         mismatches: [],
-        nextRolls: DateTime.fromJSDate(new Date())
+        nextEmote: DateTime.fromJSDate(new Date()),
+        nextRolls: DateTime.fromJSDate(new Date()),
+        nextBattle: DateTime.fromJSDate(new Date())
       })
 
       // TODO: Special handling for user, telling them that they've just created a new profile!
