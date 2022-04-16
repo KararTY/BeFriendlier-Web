@@ -1,0 +1,147 @@
+<section class="hero is-fullheight">
+  <div class="hero-head">
+    @include('includes/navbar')
+  </div>
+  <div class="hero-body">
+    <div class="container">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-title is-size-4">Getting emotes</div>
+        </div>
+        <div class="card-content">
+          <p>
+            <span>Every 5 hours, you can match or skip/decline a roll and earn a random global Twitch emote. You can then trade these emotes with other people by using the <code>giveemotes</code> command...</span>
+          @if(web.battleEmotes.length > 0)
+              <span>Or you can combine them into battle emotes. Try different emotes and see what you get. <strong>Successful combinations will spend the emotes.</strong></span>
+            </p>
+            <p>
+              <strong>You can resign an emote by pressing the <i class="icon">{{{ icon('trash-2') }}}</i> icon. This will give you back 1 random emote from the recipe.</strong>
+            </p>
+          @else
+              <small>Or you can combine them...</small>
+            </p>
+          @endif
+        </div>
+      </div>
+      <hr>
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-header-title is-size-4" data-emotes-title="{{ web.totalEmotes - web.battleEmotes.length }}">Your emotes - x{{ web.totalEmotes - web.battleEmotes.length }} total</h4>
+        </div>
+        <div {{{ user.streamerMode ? 'class="card-content blur" data-blur="emotes" data-blur-vanish="true" data-blur-text="true"' : 'class="card-content"' }}}>
+          @if(web.emotes.length > 0)
+            <div class="columns is-multiline is-mobile is-justify-content-center" id="emotesColumns">
+              @each(entry in web.emotes)
+                <div class="column is-narrow is-unselectable">
+                  <div class="box is-paddingless image is-128x128 is-flex is-flex-direction-column is-align-items-center is-justify-content-center" data-emote-id="{{ entry.emote_id }}">
+                    <figure class="image is-32x32 is-flex">
+                      <img class="object-contain" src="https://static-cdn.jtvnw.net/emoticons/v2/{{ entry.emote_id }}/default/light/1.0" alt="{{ entry.name }} emote image">
+                    </figure>
+                    <p><strong data-amount="{{ entry.amount }}">x{{ entry.amount }}</strong></p>
+                    <small>{{ entry.name }}</small>
+                  </div>
+                </div>
+              @endeach
+            </div>
+            <hr>
+            @if(web.foundRecipes)
+              <h4 class="is-size-4">Found recipes:</h4>
+              <div class="columns is-multiline is-mobile is-variable is-1">
+                @each((entry, key) in web.foundRecipes)
+                  <div class="column is-narrow">
+                    <div class="box has-text-centered">
+                      <div class="is-flex">
+                        @each(item in entry)
+                          <figure class="image is-32x32 is-flex m-auto">
+                            <img class="is-unselectable object-contain" src="https://static-cdn.jtvnw.net/emoticons/v2/{{ item[0] }}/default/light/1.0"
+                              data-image-switch="https://static-cdn.jtvnw.net/emoticons/v2/{{ item[0] }}/default/light/1.0"
+                              @each((subitem, index) in item.slice(1))
+                                data-item-{{ index }}="https://static-cdn.jtvnw.net/emoticons/v2/{{ subitem }}/default/light/1.0"
+                              @endeach
+                            >
+                          </figure>
+                        @endeach
+                      </div>
+                      <small><strong>{{ key }}</strong></small>
+                    </div>
+                  </div>
+                @endeach
+              </div>
+              <hr>
+            @endif
+            @include('forms/battleEmotes')
+          @else
+            <p>You must be dreaming! There's no emotes here, roll to farm some.</p>
+          @endif
+        </div>
+      </div>
+      <!--hr>
+      <div class="card">
+        <div class="card-content has-text-centered has-background-black is-flex is-paddingless">
+          <canvas class="m-auto" id="gameCanvas" width="800" height="600" style="width:100%;max-width:800px;"></canvas>
+        </div>
+      </div-->
+      <hr>
+      <div class="{{web.battleEmotes.length > 0 ? '' : 'is-hidden'}}" data-battle-emotes>
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-header-title is-size-4" data-battle-emotes-title="{{ web.battleEmotes.length }}">Your battle emotes - x{{ web.battleEmotes.length }} total</h4>
+          </div>
+          <div {{{ user.streamerMode ? 'class="card-content blur" data-blur="battleEmotes" data-blur-vanish="true" data-blur-text="true"' : 'class="card-content"' }}}>
+            <div class="columns is-multiline is-variable is-1" id="battleEmotesColumns">
+              @each(entry in web.battleEmotes)
+                <div class="column is-3" data-id="{{ entry.id }}">
+                  <div class="box content">
+                    <div class="level is-mobile is-marginless">
+                      <div class="level-left">
+                        <strong class="level-item is-size-4">{{ entry.image.name }}</strong>
+                      </div>
+                      <div class="level-right" title="Resign the battle emote, receive a random emote from the recipe back.">
+                        <button class="button" data-resign-battle-emote="{{ entry.id }}">
+                          <span class="icon">{{{ icon('trash-2') }}}</span>
+                        </button>
+                      </div>
+                    </div>
+                    <figure class="image max-width-256 is-flex m-auto">
+                      <img class="is-unselectable object-contain" src="/img/battle_emotes/{{ entry.image.localUrl }}" alt="{{ entry.image.name }} emote image." title="{{ entry.image.name }} drawn by {{ '@' + entry.image.author }}.">
+                    </figure>
+                    <p>
+                      <strong>Level:</strong> <span> {{ entry.statistics[1].defValue }}</span>
+                    </p>
+                    <p>
+                      <strong>Experience:</strong> <span> ~{{entry.statistics[2].curValue.toFixed(2)}}/<small>{{ nextLevelExperience(entry.statistics[1].defValue) }}</small></span>
+                      <progress
+                        class="progress is-small{{ getStatColor('Experience') }}"
+                        value="{{ entry.statistics[2].curValue }}"
+                        max="{{ nextLevelExperience(entry.statistics[1].defValue) }}"
+                        >~{{ ((entry.statistics[2].curValue / nextLevelExperience(entry.statistics[1].defValue)) * 100).toFixed(2) }}%
+                      </progress>
+                    </p>
+                    @each(statistic in entry.statistics.slice(3))
+                      <p>
+                        <label class="label">{{ statistic.name }}
+                          @if(statistic.curValue < statistic.defValue)
+                            <small>{{ statistic.curValue.toFixed(2) }}/{{ statistic.defValue.toFixed(2) }}</small>
+                          @endif
+                        </label>
+                        <progress
+                          class="progress is-small{{ getStatColor(statistic.name) }}"
+                          value="{{ statistic.curValue }}"
+                          max="{{ statistic.defValue + statistic.addValue }}"
+                          >~{{ ((statistic.curValue / (statistic.defValue + statistic.addValue)) * 100).toFixed(2) }}%
+                        </progress>
+                      </p>
+                    @endeach
+                  </div>
+                </div>
+              @endeach
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-foot">
+    @include('includes/footer')
+  </div>
+</section>

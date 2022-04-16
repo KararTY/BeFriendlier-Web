@@ -1,0 +1,45 @@
+<section class="hero is-fullheight">
+  <div class="hero-head">
+    @include('includes/navbar')
+  </div>
+  <div class="hero-body">
+    <div class="container">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-title is-size-4">Joined channels - x{{ web.channels.length }}</div>
+        </div>
+        <div class="card-content">
+          <p>
+            <span>Because the bot is in a testing phase, I will only add it if the channel's chat users are asking for it <strong>and the channel owner agrees and everyone involved is willing to deal with the bugs</strong>.</span>
+            <span>Agreed? Then send me a message on <strong>Twitch whispers (<span>@notkarar</span>)</strong> or on Discord: <strong>KararTY#0413</strong></span>
+          </p>
+          <hr>
+          <div class="menu">
+            <ul class="menu-list">
+              @each(channel in web.channels)
+                <li>
+                  <a href="{{ 'https://www.twitch.tv/' + channel.name }}" target="_blank">
+                    <div class="level is-mobile">
+                      <div class="level-left">
+                        <figure class="level-item image is-32x32 is-clipped">
+                          <img {{{ user && user.streamerMode ? 'class="blur is-rounded" data-blur-vanish="true" data-blur="channel-' + channel.name + '"' : 'class="is-rounded"' }}} src="{{ channel.avatar.replace('300x300', '70x70') }}" alt="{{ channel.display_name }}'s avatar">
+                        </figure>
+                        <strong class="level-item">{{ channel.display_name }}{{ channel.name !== channel.display_name.toLowerCase() ? ' (' + channel.name + ')': '' }}</strong>
+                      </div>
+                    </div>
+                  </a>
+                  <ul>
+                    <li title="This is the user's total emotes, not the channel's total emotes."><small>Total streamer emotes: x{{ channel.emotesCount }}</small></li>
+                  </ul>
+                </li>
+              @endeach
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-foot">
+    @include('includes/footer')
+  </div>
+</section>

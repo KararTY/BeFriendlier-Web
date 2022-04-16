@@ -1,9 +1,9 @@
-import Twitch from '@ioc:Adonis/Addons/Twitch'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Twitch from '@ioc:Befriendlier-Shared/Twitch'
 import { DateTime } from 'luxon'
 
 export default class ValidateTwitchToken {
-  private async validate ({ session, auth }: HttpContextContract) {
+  private async validate ({ session, auth }: HttpContextContract): Promise<undefined> {
     if (session.get('token') !== undefined) {
       const nextValidate = session.get('nextValidate') as string | undefined
 
@@ -13,7 +13,7 @@ export default class ValidateTwitchToken {
 
       const validatedToken = await Twitch.validateToken(session.get('token'))
 
-      session.put('nextValidate', DateTime.fromJSDate(new Date()).plus({ hour: 1 }).toJSDate())
+      session.put('nextValidate', DateTime.fromJSDate(new Date()).plus({ hours: 1 }).toJSDate())
 
       if (validatedToken === null) {
         session.flash('message', {
@@ -33,7 +33,7 @@ export default class ValidateTwitchToken {
     }
   }
 
-  public async handle (ctx: HttpContextContract, next: () => Promise<void>) {
+  public async handle (ctx: HttpContextContract, next: () => Promise<void>): Promise<void> {
     if (ctx.session.get('errorRefresh') === undefined) {
       await this.validate(ctx)
     }

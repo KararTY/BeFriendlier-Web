@@ -1,6 +1,6 @@
 <section class="hero is-fullheight">
   <div class="hero-head">
-    <div class="notification is-warning is-marginless"><a href="/terms">Terms of Service</a> & <a href="/privacy">Privacy Policy</a> have recently been updated! Please read them carefully. <strong>Effective date: August 12</strong></div>
+    <!-- <div class="notification is-warning is-marginless"><a href="/terms">Terms of Service</a> & <a href="/privacy">Privacy Policy</a> have recently been updated! Please read them carefully. <strong>Effective date: August 12</strong></div> -->
     @include('includes/navbar')
   </div>
   <div class="hero-body">
@@ -8,7 +8,8 @@
       <div class="animated slideInLeft">
         <h1 class="title is-1">BeFriendlier</h1>
         <h2 class="subtitle is-3">Find Twitch friends!</h2>
-        @if(!user)
+        <div class="buttons is-centered">
+          @if(!user)
           <div id="login">
             <a href="{{ twitchAuthURL(csrfToken) }}" class="button is-large" type="submit">
               <span class="icon">{{{ icon('twitch') }}}</span>
@@ -24,18 +25,26 @@
             <span class="icon">{{{ icon('user') }}}</span>
             <span>Profiles</span>
           </a>
+          @if(user.emotes.length > 0)
+            <a href="{{ route('EmotesController.read') }}" class="button is-large" type="submit">
+              <span class="icon">{{{ icon('star') }}}</span>
+              <span>Emotes</span>
+            </a>
+          @endif
         @endif
+        </div>
+
       </div>
       <div class="animated fadeIn delay-1s">
         <hr>
         <h3 class="is-size-5">Statistics</h3>
         <div class="columns">
           <div class="column">
-            <p>Serving {{web.statistics.users.total}} users.</p>
+            <p><a href="{{ route('LeaderboardsController.index') }}">&gt; Serving {{web.statistics.users.total}} users. &lt;</a></p>
             <p>{{web.statistics.users.new}} users joined today.</p>
           </div>
           <div class="column">
-            <p>Serving {{web.statistics.channels.total}} channels.</p>
+            <p><a href="{{ route('SplashController.channels') }}">&gt; Serving {{web.statistics.channels.total}} channels. &lt;</a></p>
             <p>{{web.statistics.channels.new}} channels joined today.</p>
           </div>
         </div>

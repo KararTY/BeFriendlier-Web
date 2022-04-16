@@ -1,12 +1,11 @@
 /**
-* Config source: https://git.io/JvyKy
-*
-* Feel free to let us know via PR, if you find something broken in this config
-* file.
-*/
+ * Config source: https://git.io/JY0mp
+ *
+ * Feel free to let us know via PR, if you find something broken in this config
+ * file.
+ */
 
 import { AuthConfig } from '@ioc:Adonis/Addons/Auth'
-import User from 'App/Models/User'
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +18,7 @@ import User from 'App/Models/User'
 */
 const authConfig: AuthConfig = {
   guard: 'web',
-  list: {
+  guards: {
     /*
     |--------------------------------------------------------------------------
     | Web Guard
@@ -72,13 +71,16 @@ const authConfig: AuthConfig = {
         | Model
         |--------------------------------------------------------------------------
         |
-        | The model to use for fetching or finding users
+        | The model to use for fetching or finding users. The model is imported
+        | lazily since the config files are read way earlier in the lifecycle
+        | of booting the app and the models may not be in a usable state at
+        | that time.
         |
         */
-        model: User,
-      },
-    },
-  },
+        model: async () => await import('App/Models/User')
+      }
+    }
+  }
 }
 
 export default authConfig

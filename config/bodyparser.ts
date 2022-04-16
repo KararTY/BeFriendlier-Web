@@ -36,8 +36,8 @@ const bodyParserConfig: BodyParserConfig = {
       'application/json',
       'application/json-patch+json',
       'application/vnd.api+json',
-      'application/csp-report',
-    ],
+      'application/csp-report'
+    ]
   },
 
   /*
@@ -53,9 +53,22 @@ const bodyParserConfig: BodyParserConfig = {
     encoding: 'utf-8',
     limit: '1mb',
     queryString: {},
+
+    /*
+    |--------------------------------------------------------------------------
+    | Convert empty strings to null
+    |--------------------------------------------------------------------------
+    |
+    | Convert empty form fields to null. HTML forms results in field string
+    | value when the field is left blank. This option normalizes all the blank
+    | field values to "null"
+    |
+    */
+    convertEmptyStringsToNull: true,
+
     types: [
-      'application/x-www-form-urlencoded',
-    ],
+      'application/x-www-form-urlencoded'
+    ]
   },
 
   /*
@@ -73,8 +86,8 @@ const bodyParserConfig: BodyParserConfig = {
     limit: '1mb',
     queryString: {},
     types: [
-      'text/*',
-    ],
+      'text/*'
+    ]
   },
 
   /*
@@ -149,6 +162,18 @@ const bodyParserConfig: BodyParserConfig = {
 
     /*
     |--------------------------------------------------------------------------
+    | Convert empty strings to null
+    |--------------------------------------------------------------------------
+    |
+    | Convert empty form fields to null. HTML forms results in field string
+    | value when the field is left blank. This option normalizes all the blank
+    | field values to "null"
+    |
+    */
+    convertEmptyStringsToNull: true,
+
+    /*
+    |--------------------------------------------------------------------------
     | Max Fields
     |--------------------------------------------------------------------------
     |
@@ -178,9 +203,9 @@ const bodyParserConfig: BodyParserConfig = {
     |
     */
     types: [
-      'multipart/form-data',
-    ],
-  },
+      'multipart/form-data'
+    ]
+  }
 }
 
 export default bodyParserConfig

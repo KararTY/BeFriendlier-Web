@@ -13,15 +13,15 @@ export default class BotLoginController {
     clientSecret: TwitchConfig.clientSecret,
     redirectURI: TwitchConfig.botRedirectURI,
     scope: ['chat:read', 'chat:edit', 'whispers:read', 'whispers:edit'],
-    headers: TwitchConfig.headers,
+    headers: TwitchConfig.headers
   }, Logger.level)
 
-  public async index ({ request, auth, response, session }: HttpContextContract) {
+  public async index ({ request, auth, response, session }: HttpContextContract): Promise<void> {
     if (auth.user !== undefined) {
       return response.redirect('/')
     }
 
-    const { code } = request.get()
+    const { code } = request.qs()
 
     const token = await this.twitchAPI.requestToken(code)
     if (token === null) {
@@ -50,5 +50,7 @@ export default class BotLoginController {
 
       return response.redirect('/')
     }
+
+    return response.notFound()
   }
 }

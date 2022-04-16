@@ -1,6 +1,5 @@
 import { BaseModel, column, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
 import { DateTime } from 'luxon'
-import { Emote } from 'befriendlier-shared'
 
 export default class Profile extends BaseModel {
   @column({ isPrimary: true })
@@ -23,16 +22,16 @@ export default class Profile extends BaseModel {
   public color: string
 
   @column({
-    prepare: (value: Emote[]) => JSON.stringify(value),
+    prepare: (value: string[]) => JSON.stringify(value),
     consume: (value: string | any) => {
       if (typeof value === 'string') {
         return JSON.parse(value)
       } else {
         return value
       }
-    },
+    }
   })
-  public favoriteEmotes: Emote[]
+  public favoriteEmotes: string[]
 
   @manyToMany(() => Profile, {
     localKey: 'id',
@@ -40,7 +39,7 @@ export default class Profile extends BaseModel {
     relatedKey: 'id',
     pivotRelatedForeignKey: 'match_profile_id',
     pivotTable: 'matches_lists',
-    pivotColumns: ['user_id', 'match_user_id'],
+    pivotColumns: ['user_id', 'match_user_id']
   })
   public matches: ManyToMany<typeof Profile>
 
@@ -52,7 +51,7 @@ export default class Profile extends BaseModel {
       } else {
         return value
       }
-    },
+    }
   })
   public mismatches: number[]
 
@@ -64,16 +63,25 @@ export default class Profile extends BaseModel {
       } else {
         return value
       }
-    },
+    }
   })
   public rolls: number[]
-
-  @column.dateTime()
-  public nextRolls: DateTime
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  @column.dateTime()
+  public nextRolls: DateTime
+
+  @column.dateTime()
+  public nextEmote: DateTime
+
+  @column()
+  public theme: string
+
+  @column.dateTime()
+  public nextBattle: DateTime
 }

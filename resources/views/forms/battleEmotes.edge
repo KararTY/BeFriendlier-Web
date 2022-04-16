@@ -1,0 +1,10 @@
+<form action="{{ route('EmotesController.combineEmotes') }}" class="form" method="POST" id="emotesCombine">
+  <div class="columns is-multiline is-mobile is-variable is-1" id="emotesCombineListColumns"></div>
+  {{ csrfField() }}
+</form>
+
+<!-- TODO: Add fields to "Resign a battle emote" -->
+
+<div class="buttons is-hidden" id="emoteSubmitButtons">
+  <button class="button" data-id="combine">Combine</button>
+</div>

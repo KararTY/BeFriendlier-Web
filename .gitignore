@@ -38,8 +38,15 @@ typings/
 # Output of 'npm pack'
 *.tgz
 
-# Yarn Integrity file
+# Yarn files
 .yarn-integrity
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
 
 # dotenv environment variables file
 .env
@@ -58,6 +65,10 @@ public/css
 public/js
 
 pnpm-lock.yaml
+package-lock.json
 
 # Supersecret.
 .supersecret.json
+
+# Battle emotes
+/public/img/battle_emotes/

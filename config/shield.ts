@@ -6,6 +6,7 @@
  */
 
 import { ShieldConfig } from '@ioc:Adonis/Addons/Shield'
+import Env from '@ioc:Adonis/Core/Env'
 
 /*
 |--------------------------------------------------------------------------
@@ -48,18 +49,6 @@ export const csp: ShieldConfig['csp'] = {
 
   /*
   |--------------------------------------------------------------------------
-  | Loose Mode
-  |--------------------------------------------------------------------------
-  |
-  | This module will detect common mistakes in your directives and throw
-  | errors if it finds any. To disable this, set the following following
-  | to `true`.
-  |
-  */
-  loose: false,
-
-  /*
-  |--------------------------------------------------------------------------
   | Report only
   |--------------------------------------------------------------------------
   |
@@ -67,34 +56,7 @@ export const csp: ShieldConfig['csp'] = {
   | instead report them to a URL.
   |
   */
-  reportOnly: false,
-
-  /*
-  |--------------------------------------------------------------------------
-  | Set all headers
-  |--------------------------------------------------------------------------
-  |
-  | Headers staring with `X` have been depreciated, since all major browsers
-  | supports the standard CSP header. So its better to disable deperciated
-  | headers, unless you want them to be set.
-  |
-  */
-  setAllHeaders: false,
-
-  /*
-  |--------------------------------------------------------------------------
-  | Disable on android
-  |--------------------------------------------------------------------------
-  |
-  | Certain versions of android are buggy with CSP policy. So you can set
-  | this value to true, to disable it for Android versions with buggy
-  | behavior.
-  |
-  | Here is an issue reported on a different package, but helpful to read
-  | if you want to know the behavior. https://github.com/helmetjs/helmet/pull/82
-  |
-  */
-  disableAndroid: true,
+  reportOnly: false
 }
 
 /*
@@ -112,7 +74,7 @@ export const csrf: ShieldConfig['csrf'] = {
   | Enable/Disable CSRF
   |--------------------------------------------------------------------------
   */
-  enabled: true,
+  enabled: Env.get('NODE_ENV') !== 'test',
 
   /*
   |--------------------------------------------------------------------------
@@ -125,6 +87,10 @@ export const csrf: ShieldConfig['csrf'] = {
   |
   | `/foo/bar`
   |
+  | Also you can define a function that is evaluated on every HTTP Request.
+  | ```
+  |  exceptRoutes: ({ request }) => request.url.includes('/api')
+  | ```
   */
   exceptRoutes: [],
 
@@ -152,24 +118,7 @@ export const csrf: ShieldConfig['csrf'] = {
   | Define an array of HTTP methods to be validated for a valid CSRF token.
   |
   */
-  methods: ['POST', 'PUT', 'PATCH', 'DELETE'],
-}
-
-/*
-|--------------------------------------------------------------------------
-| No Open
-|--------------------------------------------------------------------------
-|
-| This will prevent old versions of Internet Explorer from allowing
-| malicious HTML downloads to be executed in the context of your
-| site.
-|
-| By default, the security header is disabled, since not many websites are
-| running on ie8 these days.
-|
-*/
-export const noOpen: ShieldConfig['noOpen'] = {
-  enabled: false,
+  methods: ['POST', 'PUT', 'PATCH', 'DELETE']
 }
 
 /*
@@ -203,7 +152,7 @@ export const dnsPrefetch: ShieldConfig['dnsPrefetch'] = {
   | - When `allow = false`, then `X-DNS-Prefetch-Control = 'off'`
   |
   */
-  allow: true,
+  allow: true
 }
 
 /*
@@ -222,7 +171,7 @@ export const dnsPrefetch: ShieldConfig['dnsPrefetch'] = {
 */
 export const xFrame: ShieldConfig['xFrame'] = {
   enabled: true,
-  action: 'DENY',
+  action: 'DENY'
 }
 
 /*
@@ -268,7 +217,7 @@ export const hsts: ShieldConfig['hsts'] = {
   | the HSTS policy. Learn more https://hstspreload.org/
   |
   */
-  preload: false,
+  preload: false
 }
 
 /*
@@ -284,21 +233,5 @@ export const hsts: ShieldConfig['hsts'] = {
 |
 */
 export const contentTypeSniffing: ShieldConfig['contentTypeSniffing'] = {
-  enabled: true,
-}
-
-/*
-|--------------------------------------------------------------------------
-| X-XSS-Protection
-|--------------------------------------------------------------------------
-|
-| X-XSS Protection saves applications from XSS attacks. It was adopted
-| by IE and later followed by some other browsers.
-|
-| Learn more at https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
-*/
-export const xss: ShieldConfig['xss'] = {
-  enabled: true,
-  enableOnOldIE: false,
-  mode: 'block',
+  enabled: true
 }

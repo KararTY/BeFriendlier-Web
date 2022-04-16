@@ -1,5 +1,6 @@
 import { BaseModel, column, hasMany, HasMany, manyToMany, ManyToMany } from '@ioc:Adonis/Lucid/Orm'
 import Profile from 'App/Models/Profile'
+import EmoteEntry from './EmoteEntry'
 import { DateTime } from 'luxon'
 
 export default class User extends BaseModel {
@@ -28,12 +29,13 @@ export default class User extends BaseModel {
   public twitchID: string
 
   @manyToMany(() => User, {
+    pivotTimestamps: true,
     localKey: 'id',
     pivotForeignKey: 'user_id',
     relatedKey: 'id',
     pivotRelatedForeignKey: 'streamer_id',
     pivotTable: 'favorite_streamer_lists',
-    serializeAs: 'favorite_streamers',
+    serializeAs: 'favorite_streamers'
   })
   public favoriteStreamers: ManyToMany<typeof User>
 
@@ -42,6 +44,12 @@ export default class User extends BaseModel {
 
   @column()
   public host: boolean
+
+  @hasMany(() => EmoteEntry)
+  public emotes: HasMany<typeof EmoteEntry>
+
+  @column()
+  public currency: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

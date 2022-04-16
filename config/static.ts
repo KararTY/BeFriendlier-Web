@@ -58,7 +58,7 @@ const staticConfig: AssetsConfig = {
   | the file system's last modified value.
   |
   */
-  lastModified: true,
+  lastModified: true
 }
 
 export default staticConfig

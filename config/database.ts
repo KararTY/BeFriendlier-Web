@@ -8,12 +8,11 @@
 import Application from '@ioc:Adonis/Core/Application'
 import Env from '@ioc:Adonis/Core/Env'
 import { DatabaseConfig } from '@ioc:Adonis/Lucid/Database'
-import { OrmConfig } from '@ioc:Adonis/Lucid/Orm'
 
-const healthCheck = Boolean(Env.get('DB_HEALTHCHECK', false) as string)
-const connection = Env.get('DB_CONNECTION', 'sqlite') as string
+const healthCheck = Env.get('DB_HEALTHCHECK', false)
+const connection = Env.get('DB_CONNECTION', 'sqlite')
 
-const databaseConfig: DatabaseConfig & { orm: Partial<OrmConfig> } = {
+const databaseConfig: DatabaseConfig = {
   /*
   |--------------------------------------------------------------------------
   | Connection
@@ -41,10 +40,11 @@ const databaseConfig: DatabaseConfig & { orm: Partial<OrmConfig> } = {
     sqlite: {
       client: 'sqlite',
       connection: {
-        filename: Application.tmpPath('db.sqlite3'),
+        filename: Application.tmpPath('db.sqlite3')
       },
       useNullAsDefault: true,
       healthCheck: connection === 'sqlite' ? healthCheck : false,
+      debug: false
     },
 
     /*
@@ -61,13 +61,17 @@ const databaseConfig: DatabaseConfig & { orm: Partial<OrmConfig> } = {
     mysql: {
       client: 'mysql',
       connection: {
-        host: Env.get('DB_HOST', '127.0.0.1') as string,
+        host: Env.get('DB_HOST', '127.0.0.1'),
         port: Number(Env.get('DB_PORT', 3306)),
-        user: Env.get('DB_USER', 'lucid') as string,
-        password: Env.get('DB_PASSWORD', 'lucid') as string,
-        database: Env.get('DB_NAME', 'lucid') as string,
+        user: Env.get('DB_USER', 'lucid'),
+        password: Env.get('DB_PASSWORD', 'lucid'),
+        database: Env.get('DB_NAME', 'lucid')
       },
       healthCheck: connection === 'mysql' ? healthCheck : false,
+      debug: false,
+      migrations: {
+        naturalSort: true
+      }
     },
 
     /*
@@ -83,31 +87,69 @@ const databaseConfig: DatabaseConfig & { orm: Partial<OrmConfig> } = {
     */
     pg: {
       client: 'pg',
+      version: '12',
       connection: {
-        host: Env.get('DB_HOST', '127.0.0.1') as string,
-        port: Number(Env.get('DB_PORT', 5432)),
-        user: Env.get('DB_USER', 'lucid') as string,
-        password: Env.get('DB_PASSWORD', 'lucid') as string,
-        database: Env.get('DB_NAME', 'lucid') as string,
+        host: Env.get('DB_HOST', '127.0.0.1'),
+        port: Env.get('DB_PORT', 5432),
+        user: Env.get('DB_USER', 'lucid'),
+        password: Env.get('DB_PASSWORD', 'lucid'),
+        database: Env.get('DB_NAME', 'lucid')
       },
       healthCheck: connection === 'pg' ? healthCheck : false,
+      debug: false,
+      migrations: {
+        naturalSort: true
+      }
     },
-  },
 
-  /*
-  |--------------------------------------------------------------------------
-  | Orm Configuration
-  |--------------------------------------------------------------------------
-  |
-  | Following are some of the configuration options to tweak the conventional
-  | settings of the ORM. For example:
-  |
-  | - Define a custom function to compute the default table name for a given model.
-  | - Or define a custom function to compute the primary key for a given model.
-  |
-  */
-  orm: {
-  },
+    /*
+    |--------------------------------------------------------------------------
+    | OracleDB config
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for Oracle database. Make sure to install the driver
+    | from npm when using this connection
+    |
+    | npm i oracledb
+    |
+    */
+    oracle: {
+      client: 'oracledb',
+      connection: {
+        host: Env.get('ORACLE_HOST'),
+        port: Env.get('ORACLE_PORT'),
+        user: Env.get('ORACLE_USER'),
+        password: Env.get('ORACLE_PASSWORD', ''),
+        database: Env.get('ORACLE_DB_NAME')
+      },
+      healthCheck: connection === 'oracle' ? healthCheck : false,
+      debug: false
+    },
+
+    /*
+    |--------------------------------------------------------------------------
+    | MSSQL config
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for MSSQL database. Make sure to install the driver
+    | from npm when using this connection
+    |
+    | npm i mssql
+    |
+    */
+    mssql: {
+      client: 'mssql',
+      connection: {
+        user: Env.get('MSSQL_USER'),
+        port: Env.get('MSSQL_PORT'),
+        server: Env.get('MSSQL_SERVER'),
+        password: Env.get('MSSQL_PASSWORD', ''),
+        database: Env.get('MSSQL_DB_NAME')
+      },
+      healthCheck: connection === 'mssql' ? healthCheck : false,
+      debug: false
+    }
+  }
 }
 
 export default databaseConfig

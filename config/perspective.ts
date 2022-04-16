@@ -4,7 +4,7 @@ const PerspectiveAPIConfig = {
   /**
    * Perspective API Token.
    */
-  token: Env.get('PERSPECTIVE_API_TOKEN') as string,
+  token: Env.get('PERSPECTIVE_API_TOKEN'),
 
   /**
    * Perspective API throttling. Normal accounts have 1 query per second.
@@ -20,8 +20,8 @@ const PerspectiveAPIConfig = {
    * HTTP request headers.
    */
   headers: {
-    'user-agent': 'befriendlierapp (https://github.com/kararty/befriendlier-web)',
-  },
+    'user-agent': 'befriendlierapp (https://github.com/kararty/befriendlier-web)'
+  }
 }
 
 export default PerspectiveAPIConfig

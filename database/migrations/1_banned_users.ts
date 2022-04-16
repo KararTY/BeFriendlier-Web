@@ -4,7 +4,7 @@ import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 export default class BannedUsers extends BaseSchema {
   protected tableName = 'banned_users'
 
-  public async up () {
+  public async up (): Promise<void> {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
       table.string('name', 32).notNullable()
@@ -13,7 +13,7 @@ export default class BannedUsers extends BaseSchema {
     })
   }
 
-  public async down () {
+  public async down (): Promise<void> {
     this.schema.dropTable(this.tableName)
   }
 }

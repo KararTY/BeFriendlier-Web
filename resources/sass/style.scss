@@ -9,10 +9,16 @@
 }
 
 // Brand colors
+$custom-colors: (
+  "orange": hsl(14, 100%, 53%),
+  "yellow": hsl(44, 100%, 77%),
+  "cyan": hsl(207, 61%, 53%),
+  "purple": hsl(271, 100%, 71%),
+);
 
 // Global variables overwrite
 $family-sans-serif: 'Fira Sans', sans-serif;
-$dimensions: 16 24 32 48 64 96 128 300;
+$dimensions: 16 24 32 48 64 96 128 256 300;
 /*! bulma.io v0.8.2 | MIT License | github.com/jgthms/bulma */
 @import "../../node_modules/bulma/sass/utilities/_all.sass";
 
@@ -33,10 +39,12 @@ $dimensions: 16 24 32 48 64 96 128 300;
 
 // @import "../../node_modules/bulma/sass/components/_all.sass";
 @import "../../node_modules/bulma/sass/components/card.sass";
+@import "../../node_modules/bulma/sass/components/modal.sass";
 // @import "../../node_modules/bulma/sass/components/pagination.sass";
 // @import "../../node_modules/bulma/sass/components/tabs.sass";
 @import "../../node_modules/bulma/sass/components/level.sass";
 @import "../../node_modules/bulma/sass/components/navbar.sass";
+@import "../../node_modules/bulma/sass/components/menu.sass";
 
 @import "../../node_modules/bulma/sass/form/_all.sass";
 

@@ -1,0 +1,75 @@
+<section class="hero is-fullheight">
+  <div class="hero-head">
+    @include('includes/navbar')
+  </div>
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns">
+        <div class="column">
+          <div class="card">
+            <div class="card-header">
+              <p class="card-header-title is-size-4">Information</p>
+            </div>
+            <div class="card-content">
+              <p>The leaderboards are updated every 4-5 hours. This list does not include hosted users, <a href="{{ route('SplashController.channels') }}">instead there is a separate list of hosted streamers which you can find here.</a></p>
+              @if(typeof web.userPosition !== 'undefined')
+                <p>Your leaderboard position is <strong>{{ web.userPosition.rn }}</strong> with a total emote count of <strong>{{ web.userPosition.total_emotes }}</strong>.</p>
+              @endif
+            </div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="card">
+            <div class="card-header">
+              <p class="card-header-title is-size-4">Top 10 Emote Farmers</p>
+            </div>
+            <div class="card-content">
+              <table class="table is-fullwidth">
+                <thead>
+                  <tr>
+                    <th><abbr title="Position">Pos</abbr></th>
+                    <th>User</th>
+                    <th><abbr title="Amount">Amt</abbr></th>
+                  </tr>
+                </thead>
+                <tfoot>
+                  <tr>
+                    <th><abbr title="Position">Pos</abbr></th>
+                    <th>User</th>
+                    <th><abbr title="Amount">Amt</abbr></th>
+                  </tr>
+                </tfoot>
+                <tbody>
+                @each((entry, index) in web.leaderboards.topTenEmotesUsers)
+                  <tr>
+                    <th>{{ index + 1 }}</th>
+                    <td>
+                      <div class="level is-mobile">
+                        <div class="level-left">
+                          <figure class="level-item image is-32x32 is-clipped">
+                            <img {{{ user && user.streamerMode ? 'class="blur is-rounded" data-blur-vanish="true" data-blur="channel-' + entry.name + '"' : 'class="is-rounded"' }}} src="{{ entry.avatar.replace('300x300', '70x70') }}" alt="{{ entry.display_name }}'s avatar">
+                          </figure>
+                          <span class="level-item">{{ entry.display_name }}{{ entry.name !== entry.display_name.toLowerCase() ? ' (' + entry.name + ')': '' }}</span>
+                          @if (index === 0)
+                            <span class="level-item" title="The King duck!">(👑🦆)</span>
+                          @endif
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <strong>{{ entry.total_emotes }}</strong>
+                    </td>
+                  </tr>
+                @endeach
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-foot">
+    @include('includes/footer')
+  </div>
+</section>

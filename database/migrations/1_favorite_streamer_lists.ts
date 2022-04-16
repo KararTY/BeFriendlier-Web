@@ -5,7 +5,7 @@ import { DateTime } from 'luxon'
 export default class FavoriteStreamerLists extends BaseSchema {
   protected tableName = 'favorite_streamer_lists'
 
-  public async up () {
+  public async up (): Promise<void> {
     this.schema.createTable(this.tableName, table => {
       table.integer('user_id')
       table.integer('streamer_id')
@@ -14,7 +14,7 @@ export default class FavoriteStreamerLists extends BaseSchema {
     })
   }
 
-  public async down () {
+  public async down (): Promise<void> {
     this.schema.dropTable(this.tableName)
   }
 }

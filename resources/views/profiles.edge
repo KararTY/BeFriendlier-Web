@@ -4,40 +4,36 @@
   </div>
   <div class="hero-body">
     <div class="container">
-      <div>
-        <div {{{ user.streamer_mode ? 'class="blur" data-blur="updateUser" data-blur-vanish="true" data-blur-text="true"' : '' }}}>
-          @each(profile in profiles.filter(profile => profile.enabled))
-            <a href="{{ route('ProfilesController.read', { params: { id: profile.id } }) }}">
-              <div class="card">
-                <div class="card-header">
-                  <div class="card-header-title">
-                    <div class="level is-mobile">
-                      <div class="level-left">
-                        @if(profile.chat_user_id === 0)
-                          <span class="level-item icon">{{{ icon('globe') }}}</span>
-                          <p class="level-item">Your global profile</p>
-                          @if(!profile.enabled)
-                            <p class="level-item">(Disabled)</p>
-                          @endif
-                        @else
-                          <div class="icon level-item">
-                            <figure class="image">
-                              <img src="{{ profile.chat.avatar.replace('300x300', '70x70') }}" alt="{{ profile.chat.name }}'s avatar">
-                            </figure>
-                          </div>
-                          <p class="level-item">Your profile in {{ profile.chat.display_name }}'s ({{profile.chat.name}}) chat</p>
+      <div {{{ user.streamerMode ? 'class="blur" data-blur="updateUser" data-blur-vanish="true" data-blur-text="true"' : 'class="columns is-multiline"' }}}>
+        @each(profile in profiles)
+          <a href="{{ route('ProfilesController.read', { id: profile.id }) }}" class="column is-12">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-title is-clipped">
+                  <div class="level is-mobile">
+                    <div class="level-left">
+                      @if(profile.chat_user_id === 0)
+                        <span class="level-item image is-32x32">{{{ icon('globe', 32) }}}</span>
+                        <p class="level-item">Your global profile</p>
+                        @if(!profile.enabled)
+                          <p class="level-item">(Disabled)</p>
                         @endif
-                      </div>
+                      @else
+                        <figure class="image is-32x32 level-item">
+                            <img class="is-rounded" src="{{ profile.chat.avatar.replace('300x300', '70x70') }}" alt="{{ profile.chat.name }}'s avatar">
+                        </figure>
+                        <p class="level-item">Your profile in {{ profile.chat.display_name }}'s {{profile.chat.display_name.toLowerCase() === profile.chat.name ? '' : profile.chat.name}} chat</p>
+                      @endif
                     </div>
                   </div>
-                  <div class="card-header-icon">{{{ icon('arrow-right') }}}</div>
                 </div>
+                <div class="card-header-icon">{{{ icon('arrow-right') }}}</div>
               </div>
-            </a>
-          @else
-            <h3 class="has-text-centered is-size-3">You don't have any profiles! Go create one in chat or activate your global public profile in <a href="/user#userSettings">settings</a>.</h3>
-          @endeach
-        </div>
+            </div>
+          </a>
+        @else
+          <h3 class="has-text-centered is-size-3">You don't have any profiles! Go create one in chat or activate your global public profile in <a href="/user#userSettings">settings</a>.</h3>
+        @endeach
       </div>
     </div>
   </div>

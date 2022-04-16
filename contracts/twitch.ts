@@ -1,4 +1,4 @@
-declare module '@ioc:Adonis/Addons/Twitch' {
+declare module '@ioc:Befriendlier-Shared/Twitch' {
   import { TwitchAuth } from 'befriendlier-shared'
 
   const twitch: TwitchAuth
