@@ -404,12 +404,14 @@ export default class BattleHandler extends DefaultHandler {
       opponentHPs.push(emoteMsg(battleEmoteName, BattleHandler.statisticArrayToObject(battleEntry.battleEmote), specialStat))
     }
 
+    const turnStr = battleResult.turn > 1 ? 'turns' : 'turn'
+    const specialMsg = battleResult.turn === 1 ? ' 1 hit kill, ouch!' : ''
     if (winnerNames.length > 1) {
-      msg += `stalemate! You all survived after ${battleResult.turn} turns. [You] ${thisUserStr}. [Opponent] ${opponentHPs.join('. ')}.`
+      msg += `stalemate! You all survived after ${battleResult.turn} ${turnStr}. [You] ${thisUserStr}. [Opponent] ${opponentHPs.join('. ')}.`
     } else if (battleResult.winningEntries.some(bE => bE.id === thisUserBattleEntryId)) {
-      msg += `you win after ${battleResult.turn} turns with ${thisUserStr}.`
+      msg += `you win after ${battleResult.turn} ${turnStr} with ${thisUserStr}. [Opponent] ${opponentHPs.join('. ')}.${specialMsg}`
     } else if (winnerNames.length === 1) {
-      msg += `you lost with ${thisUserStr} after ${battleResult.turn} turns. [Opponent] ${opponentHPs.join(' ')}`
+      msg += `you lost with ${thisUserStr} after ${battleResult.turn} ${turnStr}. [Opponent] ${opponentHPs.join('. ')}.${specialMsg}`
     } else {
       msg += `you all lost after ${battleResult.turn} turns. Unlucky, 🦆 rubber ducky.`
     }
