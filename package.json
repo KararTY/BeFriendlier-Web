@@ -6,7 +6,7 @@
     "build": "npm run build-js && npm run build-css && npm run build-server",
     "build-server": "node ace build --production",
     "build-css": "node-sass resources/sass/style.scss public/css/stylesheet.css --output-style compressed",
-    "build-js": "parcel build resources/js/Index.ts --dist-dir public/js/ --detailed-report",
+    "build-js": "parcel build resources/js/index.ts --dist-dir public/js/ --detailed-report",
     "start": "node server.js",
     "dev": "node ace serve --watch --node-args=\"--inspect\"",
     "lint": "ts-standard",
