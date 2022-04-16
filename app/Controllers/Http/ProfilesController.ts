@@ -1,4 +1,5 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Logger from '@ioc:Adonis/Core/Logger'
 import { rules, schema } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
 import { ModelObject } from '@ioc:Adonis/Lucid/Orm'
@@ -208,31 +209,32 @@ export default class ProfilesController {
     const checkMessages: Array<{ error: string, message: string }> = []
 
     const pajbotCheck = await PajbotAPI.check(chatOwnerUser.name, profile.bio)
-    if (pajbotCheck?.banned !== undefined) {
-      // banphrase_data appears on banned === true
-      const banphraseData = pajbotCheck.banphrase_data as { phrase: string }
+    if (pajbotCheck === null) {
       checkMessages.push({
-        error: `🦆 Please remove: ${banphraseData.phrase}`,
-        message: 'Error: There are banned phrases in your bio!'
+        error: 'Please try setting this later when the Banphrase v1 API is online.',
+        message: 'Banphrase v1 API is offline.'
       })
-    } else if (pajbotCheck === null) {
+    } else if (pajbotCheck.banned) {
+      const banphraseData = pajbotCheck.banphrase_data as { phrase: string }
+      Logger.warn('"%s" contains bad words (%s)', profile.bio, JSON.stringify(pajbotCheck.banphrase_data))
       checkMessages.push({
-        error: 'Please try setting this later when the Banphrase API is online.',
-        message: 'Banphrase API is offline.'
+        error: `🦆 Please remove: ${banphraseData?.phrase}`,
+        message: 'Error: There are banned phrases (Banphrase v1) in your bio!'
       })
     }
 
-    const heightCheck = await PajbotAPI.checkVersion2(chatOwnerUser.name, profile.bio)
-    if (heightCheck?.banned !== undefined) {
-      const filterData = heightCheck.filter_data as Array<{ mute_type: number, reason: string }>
-      checkMessages.push({
-        error: filterData.map(data => data.reason).join('\n '),
-        message: 'Error: There are banned v2 phrases in your bio!'
-      })
-    } else if (heightCheck === null) {
+    const pajbot2Check = await PajbotAPI.checkVersion2(chatOwnerUser.name, profile.bio)
+    if (pajbot2Check === null) {
       checkMessages.push({
         error: 'Please try setting this later when the Banphrase v2 API is online.',
         message: 'Banphrase v2 API is offline.'
+      })
+    } else if (pajbot2Check.banned) {
+      const filterData = pajbot2Check.filter_data as Array<{ mute_type: number, reason: string }>
+      Logger.warn('"%s" contains bad words (%s)', profile.bio, JSON.stringify(pajbot2Check.filter_data))
+      checkMessages.push({
+        error: filterData.map(data => data.reason).join('\n '),
+        message: 'Error: There are banned phrases (Banphrase v2) in your bio!'
       })
     }
 
