@@ -1,5 +1,5 @@
 import { html, render } from 'uhtml'
-import { getStatColor } from '../../providers/Battle'
+import { getStatColor } from '../../providers/Battle/Index'
 
 const modal = document.querySelector('.modal') as HTMLElement
 

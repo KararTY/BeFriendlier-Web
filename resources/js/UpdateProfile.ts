@@ -1,5 +1,5 @@
 import { html } from 'uhtml'
-import Theme from '../../providers/Theme'
+import Theme from '../../providers/Theme/Index'
 import { displayToast } from './App'
 
 class UpdateProfileForm {

@@ -1,5 +1,5 @@
 import { html, render } from 'uhtml'
-import { getStatColor, sortEmoteEntryArray } from '../../providers/Battle'
+import { getStatColor, sortEmoteEntryArray } from '../../providers/Battle/Index'
 import { displayToast } from './App'
 import { emoteResultModal } from './Modal'
 
