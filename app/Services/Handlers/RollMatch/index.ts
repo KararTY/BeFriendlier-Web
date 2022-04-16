@@ -1,5 +1,6 @@
 import Emote from 'App/Models/Emote'
 import Profile from 'App/Models/Profile'
+import User from 'App/Models/User'
 import { MessageType, ROLLMATCH } from 'befriendlier-shared'
 import { ExtendedWebSocket, ResSchema } from '../../Ws'
 import BattleHandler from '../Battle'
@@ -46,6 +47,7 @@ export default class RollMatchHandler extends DefaultHandler {
     }
 
     let profile: Profile
+    let rollMatchUser: User
     try {
       const data = await Helper.rollMatch(rm,
         { profile: thisProfile, chatOwnerUser: thisChatOwnerUser },
@@ -53,6 +55,7 @@ export default class RollMatchHandler extends DefaultHandler {
       )
 
       profile = data.profile
+      rollMatchUser = data.user
     } catch (error) {
       if (error.message === MessageType.TAKEABREAK) {
         await BattleHandler.resetUserBattleEmotes(user)
@@ -61,8 +64,8 @@ export default class RollMatchHandler extends DefaultHandler {
       throw error
     }
 
-    await user.load('favoriteStreamers')
-    const favoriteStreamers = user.favoriteStreamers.map(user => { return { name: user.name } })
+    await rollMatchUser.load('favoriteStreamers')
+    const favoriteStreamers = rollMatchUser.favoriteStreamers.map(user => { return { name: user.name } })
 
     const profileFavoriteEmotes = await Emote.findMany(profile.favoriteEmotes)
 
