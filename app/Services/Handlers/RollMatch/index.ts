@@ -77,5 +77,7 @@ export default class RollMatchHandler extends DefaultHandler {
     }
 
     socket.send(this.ws.socketMessage(MessageType.ROLLMATCH, JSON.stringify(rm)))
+
+    await BattleHandler.resetUserBattleEmotes(user)
   }
 }
