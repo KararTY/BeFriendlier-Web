@@ -385,23 +385,22 @@ export default class BattleHandler extends DefaultHandler {
     const emoteMsg = (battleEmoteName: string, statistics: any, specialStat: Data | { name: string }): string =>
       `emote ${battleEmoteName}${specialStat.name.length > 0 ? ` [${specialStat.name}]` : ''}: ${String(statistics.Health.curValue.toFixed(2))} HP`
 
-    const thisUserBattleEmote = battleResult.entries.find(bE => bE.id === thisUserBattleEntryId) as BattleEntry
-    const thisUserBattleEmoteName = await Emotes.getBattleEmoteName(thisUserBattleEmote.battleEmote.emote_recipe, thisUserBattleEmote.battleEmote.seed)
-    const thisUserStats = BattleHandler.statisticArrayToObject(thisUserBattleEmote.battleEmote)
-    const thisUserSpecialStat = this.getSpecialStat(thisUserBattleEmote.battleEmote.statistics) ?? { name: '' }
-    const thisUserStr = emoteMsg(thisUserBattleEmoteName, thisUserStats, thisUserSpecialStat)
+    let thisUserStr = ''
 
     let msg = ''
     const opponentHPs: string[] = []
 
-    for (let index = 0; index < battleResult.winningEntries.length; index++) {
-      const battleEntry = battleResult.winningEntries[index]
+    for (let index = 0; index < battleResult.entries.length; index++) {
+      const battleEntry = battleResult.entries[index]
+      const battleEmoteName = await Emotes.getBattleEmoteName(battleEntry.battleEmote.emote_recipe, battleEntry.battleEmote.seed)
+      const stats = BattleHandler.statisticArrayToObject(battleEntry.battleEmote)
       const specialStat = this.getSpecialStat(battleEntry.battleEmote.statistics) ?? { name: '' }
 
-      if (battleEntry.id === thisUserBattleEntryId) continue
-
-      const battleEmoteName = await Emotes.getBattleEmoteName(battleEntry.battleEmote.emote_recipe, battleEntry.battleEmote.seed)
-      opponentHPs.push(emoteMsg(battleEmoteName, BattleHandler.statisticArrayToObject(battleEntry.battleEmote), specialStat))
+      if (battleEntry.id === thisUserBattleEntryId) {
+        thisUserStr = emoteMsg(battleEmoteName, stats, specialStat)
+      } else {
+        opponentHPs.push(emoteMsg(battleEmoteName, stats, specialStat))
+      }
     }
 
     const turnStr = battleResult.turn > 1 ? 'turns' : 'turn'
