@@ -173,7 +173,7 @@ export default class ProfilesController {
     request.updateBody({
       color: request.input('color', '#ffffff'),
       theme: request.input('theme', 'white'),
-      bio: request.input('bio', '').normalize().replace(/[\uE000-\uF8FF]+/gu, '').replace(/[\u{000e0000}]/gu, '').trim()
+      bio: (request.input('bio', '') ?? '').normalize().replace(/[\uE000-\uF8FF]+/gu, '').replace(/[\u{000e0000}]/gu, '').trim()
     })
 
     if (profile.updatedAt.diffNow('seconds').seconds > -60) {
@@ -200,6 +200,11 @@ export default class ProfilesController {
 
     profile.color = validated.color
     profile.theme = validated.theme
+
+    /**
+     * Sometimes PerspectiveAPI or Pajbot v1/v2 is unavailable, that's why we save at multiple stages.
+     * (At this point, at least color & theme was set.)
+     */
     await profile.save()
 
     profile.bio = validated.bio
@@ -245,10 +250,6 @@ export default class ProfilesController {
       return response.redirect(`/profile/${id}`)
     }
 
-    /**
-     * Sometimes PerspectiveAPI or Pajbot v1/v2 is unavailable, that's why we save at multiple stages.
-     * (At this point, at least color was set.)
-     */
     await profile.save()
 
     session.flash('message', { message: 'Successfully updated your profile.' })
