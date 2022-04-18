@@ -33,7 +33,7 @@
             <div class="columns is-multiline is-mobile is-justify-content-center" id="emotesColumns">
               @each(entry in web.emotes)
                 <div class="column is-narrow is-unselectable">
-                  <div class="box is-paddingless image is-128x128 is-flex is-flex-direction-column is-align-items-center is-justify-content-center" data-emote-id="{{ entry.emote_id }}">
+                  <div class="box is-paddingless image is-128x128 is-flex is-flex-direction-column is-align-items-center is-justify-content-center is-clickable" data-emote-id="{{ entry.emote_id }}">
                     <figure class="image is-32x32 is-flex">
                       <img class="object-contain" src="https://static-cdn.jtvnw.net/emoticons/v2/{{ entry.emote_id }}/default/light/1.0" alt="{{ entry.name }} emote image">
                     </figure>

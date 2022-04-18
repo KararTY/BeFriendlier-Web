@@ -143,7 +143,7 @@ class CombineEmotesForm {
       if (emote === null) {
         const emoteHTML = html.node`
           <div class="column is-narrow is-unselectable">
-            <div class="box is-paddingless image is-128x128 is-flex is-flex-direction-column is-align-items-center is-justify-content-center"
+            <div class="box is-paddingless image is-128x128 is-flex is-flex-direction-column is-align-items-center is-justify-content-center is-clickable"
               data-emote-id="${emoteToUpdate.id}"
               onclick="${(event: MouseEvent) => this.toggleEmote(event.currentTarget as HTMLButtonElement, event)}">
               <figure class="image is-32x32 is-flex">
