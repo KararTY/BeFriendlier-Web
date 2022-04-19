@@ -15,6 +15,17 @@ import DefaultHandler from '../DefaultHandler'
 import Emotes from '../Emotes'
 import Helper, { durstenfeldShuffle, Helper as HelperStatic } from '../Helpers'
 
+interface Statistics {
+  [key: string]: {
+    name: string
+    type: string
+    percentage: number
+    defValue: number
+    addValue: number
+    curValue: number
+  }
+}
+
 export default class BattleHandler extends DefaultHandler {
   public messageType = MessageType.BATTLE
 
@@ -350,12 +361,14 @@ export default class BattleHandler extends DefaultHandler {
     return { entries: [user, opponent], winningEntries, turn }
   }
 
-  public static statisticArrayToObject (battleEmote: EmoteBattleEntry | EmoteEntry): any {
+  public static statisticArrayToObject (battleEmote: EmoteBattleEntry | EmoteEntry): Statistics {
     const obj = {}
     const arr = battleEmote.statistics
 
     for (let index = 0; index < arr.length; index++) {
       const statistic = arr[index]
+
+      if (statistic.type !== 'Statistic') continue
 
       obj[statistic.name] = { ...statistic }
     }
@@ -431,7 +444,7 @@ export default class BattleHandler extends DefaultHandler {
     socket.send(this.ws.socketMessage(MessageType.BATTLE, JSON.stringify(data)))
   }
 
-  public static resetStatistics (statistics: any): any {
+  public static resetStatistics (statistics: Statistics): any {
     const lvl = statistics.Level.defValue
 
     statistics.Health.defValue = 10 + (lvl * 1.7)
