@@ -382,9 +382,6 @@ export default class BattleHandler extends DefaultHandler {
   public async resultMessage (battleResult: { winningEntries: BattleEntry[], entries: BattleEntry[], turn: number }, thisUserBattleEntryId: number): Promise<string> {
     const winnerNames = await this.getWinnerNames(battleResult.winningEntries)
 
-    const emoteMsg = (battleEmoteName: string, statistics: any, specialStat: Data | { name: string }): string =>
-      `emote ${battleEmoteName}${specialStat.name.length > 0 ? ` [${specialStat.name}]` : ''}: ${String(statistics.Health.curValue.toFixed(2))} HP`
-
     let thisUserStr = ''
 
     let msg = ''
@@ -397,9 +394,9 @@ export default class BattleHandler extends DefaultHandler {
       const specialStat = this.getSpecialStat(battleEntry.battleEmote.statistics) ?? { name: '' }
 
       if (battleEntry.id === thisUserBattleEntryId) {
-        thisUserStr = emoteMsg(battleEmoteName, stats, specialStat)
+        thisUserStr = BattleHandler.emoteMsg(battleEmoteName, stats, specialStat)
       } else {
-        opponentHPs.push(emoteMsg(battleEmoteName, stats, specialStat))
+        opponentHPs.push(BattleHandler.emoteMsg(battleEmoteName, stats, specialStat))
       }
     }
 
@@ -416,6 +413,10 @@ export default class BattleHandler extends DefaultHandler {
     }
 
     return msg
+  }
+
+  public static emoteMsg (battleEmoteName: string, statistics: Statistics, specialStat: Data | { name: string }): string {
+    return `emote ${battleEmoteName} [LVL ${statistics.Level.curValue}]${specialStat.name.length > 0 ? ` [${specialStat.name}]` : ''}: ${String(statistics.Health.curValue.toFixed(2))} HP`
   }
 
   public getSpecialStat (statistics: Data[]): Data | undefined {
