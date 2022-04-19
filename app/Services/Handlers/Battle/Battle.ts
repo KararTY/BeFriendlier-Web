@@ -361,14 +361,15 @@ export default class BattleHandler extends DefaultHandler {
     return { entries: [user, opponent], winningEntries, turn }
   }
 
+  /**
+   * Do not use .Order
+   */
   public static statisticArrayToObject (battleEmote: EmoteBattleEntry | EmoteEntry): Statistics {
     const obj = {}
     const arr = battleEmote.statistics
 
     for (let index = 0; index < arr.length; index++) {
       const statistic = arr[index]
-
-      if (statistic.type !== 'Statistic') continue
 
       obj[statistic.name] = { ...statistic }
     }
