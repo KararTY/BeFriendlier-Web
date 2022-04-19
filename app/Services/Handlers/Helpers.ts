@@ -45,6 +45,8 @@ export class Helper {
           })
         ))
 
+        await this.rollEmote({ userTwitch, channelTwitch, global }, { socket, ws })
+
         throw this.error(MessageType.ERROR, userTwitch, channelTwitch,
           'looks like it\'s not your lucky day today, 🦆 rubber ducky.')
       }
@@ -116,8 +118,6 @@ export class Helper {
       profile.rolls = []
       await profile.save()
 
-      await this.rollEmote({ userTwitch, channelTwitch, global }, { socket, ws })
-
       socket.send(ws.socketMessage(
         MessageType.WHISPER,
         JSON.stringify({
@@ -128,6 +128,8 @@ export class Helper {
           }
         })
       ))
+
+      await this.rollEmote({ userTwitch, channelTwitch, global }, { socket, ws })
 
       throw this.error(MessageType.TAKEABREAK, userTwitch, channelTwitch, 'looks like you\'re not lucky today, 🦆 rubber ducky.')
     }
