@@ -16,9 +16,14 @@ Looking to match with POG Twitch friends?
 * Website profile page.
   * Customizable background color.
   * 5 favorite streamers.
-  * 5 favorite Twitch emotes.
-  * 128 characters bio.
-* Twitch bot.
+  * 128 characters bio, including 3 favorite Twitch emotes.
+* Emotes
+  * Collect Twitch emotes.
+  * Combine emotes to make exclusive battle emotes.
+  * Battle with your matched friends using your battle emotes.
+* Leaderboards
+  * See who has farmed the most emotes and become 👑🦆 (King/Queen Duck). Hosted channels have a separate leaderboard.
+* Twitch bot [(Separate)](https://github.com/KararTY/BeFriendlier-Bot).
 
 ## Changelogs
 
@@ -34,28 +39,37 @@ Looking to match with POG Twitch friends?
 * Check `config/` directory for other configurations to change. Default config values should be sufficient for development, however.
 * If your `DB_CONNECTION` is not set to `sqlite`, make sure to create a database with the same name under `DB_NAME`.
 * `npm run r:m:s` for seeding the database with initial values. If `NODE_ENV` is set to `development`, you will also get development values to test around with.
-* `npm start-test` to start web server in watch mode (Reloads on file change) with debugging websocket enabled.
-* Or alternatively `npm start` to start web server in "production" mode (No reloading on file change and no debugging websocket). That's it.
+* `npm run dev` to start web server in watch mode (Reloads on file change) with debugging websocket enabled.
+* Or alternatively `npm run build && npm start` to build & start web server in "production" mode (No reloading on file change and no debugging websocket). That's it.
 
 ## Contributing
 
-* Use the provided eslint `.eslintrc.json` file.
-* Run `npm run lint` to check for formatting issues.
-* Run `npm run lintfix` to fix formatting issues.
+* Use `ts-standard` for linting and code style:
+  * Run `npm run lint` to check for formatting issues.
+  * Run `npm run format` to fix formatting issues.
 * Always create a new branch, it's recommended to not push to master.
 * Issue a pull request. Pull requests are squashed into 1 commit.
-* Use semver semantics in your commits, and make sure they adhere to the conventional commits specification. [Read more here](https://www.conventionalcommits.org/en/v1.0.0/).
+* Pull requests should ***only introduce or fix one thing***.
+* Use Conventional Commits specification for your commit messages. [Read more here](https://www.conventionalcommits.org/en/v1.0.0/). This project mostly make use of fix/feat/chore/docs/refactor.
 * If you are creating a release in your own fork, run `npm run release`.
 
 ## Database relationships
 
 * User
-  * hasMany: Profile
-  * manyToMany: Favorite streamers list. (Matches to other users)
+  * profile hasMany: Profile
+  * emotes hasMany: EmoteEntry
+  * favoriteStreamers manyToMany: Favorite streamers list. (Matches to other users)
 * Profile
   * manyToMany: Matches list. (Matches to other profiles)
+* BattleEntry
+  * user belongsTo: User
+  * battle belongsTo: Battle
+* Battle
+  * battleEntries hasMany: BattleEntry
 * (Pivot) Favorite streamers list.
 * (Pivot) Matches list.
+
+[Find the database models under app/Models.](app/Models/)
 
 ## Todo
 
