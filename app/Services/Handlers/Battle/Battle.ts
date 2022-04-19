@@ -237,6 +237,7 @@ export default class BattleHandler extends DefaultHandler {
       while (context.userStatistic.Experience.curValue >= nextLevelExperience) {
         // +1 to level
         context.userStatistic.Level.defValue = Number(context.userStatistic.Level.defValue) + 1
+        context.userStatistic.Level.curValue = context.userStatistic.Level.defValue
         context.userStatistic = BattleHandler.resetStatistics(context.userStatistic)
 
         // TODO: Send level-up WHISPER if initiator got a level-up.
@@ -430,7 +431,7 @@ export default class BattleHandler extends DefaultHandler {
   }
 
   public static emoteMsg (battleEmoteName: string, statistics: Statistics, specialStat: Data | { name: string }): string {
-    return `emote ${battleEmoteName} [LVL ${statistics.Level.curValue}]${specialStat.name.length > 0 ? ` [${specialStat.name}]` : ''}: ${String(statistics.Health.curValue.toFixed(2))} HP`
+    return `emote ${battleEmoteName} [LVL ${statistics.Level.defValue}]${specialStat.name.length > 0 ? ` [${specialStat.name}]` : ''}: ${String(statistics.Health.curValue.toFixed(2))} HP`
   }
 
   public getSpecialStat (statistics: Data[]): Data | undefined {
