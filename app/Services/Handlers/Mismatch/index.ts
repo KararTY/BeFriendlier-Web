@@ -13,7 +13,7 @@ export default class MismatchHandler extends DefaultHandler {
     const data: BASE = JSON.parse(res.data)
 
     await Helper.mismatch(data)
-    await Helper.rollEmote(data, { socket, ws: this.ws })
+    await Helper.rollEmote({ type: res.type, ...data }, { socket, ws: this.ws })
 
     data.result = { value: 'FeelsBadMan Better luck next time!' }
     socket.send(this.ws.socketMessage(MessageType.MISMATCH, JSON.stringify(data)))

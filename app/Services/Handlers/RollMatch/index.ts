@@ -49,7 +49,7 @@ export default class RollMatchHandler extends DefaultHandler {
     let profile: Profile
     let rollMatchUser: User
     try {
-      const data = await Helper.rollMatch(rm,
+      const data = await Helper.rollMatch({ type: res.type, ...rm },
         { profile: thisProfile, chatOwnerUser: thisChatOwnerUser },
         { socket, ws: this.ws }
       )

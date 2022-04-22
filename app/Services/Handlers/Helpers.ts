@@ -26,7 +26,7 @@ export class Helper {
   /**
    * MAKE SURE TO CATCH ERRORS.
    */
-  public async rollMatch ({ userTwitch, channelTwitch, global }: ROLLMATCH,
+  public async rollMatch ({ type, userTwitch, channelTwitch, global }: ROLLMATCH & { type: MessageType },
     { chatOwnerUser, profile }: { chatOwnerUser: User, profile: Profile },
     { socket, ws }: { socket: ExtendedWebSocket, ws: typeof WebSocketServer }): Promise<{ user: User, profile: Profile }> {
     if (profile.rolls.length > 0) {
@@ -45,7 +45,7 @@ export class Helper {
           })
         ))
 
-        await this.rollEmote({ userTwitch, channelTwitch, global }, { socket, ws })
+        await this.rollEmote({ type, userTwitch, channelTwitch, global }, { socket, ws })
 
         throw this.error(MessageType.ERROR, userTwitch, channelTwitch,
           'looks like it\'s not your lucky day today, 🦆 rubber ducky.')
@@ -67,7 +67,7 @@ export class Helper {
     }
 
     if (profile.nextRolls.diffNow('hours').hours >= 0) {
-      await this.rollEmote({ userTwitch, channelTwitch, global }, { socket, ws })
+      await this.rollEmote({ type, userTwitch, channelTwitch, global }, { socket, ws })
 
       throw this.error(MessageType.ERROR, userTwitch, channelTwitch, `you are on a cooldown. Please try again ${Helper.diffDate(profile.nextRolls)}.`)
     }
@@ -129,7 +129,7 @@ export class Helper {
         })
       ))
 
-      await this.rollEmote({ userTwitch, channelTwitch, global }, { socket, ws })
+      await this.rollEmote({ type, userTwitch, channelTwitch, global }, { socket, ws })
 
       throw this.error(MessageType.TAKEABREAK, userTwitch, channelTwitch, 'looks like you\'re not lucky today, 🦆 rubber ducky.')
     }
@@ -255,7 +255,7 @@ export class Helper {
   }
 
   public async rollEmote (
-    { userTwitch, channelTwitch, global }: BASE,
+    { type, userTwitch, channelTwitch, global }: BASE & { type: MessageType },
     { socket, ws }: { socket: ExtendedWebSocket, ws: typeof WebSocketServer }): Promise<BotEmote | null> {
     // Get Twitch's global emotes.
     const { user, profile } = await this.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, global)
@@ -310,6 +310,7 @@ export class Helper {
         channelTwitch,
         userTwitch,
         result: {
+          originalType: type,
           value: `(#${channelTwitch.name} | ${Helper.profileType(global)}): 🦆 Rubber ducky here, you've received an emote: ${emote.name}` +
             ' You can check your emote inventory at the website.'
         }

@@ -13,17 +13,18 @@ export default class MatchHandler extends DefaultHandler {
     const data: BASE = JSON.parse(res.data)
     const result = await Helper.match(data)
 
-    await Helper.rollEmote(data, { socket, ws: this.ws })
+    await Helper.rollEmote({ type: res.type, ...data }, { socket, ws: this.ws })
 
     switch (result.attempt) {
       case MessageType.MATCH: {
         // Attempted to match. Must wait for receiving end.
         data.result = {
-          value: `you are attempting to match with a ${data.global === true ? 'global ' : ''}user.`
+          value: `you are attempting to match with a ${data.global === true ? 'global ' : ''}user. 🤞`
         }
         socket.send(this.ws.socketMessage(MessageType.WHISPER, JSON.stringify({
           ...data,
           result: {
+            originalType: res.type,
             value: 'Good luck! You will receive a notification on a successful match!'
           }
         })))
