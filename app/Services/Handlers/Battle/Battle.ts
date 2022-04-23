@@ -208,6 +208,8 @@ export default class BattleHandler extends DefaultHandler {
 
     await battle.save()
 
+    this.sendBattleMessage(socket, data, await this.resultMessage(battleResult, battleEntryThisUser.id))
+
     // Calculate experience points & level
     const battleExperienceAlgorithm = await BattleStatisticAlgorithm.findBy('statistic', 'Experience') as BattleStatisticAlgorithm
 
@@ -265,8 +267,6 @@ export default class BattleHandler extends DefaultHandler {
       user.battleEmote.save(),
       opponent.battleEmote.save()
     ])
-
-    this.sendBattleMessage(socket, data, await this.resultMessage(battleResult, battleEntryThisUser.id))
   }
 
   public async runBattle ({ battle, user, opponent }: { battle: Battle, user: BattleEntry, opponent: BattleEntry }): Promise<{ entries: BattleEntry[], winningEntries: BattleEntry[], turn: number }> {
