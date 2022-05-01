@@ -47,9 +47,12 @@ export default class EmotesHandler extends DefaultHandler {
     return await Emote.findMany(profile.favoriteEmotes)
   }
 
-  // Deals with global profiles only.
   public static async giveEmotes ({ userTwitch, channelTwitch, recipientUserTwitch, emotes }: GIVEEMOTES): Promise<BotEmote[]> {
-    const { user } = await Helper.findProfileOrCreateByChatOwner(userTwitch, channelTwitch, true)
+    const user = await Helper.findUserByTwitchID(userTwitch.id)
+
+    if (user == null) {
+      throw Helper.error(MessageType.UNREGISTERED, userTwitch, channelTwitch)
+    }
 
     await user.load('emotes')
 
