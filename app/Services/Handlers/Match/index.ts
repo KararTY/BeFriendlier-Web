@@ -36,7 +36,7 @@ export default class MatchHandler extends DefaultHandler {
           // Successfully matched!
           data.result = {
             matchUsername: result.matchUser.name,
-            value: 'you have matched with %s%! Send them a message?'
+            value: 'you have matched with %s%! You should send them a message!'
           }
           socket.send(this.ws.socketMessage(MessageType.SUCCESS, JSON.stringify(data)))
         }
