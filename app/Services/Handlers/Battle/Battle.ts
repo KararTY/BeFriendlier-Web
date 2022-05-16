@@ -50,55 +50,7 @@ export default class BattleHandler extends DefaultHandler {
       throw Helper.error(MessageType.TAKEABREAK, data.userTwitch, data.channelTwitch, 'looks like you\'ve already had a fight in this channel, 🦆 rubber ducky.')
     }
 
-    // Check if this user exists...
-    const thisUser = await Helper.findUserByTwitchID(data.userTwitch.id)
-    if (thisUser == null) {
-      socket.send(this.ws.socketMessage(MessageType.UNREGISTERED, JSON.stringify(data)))
-      return
-    }
-
-    // ... and has battle emotes.
-    let thisUserBattleEmotes = await BattleHandler.getBattleEmotes(thisUser)
-    if (thisUserBattleEmotes.length === 0) {
-      this.sendBattleMessage(socket, data, "you don't have any battle emotes! Combine some on the website!")
-      return
-    }
-
-    // Are some still alive?
-    thisUserBattleEmotes = thisUserBattleEmotes.filter(emote => this.battleEmoteStillAlive(emote))
-    if (thisUserBattleEmotes.length === 0) {
-      this.sendBattleMessage(socket, data, "you don't have any living battle emotes! Looking for friends is healing.")
-      return
-    }
-
-    // Check if targetUser exists...
-    const targetUser = await Helper.findUserByTwitchID(data.targetUserTwitch.id)
-    if (targetUser == null) {
-      this.sendBattleMessage(socket, data, "couldn't find the opponent. Double check the spelling.")
-      return
-    }
-
-    // ... as a match in any of this user's profiles.
-    await thisUser.load('profile')
-    const foundProfile = await this.matchedWithUser(thisUser, targetUser)
-    if (!foundProfile) {
-      this.sendBattleMessage(socket, data, "can't battle them. You've not matched with this opponent in any of your profiles.")
-      return
-    }
-
-    // and has battle emotes.
-    let targetUserBattleEmotes = await BattleHandler.getBattleEmotes(targetUser)
-    if (targetUserBattleEmotes.length === 0) {
-      this.sendBattleMessage(socket, data, "opponent doesn't have any battle emotes! Tell them to combine some.")
-      return
-    }
-
-    // Are some still alive?
-    targetUserBattleEmotes = targetUserBattleEmotes.filter(emote => this.battleEmoteStillAlive(emote))
-    if (targetUserBattleEmotes.length === 0) {
-      this.sendBattleMessage(socket, data, "opponent doesn't have any remaining healthy battle emotes!")
-      return
-    }
+    let { thisUser, targetUser, thisUserBattleEmotes, targetUserBattleEmotes } = await this.validateContestants(data)
 
     thisUserBattleEmotes = await this.sortBattleEmotes(thisUserBattleEmotes)
     targetUserBattleEmotes = await this.sortBattleEmotes(targetUserBattleEmotes)
@@ -112,6 +64,55 @@ export default class BattleHandler extends DefaultHandler {
     thisUserProfile.nextBattle = DateTime.fromJSDate(new Date()).plus({ hour: 1 })
 
     await thisUserProfile.save()
+  }
+
+  public async validateContestants (
+    { userTwitch, channelTwitch, targetUserTwitch }: BATTLE
+  ): Promise<{ thisUser: User, targetUser: User, thisUserBattleEmotes: EmoteEntry[], targetUserBattleEmotes: EmoteEntry[] }> {
+    // Check if this user exists...
+    const thisUser = await Helper.findUserByTwitchID(userTwitch.id)
+    if (thisUser == null) {
+      throw Helper.error(MessageType.UNREGISTERED, userTwitch, channelTwitch)
+    }
+
+    // ... and has battle emotes...
+    let thisUserBattleEmotes = await BattleHandler.getBattleEmotes(thisUser)
+    if (thisUserBattleEmotes.length === 0) {
+      throw Helper.error(MessageType.ERROR, userTwitch, channelTwitch, "you don't have any battle emotes! Combine some on the website!")
+    }
+
+    // that are still alive?
+    thisUserBattleEmotes = thisUserBattleEmotes.filter(emote => this.battleEmoteStillAlive(emote))
+    if (thisUserBattleEmotes.length === 0) {
+      throw Helper.error(MessageType.ERROR, userTwitch, channelTwitch, "you don't have any living battle emotes! Looking for friends is healing.")
+    }
+
+    // Check if targetUser exists...
+    const targetUser = await Helper.findUserByTwitchID(targetUserTwitch.id)
+    if (targetUser == null) {
+      throw Helper.error(MessageType.ERROR, userTwitch, channelTwitch, "couldn't find the opponent. Double check the spelling.")
+    }
+
+    // ... as a match in any of this user's profiles...
+    await thisUser.load('profile')
+    const isMatched = await this.matchedWithUser(thisUser, targetUser)
+    if (!isMatched) {
+      throw Helper.error(MessageType.ERROR, userTwitch, channelTwitch, "can't battle them. You've not matched with this opponent in any of your profiles.")
+    }
+
+    // and has battle emotes...
+    let targetUserBattleEmotes = await BattleHandler.getBattleEmotes(targetUser)
+    if (targetUserBattleEmotes.length === 0) {
+      throw Helper.error(MessageType.ERROR, userTwitch, channelTwitch, "opponent doesn't have any battle emotes! Tell them to combine some.")
+    }
+
+    // that are still alive?
+    targetUserBattleEmotes = targetUserBattleEmotes.filter(emote => this.battleEmoteStillAlive(emote))
+    if (targetUserBattleEmotes.length === 0) {
+      throw Helper.error(MessageType.ERROR, userTwitch, channelTwitch, "opponent doesn't have any remaining healthy battle emotes!")
+    }
+
+    return { thisUser, targetUser, thisUserBattleEmotes, targetUserBattleEmotes }
   }
 
   public static async getBattleEmotes (user: User): Promise<EmoteEntry[]> {
@@ -230,10 +231,9 @@ export default class BattleHandler extends DefaultHandler {
 
       vm.createContext(context)
 
-      // eslint-disable-next-line
-      let exp = Number(vm.runInContext(battleExperienceAlgorithm.func.cleanEval, context))
+      const calculatedEXP = Number(vm.runInContext(battleExperienceAlgorithm.func.cleanEval, context))
 
-      context.userStatistic.Experience.curValue = Number(context.userStatistic.Experience.curValue) + exp
+      context.userStatistic.Experience.curValue = Number(context.userStatistic.Experience.curValue) + calculatedEXP
       let nextLevelExperience = BattleStatic.nextLevelExperience(context.userStatistic.Level.defValue)
 
       while (context.userStatistic.Experience.curValue >= nextLevelExperience) {
@@ -315,7 +315,6 @@ export default class BattleHandler extends DefaultHandler {
       // Do normal attack
       vm.runInContext(attackAlgorithm.func.applyEval, context)
 
-      // See if opponent has a special stat where applyOn="onDamage", do it.
       const opponentSpecialStat = this.getSpecialStat(defendingUser.battleEmote.statistics)
 
       /** min inclusive, max exclusive */
@@ -363,7 +362,7 @@ export default class BattleHandler extends DefaultHandler {
   }
 
   /**
-   * Do not use .Order
+   * Do not use .Order from this object.
    */
   public static statisticArrayToObject (battleEmote: EmoteBattleEntry | EmoteEntry): Statistics {
     const obj = {}
