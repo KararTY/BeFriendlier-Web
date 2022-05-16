@@ -140,10 +140,9 @@ export default class EmotesController {
 
     const emotesToRoll = (await this.aliasesToEmoteIds(recipe.combo)).flat()
 
-    // Mutating in place.
-    durstenfeldShuffle(emotesToRoll)
+    const shuffledEmotes = durstenfeldShuffle(emotesToRoll)
 
-    const id = emotesToRoll[0]
+    const id = shuffledEmotes[0]
 
     await this.deleteEmotes([battleEmoteToResign])
 

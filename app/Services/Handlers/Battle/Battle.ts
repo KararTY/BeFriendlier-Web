@@ -141,9 +141,9 @@ export default class BattleHandler extends DefaultHandler {
     //  }
     // }
 
-    durstenfeldShuffle(emotes)
+    const shuffledBattleEmotes = durstenfeldShuffle(emotes)
 
-    return emotes.sort((a, b) => {
+    return shuffledBattleEmotes.sort((a, b) => {
       const orderDataA = a.statistics.find(statistic => statistic.name === 'Order') as Data
       const orderDataB = b.statistics.find(statistic => statistic.name === 'Order') as Data
 

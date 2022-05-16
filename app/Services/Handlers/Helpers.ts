@@ -135,13 +135,13 @@ export class Helper {
     }
 
     // Shuffle the array!
-    durstenfeldShuffle(filteredMatches)
+    const shuffledMatches = durstenfeldShuffle(filteredMatches)
 
-    profile.rolls = filteredMatches.map((m) => m.profile.id).slice(0, 5)
+    profile.rolls = shuffledMatches.map((m) => m.profile.id).slice(0, 5)
 
     await profile.save()
 
-    return { user: filteredMatches[0].user, profile: filteredMatches[0].profile }
+    return { user: shuffledMatches[0].user, profile: shuffledMatches[0].profile }
   }
 
   /**
@@ -278,9 +278,9 @@ export class Helper {
 
     await user.load('emotes')
 
-    durstenfeldShuffle(emotes)
+    const shuffledEmotes = durstenfeldShuffle(emotes)
 
-    const emote = emotes[0]
+    const emote = shuffledEmotes[0]
 
     const existingUserEmote = user.emotes.find(ee => ee.emoteId === emote.id)
 
@@ -493,12 +493,18 @@ export class Helper {
 }
 
 // https://stackoverflow.com/a/12646864 CC BY-SA 4.0
-// Mutates the array.
-export function durstenfeldShuffle (array: any[]): void {
-  for (let i = array.length - 1; i > 0; i--) {
+/**
+ * Mutates the array.
+ */
+export function durstenfeldShuffle<Type> (array: Type[]): Type[] {
+  const newArr = [...array]
+
+  for (let i = newArr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]]
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]]
   }
+
+  return newArr
 }
 
 /**
