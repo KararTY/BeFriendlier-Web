@@ -493,9 +493,6 @@ export class Helper {
 }
 
 // https://stackoverflow.com/a/12646864 CC BY-SA 4.0
-/**
- * Mutates the array.
- */
 export function durstenfeldShuffle<Type> (array: Type[]): Type[] {
   const newArr = [...array]
 
@@ -507,7 +504,4 @@ export function durstenfeldShuffle<Type> (array: Type[]): Type[] {
   return newArr
 }
 
-/**
- * This makes our service a singleton
- */
 export default new Helper()
