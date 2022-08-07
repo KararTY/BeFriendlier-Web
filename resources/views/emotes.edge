@@ -109,7 +109,7 @@
                       <strong>Level:</strong> <span> {{ entry.statistics[1].defValue }}</span>
                     </p>
                     <p>
-                      <strong>Experience:</strong> <span> ~{{entry.statistics[2].curValue.toFixed(2)}}/<small>{{ nextLevelExperience(entry.statistics[1].defValue) }}</small></span>
+                      <strong>Experience:</strong> <span> ~{{entry.statistics[2].curValue.toFixed(2)}}/<small>{{ nextLevelExperience(entry.statistics[1].defValue).toFixed(2) }}</small></span>
                       <progress
                         class="progress is-small{{ getStatColor('Experience') }}"
                         value="{{ entry.statistics[2].curValue }}"
