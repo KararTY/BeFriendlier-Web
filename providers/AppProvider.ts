@@ -53,6 +53,7 @@ export default class AppProvider {
   public async boot (): Promise<void> {
     // IoC container is ready
     const View = (await import('@ioc:Adonis/Core/View')).default
+    const Application = (await import('@ioc:Adonis/Core/Application')).default
     const Twitch = (await import('@ioc:Befriendlier-Shared/Twitch')).default
     const BeFriendlierBattle = (await import('@ioc:Befriendlier-Battle')).default
     const BeFriendlierTheme = (await import('@ioc:Befriendlier-Theme')).default
@@ -110,6 +111,8 @@ export default class AppProvider {
     View.global('getThemeColor', (theme: string) => {
       return BeFriendlierTheme.getThemeColor(theme)
     })
+
+    View.global('ver', () => Application.version?.toString())
   }
 
   public async ready (): Promise<void> {
