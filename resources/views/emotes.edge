@@ -82,10 +82,16 @@
         </div>
       </div-->
       <hr>
-      <div class="{{web.battleEmotes.length > 0 ? '' : 'is-hidden'}}" data-battle-emotes>
-        <div class="card">
+      <div class="{{web.battleEmotes.length > 0 ? '' : 'is-hidden'}}">
+        <div class="card" data-battle-emotes>
           <div class="card-header">
             <h4 class="card-header-title is-size-4" data-battle-emotes-title="{{ web.battleEmotes.length }}">Your battle emotes - x{{ web.battleEmotes.length }} total</h4>
+            <div class="is-flex is-align-items-center px-4 p-3">
+              <button class="button" data-battle-tabs-toggle>
+                <span class="icon">{{{ icon('award') }}}</span>
+                <strong>Battle Logs (WIP)</strong>
+              </button>
+            </div>
           </div>
           <div {{{ user.streamerMode ? 'class="card-content blur" data-blur="battleEmotes" data-blur-vanish="true" data-blur-text="true"' : 'class="card-content"' }}}>
             <div class="columns is-multiline is-variable is-1" id="battleEmotesColumns">
@@ -136,6 +142,25 @@
                 </div>
               @endeach
             </div>
+          </div>
+        </div>
+
+        <div class="card is-hidden" data-battle-logs>
+          <div class="card-header">
+            <h4 class="card-header-title is-size-4">Your battle logs</h4>
+            <div class="is-flex is-align-items-center px-4 p-3">
+              <button class="button mr-2" data-battle-tabs-toggle>
+                <span class="icon">{{{ icon('list') }}}</span>
+                <strong>Battle Emotes</strong>
+              </button>
+              <button class="button" data-battle-logs-reload>
+                <span class="icon">{{{ icon('refresh-cw') }}}</span>
+              </button>
+            </div>
+          </div>
+          <div class="card-content">
+            <noscript> Enable JavaScript to see this content.</noscript>
+            <div id="battleLogs"></div>
           </div>
         </div>
       </div>

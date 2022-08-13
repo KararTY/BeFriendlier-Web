@@ -381,7 +381,7 @@ export default class BattleHandler extends DefaultHandler {
     return Object.values(obj).map((stat) => ({ ...stat as any }))
   }
 
-  public async getWinnerNames (battleEntries: BattleEntry[]): Promise<string[]> {
+  public static async getDisplayNames (battleEntries: BattleEntry[]): Promise<string[]> {
     const winners: string[] = []
 
     for (let index = 0; index < battleEntries.length; index++) {
@@ -394,7 +394,7 @@ export default class BattleHandler extends DefaultHandler {
   }
 
   public async resultMessage (battleResult: { winningEntries: BattleEntry[], entries: BattleEntry[], turn: number }, thisUserBattleEntryId: number): Promise<string> {
-    const winnerNames = await this.getWinnerNames(battleResult.winningEntries)
+    const winnerNames = await BattleHandler.getDisplayNames(battleResult.winningEntries)
 
     let thisUserStr = ''
 

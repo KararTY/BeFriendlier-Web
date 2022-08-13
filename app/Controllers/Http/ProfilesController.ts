@@ -276,7 +276,7 @@ export default class ProfilesController {
       await profile.related('matches').detach()
 
       // Remove all matches to this profile.
-      await Database.query().from('matches_lists').where('match_profile_id', profile.id).delete()
+      await Database.query().from('matches_lists').where('matchProfileId', profile.id).delete()
 
       // Anonymize profile
       profile.bio = ''

@@ -3,6 +3,7 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
 import { ModelObject } from '@ioc:Adonis/Lucid/Orm'
 import battle from '@ioc:Befriendlier-Battle'
+import BattleEntry from 'App/Models/BattleEntry'
 import Emote from 'App/Models/Emote'
 import EmoteAlias from 'App/Models/EmoteAlias'
 import EmoteEntry, { Data } from 'App/Models/EmoteEntry'
@@ -19,6 +20,19 @@ interface BattleEmoteEntry {
   emoteRecipe: string
   emoteId: string
   statistics: any
+}
+
+interface BattleLogEntry {
+  date: string
+  won: boolean
+  statistics: any
+  participants: string[]
+  images: string[]
+}
+
+interface BattleLogResponse {
+  logs: BattleLogEntry[]
+  maxPage: number
 }
 
 export default class EmotesController {
@@ -151,6 +165,63 @@ export default class EmotesController {
     const emote = await Emote.find(id)
 
     return emote?.serialize({ fields: ['id', 'name'] })
+  }
+
+  public async battleLogs ({ auth, request, response }: HttpContextContract): Promise<undefined | any> {
+    if (auth.user === undefined) {
+      return
+    }
+
+    const { page: offsetRaw } = request.qs()
+    const pageNum = Number(offsetRaw)
+    const page = Number.isNaN(pageNum) ? 1 : (pageNum <= 0 ? 1 : pageNum)
+
+    // 1. battle_entries -> battle_id
+    const battleEntries = await BattleEntry.query().where({ userId: auth.user.id }).orderBy('updatedAt', 'desc').paginate(page, 10)
+
+    const res: BattleLogResponse = {
+      logs: [],
+      maxPage: battleEntries.lastPage
+    }
+
+    // 2. battles
+    for (let index = 0; index < battleEntries.length; index++) {
+      const battleEntry = battleEntries[index]
+
+      await battleEntry.load('battle')
+
+      await battleEntry.battle.load('battleEntries')
+
+      const winningEntries = battleEntry.battle.winningBattleEntries
+
+      let won: boolean = false
+      if (winningEntries.includes(battleEntry.id)) won = true
+
+      const images: string[] = []
+      const participants: string[] = []
+
+      const emoteRecipes = await EmoteRecipe.findMany(battleEntry.battle.battleEntries.map(entry => entry.battleEmote.emote_recipe))
+      for (let index = 0; index < battleEntry.battle.battleEntries.length; index++) {
+        const bE = battleEntry.battle.battleEntries[index]
+        await bE.load('user')
+        participants.push(bE.user.displayName)
+        const recipe = emoteRecipes.find(entry => entry.id === bE.battleEmote.emote_recipe)
+
+        if (recipe != null) {
+          images.push(recipe.images[bE.battleEmote.seed])
+        }
+      }
+
+      res.logs.push({
+        date: battleEntry.battle.updatedAt.toUTC().set({ millisecond: 0 }).toString(),
+        won,
+        statistics: battleEntry.battleEmote.statistics.map(statistic => ({ name: statistic.name, curValue: statistic.curValue })).filter(statistic => statistic.name !== 'Order'),
+        participants,
+        images
+      })
+    }
+
+    return JSON.stringify(res)
   }
 
   private async giveEmote (user: User, id: string): Promise<void> {

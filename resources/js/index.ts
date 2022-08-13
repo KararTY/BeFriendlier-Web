@@ -11,6 +11,7 @@ import './UpdateProfile'
 
 // /emotes
 // import './EmotesAnimation'
+import './BattleLogs.tsx'
 import './CombineEmotes'
 import './ResignBattleEmote'
 

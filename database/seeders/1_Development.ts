@@ -44,7 +44,7 @@ export default class DevelopmentSeeder extends BaseSeeder {
       {
         twitchID: '527115020',
         name: 'twitchgaming',
-        displayName: 'twitchgaming',
+        displayName: 'TwitchGaming',
         avatar: 'https://static-cdn.jtvnw.net/jtv_user_pictures/fa8c656a-ca2e-4903-a469-e5bc87e65937-profile_image-300x300.png'
       }
     ])
@@ -61,7 +61,7 @@ export default class DevelopmentSeeder extends BaseSeeder {
       })
 
       if (index > 0) {
-        const previousProfile = await users[index - 1].related('profile').query().where('chat_user_id', 0).first()
+        const previousProfile = await users[index - 1].related('profile').query().where('chatUserId', 0).first()
         if (previousProfile !== null) {
           // Add match to the previousProfile to this profile.
           if (await profile.related('matches').query().where('id', previousProfile.id).first() === null) {
@@ -84,7 +84,7 @@ export default class DevelopmentSeeder extends BaseSeeder {
         }
 
         // Match to testUser.
-        const testUserProfile = await users[0].related('profile').query().where('chat_user_id', 0).first()
+        const testUserProfile = await users[0].related('profile').query().where('chatUserId', 0).first()
         if (testUserProfile !== null) {
           // Add match to this profile for first user.
           if (await profile.related('matches').query().where('id', testUserProfile.id).first() === null) {
@@ -109,7 +109,7 @@ export default class DevelopmentSeeder extends BaseSeeder {
       }
     }
 
-    // No hard feelings, forsen & xqcow. This is just for testing purposes.
+    // No hard feelings, this is just for testing purposes.
     await BannedUser.updateOrCreateMany(uniqueKey, [
       {
         twitchID: '22484632',
