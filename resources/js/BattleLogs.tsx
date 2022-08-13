@@ -8,7 +8,7 @@ const [page, setPage] = createSignal()
 const fetchLogs = async (page = 0) => (await fetch(`/emotes/logs?page=${page}`)).json()
 const [logsResponse, { refetch }] = createResource(page, fetchLogs)
 
-function BattleLog({ date, won, statistics, participants, images }) {
+function BattleLog({ date, won, participants, images }) {
   const [fullStatus, setFullStatus] = createSignal(false)
 
   return (
@@ -65,7 +65,7 @@ function Pagination({ maxPage }) {
       <button class={`button pagination-previous ${pagination()?.prev && 'is-disabled'}`} disabled={!pagination()?.prev} onClick={() => pagination()?.prev && setPage((page() as number) - 1)}>Previous</button>
       <button class={`button pagination-next ${pagination()?.next && 'is-disabled'}`} disabled={!pagination()?.next} onClick={() => pagination()?.next && setPage((page() as number) + 1)}>Next page</button>
       <ul class='pagination-list'>
-        <For each={pagination()?.items}>{(item, i) =>
+        <For each={pagination()?.items}>{(item) =>
           <li>
             {typeof item === 'number' && <button class={`button pagination-link ${page() === item && 'is-current'}`} aria-label={'Goto page ' + item} aria-current={page() === item ? 'page' : undefined} onClick={() => setPage(item)}>{item}</button>}
             {typeof item === 'string' && <span class='pagination-ellipsis'>&hellip;</span>}

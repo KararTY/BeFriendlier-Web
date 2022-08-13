@@ -167,7 +167,7 @@ export default class EmotesController {
     return emote?.serialize({ fields: ['id', 'name'] })
   }
 
-  public async battleLogs ({ auth, request, response }: HttpContextContract): Promise<undefined | any> {
+  public async battleLogs ({ auth, request }: HttpContextContract): Promise<undefined | any> {
     if (auth.user === undefined) {
       return
     }
