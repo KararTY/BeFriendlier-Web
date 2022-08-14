@@ -1,6 +1,7 @@
-import { createMemo, createResource, createSignal, For } from 'solid-js'
+import { createMemo, createResource, createSignal, For, Show } from 'solid-js'
 import { render } from 'solid-js/web'
 
+import { getStatColor } from '../../providers/Battle'
 import { paginate } from './PaginationHelper'
 
 const [page, setPage] = createSignal()
@@ -8,7 +9,17 @@ const [page, setPage] = createSignal()
 const fetchLogs = async (page = 0) => (await fetch(`/emotes/logs?page=${page}`)).json()
 const [logsResponse, { refetch }] = createResource(page, fetchLogs)
 
-function BattleLog({ date, won, participants, images }) {
+function Statistic ({ statistic }) {
+  return (
+    <p>
+      <strong>{statistic.name}</strong>
+      {typeof statistic.defValue === 'number' && typeof statistic.curValue === 'number' &&
+        <><strong>: </strong><small>{statistic.curValue.toFixed(2)}{statistic.defValue !== statistic.curValue ? '/' + statistic.defValue.toFixed(2) : undefined}</small></>}
+    </p>
+  )
+}
+
+function BattleLog({ date, won, statistics, participants, images }) {
   const [fullStatus, setFullStatus] = createSignal(false)
 
   return (
@@ -31,7 +42,7 @@ function BattleLog({ date, won, participants, images }) {
                 </figure>
               </div>
               <div class='level-item'>
-                <span>{images[0].name}</span>
+                <span>{images[0].name} {statistics[0][4] && <span class={'tag p-1 has-background-dark has-text-' + getStatColor(statistics[0][4].name).split('-').pop()}>{`[${statistics[0][4].name}]`}</span>}</span>
               </div>
               <div class='level-item'>
                 <span>{participants[0]}</span>
@@ -42,7 +53,7 @@ function BattleLog({ date, won, participants, images }) {
                 <span>{participants[1]}</span>
               </div>
               <div class='level-item'>
-                <span>{images[1].name}</span>
+                <span>{images[1].name} {statistics[1][4] && <span class={'tag p-1 has-background-dark has-text-' + getStatColor(statistics[1][4].name).split('-').pop()}>{`[${statistics[1][4].name}]`}</span>}</span>
               </div>
               <div class='level-item'>
                 <figure class='image is-32x32'>
@@ -50,6 +61,33 @@ function BattleLog({ date, won, participants, images }) {
                 </figure>
               </div>
             </div>
+          </div>
+          <div class='animated'>
+            <Show when={fullStatus()}>
+              <div class='animated fadeIn content'>
+                <div class='level is-mobile'>
+                  <div class='level-left'>
+                    <div>
+                      <p>
+                        <strong>Level: </strong>
+                        <span> {statistics[0][0].defValue}</span>
+                      </p>
+                      <For each={statistics[0].slice(1)}>{(statistic: any) => <Statistic statistic={statistic} />}</For>
+                    </div>
+                  </div>
+                  <div class='level-right'>
+                    <div class='has-text-right-desktop'>
+                      <p>
+                        <strong>Level: </strong>
+                        <span> {statistics[1][0].defValue}</span>
+                      </p>
+                      <For each={statistics[1].slice(1)}>{(statistic: any) => <Statistic statistic={statistic} />}</For>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Show>
+            <button class='button is-fullwidth is-small' onClick={() => setFullStatus(!fullStatus())}>{fullStatus() ? 'Hide' : 'Show'} statistics</button>
           </div>
         </div>
       </div>

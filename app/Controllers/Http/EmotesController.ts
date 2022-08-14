@@ -176,7 +176,6 @@ export default class EmotesController {
     const pageNum = Number(offsetRaw)
     const page = Number.isNaN(pageNum) ? 1 : (pageNum <= 0 ? 1 : pageNum)
 
-    // 1. battle_entries -> battle_id
     const battleEntries = await BattleEntry.query().where({ userId: auth.user.id }).orderBy('updatedAt', 'desc').paginate(page, 10)
 
     const res: BattleLogResponse = {
@@ -184,7 +183,9 @@ export default class EmotesController {
       maxPage: battleEntries.lastPage
     }
 
-    // 2. battles
+    const statisticsToFilter = ['Order', 'Experience']
+    const statisticsToCensor = ['Joy', 'Joker', 'Toxic', 'Lurker']
+
     for (let index = 0; index < battleEntries.length; index++) {
       const battleEntry = battleEntries[index]
 
@@ -199,6 +200,7 @@ export default class EmotesController {
 
       const images: string[] = []
       const participants: string[] = []
+      const statistics: any[] = []
 
       const emoteRecipes = await EmoteRecipe.findMany(battleEntry.battle.battleEntries.map(entry => entry.battleEmote.emote_recipe))
       for (let index = 0; index < battleEntry.battle.battleEntries.length; index++) {
@@ -210,12 +212,22 @@ export default class EmotesController {
         if (recipe != null) {
           images.push(recipe.images[bE.battleEmote.seed])
         }
+
+        statistics.push(bE.battleEmote.statistics.map(statistic => {
+          let stats: any = { name: statistic.name }
+
+          if (!statisticsToCensor.includes(statistic.name)) {
+            stats = { ...stats, curValue: statistic.curValue, defValue: statistic.defValue }
+          }
+
+          return stats
+        }).filter(statistic => !statisticsToFilter.includes(statistic.name)))
       }
 
       res.logs.push({
         date: battleEntry.battle.updatedAt.toUTC().set({ millisecond: 0 }).toString(),
         won,
-        statistics: battleEntry.battleEmote.statistics.map(statistic => ({ name: statistic.name, curValue: statistic.curValue })).filter(statistic => statistic.name !== 'Order'),
+        statistics,
         participants,
         images
       })
