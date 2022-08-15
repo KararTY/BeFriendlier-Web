@@ -28,7 +28,7 @@ export default class LeaderboardsController {
     }
 
     let userPosition
-    if (auth.user != null) {
+    if (auth.user !== undefined) {
       // https://stackoverflow.com/a/55334692
       userPosition = await Database.rawQuery(`
         with temp_table as (
