@@ -12,7 +12,7 @@
             </div>
             <div class="card-content">
               <p>The leaderboards are updated every 4-5 hours. This list does not include hosted users, <a href="{{ route('SplashController.channels') }}">instead there is a separate list of hosted streamers which you can find here.</a></p>
-              @if(typeof web.userPosition === 'number')
+              @if(web.userPosition)
                 <p>Your leaderboard position is <strong>{{ web.userPosition.rn }}</strong> with a total emote count of <strong>{{ web.userPosition.total_emotes }}</strong>.</p>
               @endif
             </div>
