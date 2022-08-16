@@ -5,7 +5,7 @@ import { DateTime } from 'luxon'
 
 interface LeaderboardResponse {
   topTenEmotesUsers: UserLeaderboard[]
-  topTenBattlesUsers: UserLeaderboardBattle[]
+  topFiveBattlesUsers: UserLeaderboardBattle[]
 }
 
 interface UserLeaderboard {
@@ -26,7 +26,7 @@ interface UserLeaderboardBattle {
 let leaderboardsLastUpdate = DateTime.fromJSDate(new Date())
 const leaderboards: LeaderboardResponse = {
   topTenEmotesUsers: [],
-  topTenBattlesUsers: []
+  topFiveBattlesUsers: []
 }
 
 export interface LeaderboardEntry {
@@ -78,7 +78,6 @@ export default class LeaderboardsController {
 
   private async refreshStatistics (): Promise<void> {
     const resTopTenFarmers = await Database.from('_leaderboards').orderBy('total_emotes', 'desc').limit(10) as LeaderboardEntry[]
-    const resTopTenBattles = await Database.from('_leaderboards_battles').orderBy('total_wins', 'desc').limit(10) as LeaderboardBattleEntry[]
 
     const topTenEmotesUsers: UserLeaderboard[] = []
     for (let index = 0; index < resTopTenFarmers.length; index++) {
@@ -96,15 +95,17 @@ export default class LeaderboardsController {
       })
     }
 
-    const topTenBattlesUsers: UserLeaderboardBattle[] = []
-    for (let index = 0; index < resTopTenBattles.length; index++) {
-      const leaderboardEntry = resTopTenBattles[index]
+    const resTopFiveBattles = await Database.from('_leaderboards_battles').orderBy('total_wins', 'desc').limit(5) as LeaderboardBattleEntry[]
+
+    const topFiveBattlesUsers: UserLeaderboardBattle[] = []
+    for (let index = 0; index < resTopFiveBattles.length; index++) {
+      const leaderboardEntry = resTopFiveBattles[index]
 
       const user = await User.find(leaderboardEntry.user_id)
 
       if (user == null) continue
 
-      topTenBattlesUsers.push({
+      topFiveBattlesUsers.push({
         avatar: user.avatar,
         display_name: user.displayName,
         name: user.name,
@@ -114,7 +115,7 @@ export default class LeaderboardsController {
     }
 
     leaderboards.topTenEmotesUsers = topTenEmotesUsers
-    leaderboards.topTenBattlesUsers = topTenBattlesUsers
+    leaderboards.topFiveBattlesUsers = topFiveBattlesUsers
   }
 
   public async battleLeaderboards (): Promise<UserLeaderboardBattle[]> {
@@ -123,6 +124,6 @@ export default class LeaderboardsController {
       await this.refreshStatistics()
     }
 
-    return leaderboards.topTenBattlesUsers
+    return leaderboards.topFiveBattlesUsers
   }
 }
