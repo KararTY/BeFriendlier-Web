@@ -1,20 +1,38 @@
 <section class="hero is-fullheight">
   <div class="hero-head">
     @include('includes/navbar')
+    <script>
+      let streamerMode = {{ user && user.streamerMode }}
+    </script>
   </div>
   <div class="hero-body">
     <div class="container">
       <div class="columns">
         <div class="column">
-          <div class="card">
-            <div class="card-header">
-              <p class="card-header-title is-size-4">Information</p>
+          <div class="columns is-multiline">
+            <div class="column is-12">
+              <div class="card">
+                <div class="card-header">
+                  <p class="card-header-title is-size-4">Information</p>
+                </div>
+                <div class="card-content">
+                  <p>The leaderboards are updated every 4-5 hours. This list does not include hosted users, <a href="{{ route('SplashController.channels') }}">instead there is a separate list of hosted streamers which you can find here.</a></p>
+                  @if(web.userPosition)
+                    <p>Your leaderboard position is <strong>{{ web.userPosition.rn }}</strong> with a total emote count of <strong>{{ web.userPosition.total_emotes }}</strong>.</p>
+                  @endif
+                </div>
+              </div>
             </div>
-            <div class="card-content">
-              <p>The leaderboards are updated every 4-5 hours. This list does not include hosted users, <a href="{{ route('SplashController.channels') }}">instead there is a separate list of hosted streamers which you can find here.</a></p>
-              @if(web.userPosition)
-                <p>Your leaderboard position is <strong>{{ web.userPosition.rn }}</strong> with a total emote count of <strong>{{ web.userPosition.total_emotes }}</strong>.</p>
-              @endif
+            <div class="column is-12">
+              <div class="card">
+                <div class="card-header">
+                  <p class="card-header-title is-size-4" title="WARRIA">Top 5 Warriors</p>
+                </div>
+                <div class="card-content">
+                  <noscript><p>Enable JavaScript to see this content.</p></noscript>
+                  <div id="battlesLeaderboard"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -47,7 +65,7 @@
                       <div class="level is-mobile">
                         <div class="level-left">
                           <figure class="level-item image is-32x32 is-clipped">
-                            <img {{{ user && user.streamerMode ? 'class="blur is-rounded" data-blur-vanish="true" data-blur="channel-' + entry.name + '"' : 'class="is-rounded"' }}} src="{{ entry.avatar.replace('300x300', '70x70') }}" alt="{{ entry.display_name }}'s avatar">
+                            <img {{{ user && user.streamerMode ? 'class="blur is-rounded" data-blur-vanish="true" data-blur="channel-' + entry.name + '"' : 'class="is-rounded"' }}} src="{{ entry.avatar.replace('300x300', '70x70') }}" alt="{{ entry.display_name }}'s avatar" />
                           </figure>
                           <span class="level-item">{{ entry.display_name }}{{ entry.name !== entry.display_name.toLowerCase() ? ' (' + entry.name + ')': '' }}</span>
                           @if (index === 0)

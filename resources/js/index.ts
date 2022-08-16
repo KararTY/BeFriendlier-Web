@@ -16,3 +16,6 @@ import './CombineEmotes'
 import './ResignBattleEmote'
 
 import './Modal'
+
+// /leaderboards
+import './BattlesLeaderboard.tsx'

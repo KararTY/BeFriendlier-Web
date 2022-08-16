@@ -1,4 +1,5 @@
 import { BaseCommand } from '@adonisjs/core/build/standalone'
+import Battle from 'App/Models/Battle'
 
 export default class UpdateLeaderboards extends BaseCommand {
   /**
@@ -50,6 +51,38 @@ export default class UpdateLeaderboards extends BaseCommand {
         await Database.table('_leaderboards').insert({ user_id: id, total_emotes: totalEmotes })
       } catch (err) {
         await Database.from('_leaderboards').where({ user_id: id }).update({ total_emotes: totalEmotes })
+      }
+    }
+
+    const allBattles = await Battle.all()
+
+    await Database.from('_leaderboards_battles').delete()
+
+    for (let index = 0; index < allBattles.length; index++) {
+      const battle = allBattles[index]
+
+      await battle.load('battleEntries')
+
+      const winningBattleEntries = battle.winningBattleEntries
+
+      for (let index = 0; index < battle.battleEntries.length; index++) {
+        const battleEntry = battle.battleEntries[index]
+
+        const id = battleEntry.userId
+
+        const data: any = {
+          user_id: id
+        }
+
+        if (winningBattleEntries.includes(battleEntry.id)) data.total_wins = 1
+        else data.total_losses = 1
+
+        try {
+          await Database.table('_leaderboards_battles').insert(data)
+        } catch (err) {
+          delete data.user_id
+          await Database.from('_leaderboards_battles').where({ user_id: id }).increment(data)
+        }
       }
     }
 
