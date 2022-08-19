@@ -11,6 +11,7 @@ import MatchHandler from './Match'
 import MismatchHandler from './Mismatch'
 import PingHandler from './Ping'
 import ProfileHandler from './Profile'
+import ProfilesHandler from './Profiles'
 import RegisterHandler from './Register'
 import RollMatchHandler from './RollMatch'
 import UnmatchHandler from './Unmatch'
@@ -32,6 +33,7 @@ export default function (ws: typeof WebsocketServer): DefaultHandler[] {
     new RegisterHandler(ws),
     new RollMatchHandler(ws),
     new UnmatchHandler(ws),
-    new WelcomeHandler(ws)
+    new WelcomeHandler(ws),
+    new ProfilesHandler(ws)
   ]
 }
