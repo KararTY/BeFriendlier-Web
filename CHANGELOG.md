@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.1](https://github.com/KararTY/Twitchr/compare/v0.5.0...v0.5.1) (2022-10-06)
+
+
+### Features
+
+* + MessageType type to rollMatch & rollEmote ([1ac1599](https://github.com/KararTY/Twitchr/commit/1ac159951fadd4a3edcecaf0acab80af7a8e4af7))
+* **BattleLogs:** BattleLogs available on website. ([f88ed19](https://github.com/KararTY/Twitchr/commit/f88ed19a717ab97d4c26bb4d9b58ea467b64e195))
+* **Leaderboards:** Top 5 warriors leaderboard ([0e9a8b5](https://github.com/KararTY/Twitchr/commit/0e9a8b510c46fea1da6729eb2c65237cf5709618))
+* Profiles command. ([a158290](https://github.com/KararTY/Twitchr/commit/a15829035e5f931730eab5964e1c008a84ab67f3))
+
+
+### Bug Fixes
+
+* Add battle emote level to output message. ([e3fd04f](https://github.com/KararTY/Twitchr/commit/e3fd04f852a83e16c1b5c8f07fe4208ba7552707))
+* Add extra user get attempt for LeaveChat ([cfc1611](https://github.com/KararTY/Twitchr/commit/cfc1611a57fb54fc7625d4389a4c734a4316f378))
+* Add is-clickable to emote boxes. ([93a69a1](https://github.com/KararTY/Twitchr/commit/93a69a1d344bd20a121343d502dc02ca4c225935))
+* Add rollEmote for when rau fails. ([9eb4e42](https://github.com/KararTY/Twitchr/commit/9eb4e4294288fa9b5ae8d5ae399431ad1d509d86))
+* Add type checks for statistics object. ([d6490fa](https://github.com/KararTY/Twitchr/commit/d6490fafd6f800060fca7ea6ab379a4db721c6bb))
+* Allow emotes to be traded on any profile. ([decb139](https://github.com/KararTY/Twitchr/commit/decb1398460083c6db3121f239465c1e0a0e520b))
+* **BattleLogs:** Add statistics. ([04de48d](https://github.com/KararTY/Twitchr/commit/04de48d62868a37dfb7cac5c1d0928fc222c1878))
+* durstenfeldShuffle no longer mutating. ([87d292f](https://github.com/KararTY/Twitchr/commit/87d292f95811cbafca5f3da79a9fb01a17a3967d))
+* For some reason defaultValue isn't set. ([75cb0b1](https://github.com/KararTY/Twitchr/commit/75cb0b1d92ecb6db2386f4eca66f666a9258b484))
+* Give prefilled new entries for new profiles. ([db50dd5](https://github.com/KararTY/Twitchr/commit/db50dd5732eee87a01591552a36af54dcc54ef62))
+* **Leaderboards:** Just use an if check ([b51ae29](https://github.com/KararTY/Twitchr/commit/b51ae2900d01377cc9fb0574b5ab41dbba5df5a9))
+* **Leaderboards:** Show only top 5 battle users. ([738ee53](https://github.com/KararTY/Twitchr/commit/738ee53a8a25aaa3624f9c10007c441f93c00f86))
+* **Leaderboards:** web.userPosition typeof number ([c487523](https://github.com/KararTY/Twitchr/commit/c4875236ecee0ddf7e1de226c4e9131b27dde7b7))
+* Linting issues. ([8253830](https://github.com/KararTY/Twitchr/commit/82538308ad82b019cfcd0841f78bd944ee9b79c4))
+* Make sure opponentHPs is always filled. ([5fac954](https://github.com/KararTY/Twitchr/commit/5fac9546db4c6b20f180db6f3fe18485b09d53e5))
+* More battle refactoring. ([390c17f](https://github.com/KararTY/Twitchr/commit/390c17f5bdd2dca217a01e2e72b6e7d987e88c66))
+* More polish for battle message. ([d17d35a](https://github.com/KararTY/Twitchr/commit/d17d35a72cd40323d5a54aab710b02be5c255ffe))
+* npm run build-js Index -> index ([4a76c82](https://github.com/KararTY/Twitchr/commit/4a76c8213767dfcbead2063c433cac1df233497a))
+* Oopsie, order object disappeared. ([8cdd1f0](https://github.com/KararTY/Twitchr/commit/8cdd1f0713d37e9c35b697ee57fb4f828760fc10))
+* Redundant migration detected ([49f1254](https://github.com/KararTY/Twitchr/commit/49f1254bae3284f87ab55bfd024211db3e1397c9))
+* Remove unused arguments ([8374a84](https://github.com/KararTY/Twitchr/commit/8374a843a2b7d3dc9a83836d374370e3ee272aac))
+* Reorder pajbot check logic. ([461201f](https://github.com/KararTY/Twitchr/commit/461201fd5ed350eee3bb88cca11748809721edce))
+* Reset battle emote health on rolls. ([32e3902](https://github.com/KararTY/Twitchr/commit/32e39026a10adeefb9823608858332aba5f979fe))
+* Reword match whisper. ([7b54acc](https://github.com/KararTY/Twitchr/commit/7b54accbb5ac93e0c3cef38dad79e281177a3cae))
+* Send result battle message before leveling up ([1d8029e](https://github.com/KararTY/Twitchr/commit/1d8029e0b61715ccbf384de9438f6585f2f82af0))
+* Show match's user actual favorite streamers. ([c8fd47a](https://github.com/KararTY/Twitchr/commit/c8fd47a4ef1cd98d25d815d008f2c581f4dc1e8f))
+* Something silly ([0cbd530](https://github.com/KararTY/Twitchr/commit/0cbd5305d0afecec06e5ec53c2043580c757e816))
+* Update copyright notice. ([bf54554](https://github.com/KararTY/Twitchr/commit/bf54554710a3ce0b614affe032868dc1864303f1))
+* uppercase to lowercase, smh Windows ([8edd836](https://github.com/KararTY/Twitchr/commit/8edd8367f424965d10bf2a3e6b8fa8beb79a1233))
+* Use correct string for displaying level. ([f60cee0](https://github.com/KararTY/Twitchr/commit/f60cee07b237645bcf41c7ee738930a133ae5be9))
+* **View:** Lowercase index.js & Add version to qs ([3df263b](https://github.com/KararTY/Twitchr/commit/3df263b98d06198c67b4addd74c46e4e1de923c6))
+* **Views:** Add toFixed to next experience number. ([6857c22](https://github.com/KararTY/Twitchr/commit/6857c223a10f41fee5ee811a6ddab215fffe5991))
+* **Views:** Overflow hidden on avatars. ([9e58d10](https://github.com/KararTY/Twitchr/commit/9e58d10091ea5ba53ab2a385269a584ee24aea5b))
+* windows stuff ([8a96a41](https://github.com/KararTY/Twitchr/commit/8a96a412a4343a82096468da1d6c79931798ac25))
+
 ## [0.5.0](https://github.com/KararTY/Twitchr/compare/v0.3.3...v0.5.0) (2022-04-16)
 
 
